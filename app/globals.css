@@ -1,0 +1,332 @@
+@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700&family=Lato:wght@300;400;700&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --background: #0F0F1A;
+  --foreground: #E1BEE7;
+  --mystical-dark: #0F0F1A;
+  --mystical-primary: #1F1F3D;
+  --mystical-accent: #9C27B0;
+  --mystical-light: #E1BEE7;
+  --mystical-gold: #FFD700;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --background: #0a0a0a;
+    --foreground: #ededed;
+  }
+}
+
+body {
+  background-color: #0F0F1A;
+  color: #E1BEE7;
+  font-family: 'Lato', sans-serif;
+  background-image: 
+    radial-gradient(circle at 15% 15%, rgba(156, 39, 176, 0.08), transparent 20%),
+    radial-gradient(circle at 85% 85%, rgba(255, 215, 0, 0.05), transparent 25%),
+    radial-gradient(circle at 50% 50%, rgba(15, 15, 26, 0.9), rgba(15, 15, 26, 0.95) 100%);
+  min-height: 100vh;
+  overflow-x: hidden;
+  position: relative;
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 10px;
+  background-color: #0F0F1A;
+}
+
+::-webkit-scrollbar-thumb {
+  background: linear-gradient(to bottom, #9C27B0, #1F1F3D);
+  border-radius: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background-color: rgba(15, 15, 26, 0.9);
+}
+
+@layer components {
+  .mystical-card {
+    background-color: rgba(31, 31, 61, 0.6);
+    border: 1px solid rgba(255, 215, 0, 0.15);
+    border-radius: 0.5rem;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+    padding: 1.5rem;
+    backdrop-filter: blur(8px);
+    position: relative;
+    overflow: hidden;
+    transition: all 0.4s ease;
+  }
+  
+  .mystical-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(45deg, rgba(156, 39, 176, 0.02) 0%, rgba(255, 215, 0, 0.02) 100%);
+    z-index: -1;
+  }
+  
+  /* Add a subtle animated border glow effect */
+  .mystical-card::after {
+    content: '';
+    position: absolute;
+    top: -1px;
+    left: -1px;
+    right: -1px;
+    bottom: -1px;
+    border-radius: 0.5rem;
+    z-index: -1;
+    background: linear-gradient(
+      45deg, 
+      rgba(156, 39, 176, 0) 0%, 
+      rgba(156, 39, 176, 0.1) 25%, 
+      rgba(255, 215, 0, 0.1) 50%, 
+      rgba(156, 39, 176, 0.1) 75%, 
+      rgba(156, 39, 176, 0) 100%
+    );
+    background-size: 200% 200%;
+    animation: shimmerBorder 6s linear infinite;
+  }
+  
+  /* Add subtle twinkling stars effect to cards */
+  .mystical-card .twinkle {
+    position: absolute;
+    border-radius: 50%;
+    background-color: white;
+    z-index: 0;
+    animation: twinkle 4s ease-in-out infinite;
+  }
+  
+  /* Enhanced hover effect for cards */
+  .mystical-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 15px 30px rgba(0, 0, 0, 0.3),
+                0 0 15px rgba(156, 39, 176, 0.2);
+  }
+  
+  .mystical-button {
+    background-color: #9C27B0;
+    color: white;
+    font-family: 'Cinzel', serif;
+    font-weight: 600;
+    padding: 0.75rem 1.5rem;
+    border-radius: 0.375rem;
+    transition: all 300ms;
+    box-shadow: 0 4px 12px rgba(156, 39, 176, 0.2);
+    position: relative;
+    overflow: hidden;
+    z-index: 1;
+  }
+  
+  .mystical-button::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+    transition: all 0.6s;
+    z-index: -1;
+  }
+  
+  .mystical-button:hover::before {
+    left: 100%;
+  }
+  
+  /* Enhanced button hover effect */
+  .mystical-button:hover {
+    background-color: #7B1FA2;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 15px rgba(156, 39, 176, 0.3);
+  }
+  
+  .mystical-button:active {
+    transform: translateY(1px);
+  }
+  
+  .mystical-input {
+    background-color: rgba(31, 31, 61, 0.5);
+    border: 1px solid rgba(225, 190, 231, 0.3);
+    border-radius: 0.375rem;
+    padding: 0.75rem;
+    color: #E1BEE7;
+    transition: all 300ms;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  }
+  
+  .mystical-input:focus {
+    outline: none;
+    border-color: rgba(156, 39, 176, 0.5);
+    box-shadow: 0 0 0 2px rgba(156, 39, 176, 0.25);
+  }
+  
+  .mystical-title {
+    font-family: 'Cinzel', serif;
+    font-size: clamp(2rem, 5vw, 3.5rem);
+    color: #FFD700;
+    font-weight: bold;
+    letter-spacing: 0.05em;
+    text-shadow: 0 2px 10px rgba(255, 215, 0, 0.3), 
+                 0 0 40px rgba(156, 39, 176, 0.1);
+  }
+  
+  .mystical-subtitle {
+    font-family: 'Cinzel', serif;
+    font-size: clamp(1.125rem, 3vw, 1.5rem);
+    color: rgba(225, 190, 231, 0.9);
+    font-weight: 600;
+    letter-spacing: 0.03em;
+  }
+}
+
+/* Utility classes for the mystical theme colors */
+.bg-mystical-dark { background-color: #0F0F1A; }
+.bg-mystical-primary { background-color: #1F1F3D; }
+.bg-mystical-accent { background-color: #9C27B0; }
+.text-mystical-light { color: #E1BEE7; }
+.text-mystical-gold { color: #FFD700; }
+
+/* Animation utilities */
+.animate-float {
+  animation: float 6s ease-in-out infinite;
+}
+
+.animate-spin-slow {
+  animation: spin 20s linear infinite;
+}
+
+.animate-spin-slow-reverse {
+  animation: spin 25s linear infinite reverse;
+}
+
+.shadow-glow {
+  box-shadow: 0 0 15px rgba(156, 39, 176, 0.5),
+              0 0 30px rgba(156, 39, 176, 0.2);
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
+}
+
+@keyframes glow {
+  0% { box-shadow: 0 0 5px rgba(156, 39, 176, 0.3); }
+  50% { box-shadow: 0 0 20px rgba(156, 39, 176, 0.6), 0 0 40px rgba(156, 39, 176, 0.3); }
+  100% { box-shadow: 0 0 5px rgba(156, 39, 176, 0.3); }
+}
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+/* Card flip animation */
+.card-container {
+  perspective: 1000px;
+}
+
+.card-inner {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  text-align: center;
+  transition: transform 0.8s;
+  transform-style: preserve-3d;
+}
+
+.card-container:hover .card-inner {
+  transform: rotateY(180deg);
+}
+
+.card-front, .card-back {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
+  border-radius: 0.5rem;
+  overflow: hidden;
+}
+
+.card-back {
+  transform: rotateY(180deg);
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .mystical-card {
+    padding: 1rem;
+  }
+  
+  .mystical-button {
+    padding: 0.5rem 1rem;
+  }
+}
+
+/* Custom loading animation */
+.loader {
+  width: 48px;
+  height: 48px;
+  border: 3px solid #E1BEE7;
+  border-radius: 50%;
+  display: inline-block;
+  position: relative;
+  box-sizing: border-box;
+  animation: rotation 1s linear infinite;
+}
+
+.loader::after {
+  content: '';  
+  box-sizing: border-box;
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  border: 3px solid transparent;
+  border-bottom-color: #FFD700;
+}
+
+@keyframes rotation {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* Add keyframes for the shimmer border animation */
+@keyframes shimmerBorder {
+  0% {
+    background-position: 0% 0%;
+  }
+  100% {
+    background-position: 200% 200%;
+  }
+}
+
+/* Add keyframes for the twinkling stars effect */
+@keyframes twinkle {
+  0%, 100% {
+    opacity: 0.1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.8;
+    transform: scale(1.2);
+  }
+}
