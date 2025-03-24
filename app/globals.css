@@ -12,6 +12,17 @@
   --mystical-accent: #9C27B0;
   --mystical-light: #E1BEE7;
   --mystical-gold: #FFD700;
+  
+  /* Agatha Harkness style colors */
+  --agatha-dark: #190029;
+  --agatha-deeper: #32004A;
+  --agatha-purple: #4A0072;
+  --agatha-accent: #8E24AA;
+  --agatha-vibrant: #6A0DAD;
+  --agatha-mist: rgba(110, 33, 172, 0.4);
+  --agatha-glow: rgba(147, 51, 234, 0.8);
+  --agatha-rune: #B026FF;
+  --agatha-black: #0A0A0A;
 }
 
 @theme inline {
@@ -28,195 +39,197 @@
   }
 }
 
-body {
-  background-color: #0F0F1A;
-  color: #E1BEE7;
-  font-family: 'Lato', sans-serif;
-  background-image: 
-    radial-gradient(circle at 15% 15%, rgba(156, 39, 176, 0.08), transparent 20%),
-    radial-gradient(circle at 85% 85%, rgba(255, 215, 0, 0.05), transparent 25%),
-    radial-gradient(circle at 50% 50%, rgba(15, 15, 26, 0.9), rgba(15, 15, 26, 0.95) 100%);
-  min-height: 100vh;
-  overflow-x: hidden;
-  position: relative;
-}
-
-/* Custom scrollbar */
-::-webkit-scrollbar {
-  width: 10px;
-  background-color: #0F0F1A;
-}
-
-::-webkit-scrollbar-thumb {
-  background: linear-gradient(to bottom, #9C27B0, #1F1F3D);
-  border-radius: 10px;
-}
-
-::-webkit-scrollbar-track {
-  background-color: rgba(15, 15, 26, 0.9);
+@layer base {
+  html {
+    @apply bg-agatha-dark text-agatha-mist;
+    overflow-x: hidden;
+    cursor: url("data:image/svg+xml,%3Csvg width='24' height='24' viewBox='0 0 24 24' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Ccircle cx='12' cy='12' r='6' fill='%236A0DAD' fill-opacity='0.6'/%3E%3Ccircle cx='12' cy='12' r='4' fill='%238E24AA' fill-opacity='0.8'/%3E%3Ccircle cx='12' cy='12' r='2' fill='%23B026FF'/%3E%3C/svg%3E") 12 12, auto;
+  }
+  
+  ::selection {
+    background-color: var(--agatha-purple);
+    color: white;
+  }
+  
+  body {
+    background-color: var(--agatha-dark);
+    color: var(--mystical-light);
+    font-family: 'Lato', sans-serif;
+    background-image: 
+      radial-gradient(circle at 50% 50%, rgba(74, 0, 114, 0.3), rgba(25, 0, 41, 0.95) 70%),
+      url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='40' height='40' viewBox='0 0 40 40'%3E%3Cpath d='M20 0 L40 20 L20 40 L0 20 Z' fill='%236A0DAD' fill-opacity='0.05'/%3E%3C/svg%3E");
+    min-height: 100vh;
+    overflow-x: hidden;
+    position: relative;
+  }
+  
+  body::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 100%;
+    background: linear-gradient(to bottom, rgba(25, 0, 41, 0.5), transparent 15%, transparent 85%, rgba(25, 0, 41, 0.5));
+    pointer-events: none;
+    z-index: 1;
+  }
+  
+  /* Custom scrollbar - Agatha style */
+  ::-webkit-scrollbar {
+    width: 10px;
+  }
+  
+  ::-webkit-scrollbar-track {
+    background: var(--agatha-dark);
+  }
+  
+  ::-webkit-scrollbar-thumb {
+    background: var(--agatha-purple);
+    border-radius: 10px;
+    border: 2px solid var(--agatha-dark);
+  }
+  
+  ::-webkit-scrollbar-thumb:hover {
+    background: var(--agatha-accent);
+    box-shadow: inset 0 0 6px var(--agatha-glow);
+  }
 }
 
 @layer components {
   .mystical-card {
-    background-color: rgba(31, 31, 61, 0.6);
-    border: 1px solid rgba(255, 215, 0, 0.15);
-    border-radius: 0.5rem;
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
-    padding: 1.5rem;
-    backdrop-filter: blur(8px);
-    position: relative;
-    overflow: hidden;
-    transition: all 0.4s ease;
+    @apply bg-agatha-deeper border-[3px] border-agatha-accent/30 rounded-lg shadow-lg p-4 backdrop-blur-sm relative overflow-hidden;
   }
   
   .mystical-card::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: linear-gradient(45deg, rgba(156, 39, 176, 0.02) 0%, rgba(255, 215, 0, 0.02) 100%);
-    z-index: -1;
+    @apply content-[''] absolute inset-0 bg-gradient-to-br from-agatha-purple/20 to-agatha-deeper/30 opacity-30 pointer-events-none transition-opacity duration-500;
   }
   
-  /* Add a subtle animated border glow effect */
+  .mystical-card:hover::before {
+    @apply opacity-50;
+  }
+  
   .mystical-card::after {
-    content: '';
-    position: absolute;
-    top: -1px;
-    left: -1px;
-    right: -1px;
-    bottom: -1px;
-    border-radius: 0.5rem;
-    z-index: -1;
-    background: linear-gradient(
-      45deg, 
-      rgba(156, 39, 176, 0) 0%, 
-      rgba(156, 39, 176, 0.1) 25%, 
-      rgba(255, 215, 0, 0.1) 50%, 
-      rgba(156, 39, 176, 0.1) 75%, 
-      rgba(156, 39, 176, 0) 100%
-    );
-    background-size: 200% 200%;
-    animation: shimmerBorder 6s linear infinite;
+    @apply content-[''] absolute -inset-[50%] bg-agatha-purple/10 opacity-0 pointer-events-none transition-all duration-700 ease-in-out;
   }
   
-  /* Add subtle twinkling stars effect to cards */
-  .mystical-card .twinkle {
-    position: absolute;
-    border-radius: 50%;
-    background-color: white;
-    z-index: 0;
-    animation: twinkle 4s ease-in-out infinite;
-  }
-  
-  /* Enhanced hover effect for cards */
-  .mystical-card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 15px 30px rgba(0, 0, 0, 0.3),
-                0 0 15px rgba(156, 39, 176, 0.2);
+  .mystical-card:hover::after {
+    @apply opacity-20;
   }
   
   .mystical-button {
-    background-color: #9C27B0;
-    color: white;
-    font-family: 'Cinzel', serif;
-    font-weight: 600;
-    padding: 0.75rem 1.5rem;
-    border-radius: 0.375rem;
-    transition: all 300ms;
-    box-shadow: 0 4px 12px rgba(156, 39, 176, 0.2);
-    position: relative;
-    overflow: hidden;
-    z-index: 1;
+    @apply bg-agatha-purple text-white font-bold py-2 px-4 rounded shadow-md transition-all duration-300 relative overflow-hidden;
   }
   
   .mystical-button::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: -100%;
-    width: 100%;
-    height: 100%;
-    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
-    transition: all 0.6s;
-    z-index: -1;
+    @apply content-[''] absolute inset-0 bg-agatha-accent opacity-0 transition-opacity duration-300;
+  }
+  
+  .mystical-button:hover {
+    @apply transform -translate-y-0.5 shadow-lg;
   }
   
   .mystical-button:hover::before {
-    left: 100%;
+    @apply opacity-80;
   }
   
-  /* Enhanced button hover effect */
-  .mystical-button:hover {
-    background-color: #7B1FA2;
-    transform: translateY(-2px);
-    box-shadow: 0 6px 15px rgba(156, 39, 176, 0.3);
+  .mystical-button::after {
+    @apply content-[''] absolute inset-0 bg-gradient-to-r from-agatha-purple to-agatha-accent opacity-0 scale-x-0 origin-left transition-all duration-500;
   }
   
-  .mystical-button:active {
-    transform: translateY(1px);
+  .mystical-button:active::after {
+    @apply opacity-90 scale-x-100;
   }
   
   .mystical-input {
-    background-color: rgba(31, 31, 61, 0.5);
-    border: 1px solid rgba(225, 190, 231, 0.3);
-    border-radius: 0.375rem;
-    padding: 0.75rem;
-    color: #E1BEE7;
-    transition: all 300ms;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    @apply bg-agatha-dark/70 border-2 border-agatha-accent/30 rounded px-3 py-2 text-mystical-light transition-all duration-300;
   }
   
   .mystical-input:focus {
-    outline: none;
-    border-color: rgba(156, 39, 176, 0.5);
-    box-shadow: 0 0 0 2px rgba(156, 39, 176, 0.25);
+    @apply outline-none border-agatha-accent/70 shadow-md bg-agatha-deeper/80;
   }
   
   .mystical-title {
-    font-family: 'Cinzel', serif;
-    font-size: clamp(2rem, 5vw, 3.5rem);
-    color: #FFD700;
-    font-weight: bold;
-    letter-spacing: 0.05em;
-    text-shadow: 0 2px 10px rgba(255, 215, 0, 0.3), 
-                 0 0 40px rgba(156, 39, 176, 0.1);
+    @apply font-bold text-[clamp(1.75rem,5vw,2.5rem)] text-agatha-rune;
+    text-shadow: 0 0 10px var(--agatha-glow), 0 0 20px var(--agatha-mist);
   }
   
   .mystical-subtitle {
-    font-family: 'Cinzel', serif;
-    font-size: clamp(1.125rem, 3vw, 1.5rem);
-    color: rgba(225, 190, 231, 0.9);
-    font-weight: 600;
-    letter-spacing: 0.03em;
+    @apply text-[clamp(1.25rem,3vw,1.75rem)] text-mystical-light/90 font-semibold;
+    text-shadow: 0 0 8px var(--agatha-mist), 0 0 15px var(--agatha-dark);
+  }
+  
+  .witch-circle {
+    @apply w-12 h-12 rounded-full border-2 border-agatha-accent/70 bg-agatha-dark flex items-center justify-center relative shadow-md;
+  }
+  
+  .witch-circle::before {
+    @apply content-[''] absolute inset-1 rounded-full border border-agatha-rune/30;
+  }
+  
+  .agatha-rune {
+    @apply inline-block w-6 h-6 mx-1 bg-agatha-purple rounded-sm transform rotate-45 relative;
+  }
+  
+  .agatha-rune::before {
+    @apply content-[''] absolute inset-1 bg-agatha-rune/60 rounded-sm;
+  }
+  
+  .magic-text {
+    @apply relative inline-block;
+  }
+  
+  .magic-text::after {
+    @apply content-[''] absolute -bottom-0.5 left-0 w-full h-0.5 bg-agatha-accent/70 transform scale-x-0 origin-left transition-transform duration-300;
+  }
+  
+  .magic-text:hover::after {
+    @apply scale-x-100;
+  }
+  
+  .witch-finger {
+    @apply relative;
+  }
+  
+  .witch-finger::before {
+    @apply content-[''] absolute inset-0 rounded-full bg-agatha-glow opacity-0;
+  }
+  
+  .witch-finger:hover::before {
+    @apply opacity-100;
+  }
+  
+  .magic-mist {
+    @apply fixed inset-0 pointer-events-none bg-agatha-purple/5 opacity-30 z-10;
+  }
+  
+  .agatha-energy {
+    @apply absolute w-8 h-8 rounded-full bg-agatha-vibrant/50 shadow-md pointer-events-none;
+  }
+  
+  .spell-particle {
+    @apply absolute w-2 h-2 rounded-full bg-agatha-rune opacity-70 pointer-events-none;
   }
 }
 
-/* Utility classes for the mystical theme colors */
-.bg-mystical-dark { background-color: #0F0F1A; }
-.bg-mystical-primary { background-color: #1F1F3D; }
-.bg-mystical-accent { background-color: #9C27B0; }
-.text-mystical-light { color: #E1BEE7; }
-.text-mystical-gold { color: #FFD700; }
+/* Utility classes for the Agatha theme colors */
+.bg-agatha-dark { background-color: var(--agatha-dark); }
+.bg-agatha-deeper { background-color: var(--agatha-deeper); }
+.bg-agatha-purple { background-color: var(--agatha-purple); }
+.bg-agatha-accent { background-color: var(--agatha-accent); }
+.bg-agatha-vibrant { background-color: var(--agatha-vibrant); }
+.text-agatha-rune { color: var(--agatha-rune); }
+.text-agatha-mist { color: var(--agatha-mist); }
+.text-agatha-vibrant { color: var(--agatha-vibrant); }
+.text-agatha-accent { color: var(--agatha-accent); }
+.border-agatha-purple { border-color: var(--agatha-purple); }
+.border-agatha-accent { border-color: var(--agatha-accent); }
+.border-agatha-rune { border-color: var(--agatha-rune); }
+.shadow-agatha-glow { box-shadow: 0 0 10px var(--agatha-glow); }
 
 /* Animation utilities */
 .animate-float {
   animation: float 6s ease-in-out infinite;
-}
-
-.animate-spin-slow {
-  animation: spin 20s linear infinite;
-}
-
-.animate-spin-slow-reverse {
-  animation: spin 25s linear infinite reverse;
-}
-
-.shadow-glow {
-  box-shadow: 0 0 15px rgba(156, 39, 176, 0.5),
-              0 0 30px rgba(156, 39, 176, 0.2);
 }
 
 @keyframes float {
@@ -225,108 +238,148 @@ body {
 }
 
 @keyframes glow {
-  0% { box-shadow: 0 0 5px rgba(156, 39, 176, 0.3); }
-  50% { box-shadow: 0 0 20px rgba(156, 39, 176, 0.6), 0 0 40px rgba(156, 39, 176, 0.3); }
-  100% { box-shadow: 0 0 5px rgba(156, 39, 176, 0.3); }
+  0% { box-shadow: 0 0 5px rgba(156, 39, 176, 0.5); }
+  100% { box-shadow: 0 0 20px rgba(156, 39, 176, 0.8); }
 }
 
-@keyframes spin {
-  from { transform: rotate(0deg); }
-  to { transform: rotate(360deg); }
+/* Witch magic effect animations */
+@keyframes witchMagic {
+  0% { 
+    transform: scale(0) rotate(0deg);
+    opacity: 0;
+  }
+  50% { 
+    transform: scale(1.2) rotate(180deg);
+    opacity: 0.8;
+  }
+  100% { 
+    transform: scale(0) rotate(360deg);
+    opacity: 0;
+  }
 }
 
-/* Card flip animation */
-.card-container {
-  perspective: 1000px;
+@keyframes runeGlow {
+  0%, 100% { 
+    filter: drop-shadow(0 0 5px var(--agatha-glow)); 
+  }
+  50% { 
+    filter: drop-shadow(0 0 15px var(--agatha-rune)); 
+  }
 }
 
-.card-inner {
-  position: relative;
-  width: 100%;
-  height: 100%;
-  text-align: center;
-  transition: transform 0.8s;
+/* Magic pulse animation */
+@keyframes magicPulse {
+  0%, 100% {
+    transform: scale(1);
+    opacity: 0.5;
+  }
+  50% {
+    transform: scale(1.1);
+    opacity: 0.8;
+  }
+}
+
+/* Spell cast animation */
+@keyframes spellCast {
+  0% {
+    transform: scale(1) rotate(0deg);
+    opacity: 0.3;
+  }
+  50% {
+    transform: scale(1.2) rotate(180deg);
+    opacity: 0.6;
+  }
+  100% {
+    transform: scale(1) rotate(360deg);
+    opacity: 0.3;
+  }
+}
+
+/* Witchcraft animation */
+@keyframes witchcraft {
+  0% {
+    transform: scale(0.9) rotate(0deg);
+  }
+  50% {
+    transform: scale(1.1) rotate(-180deg);
+  }
+  100% {
+    transform: scale(0.9) rotate(-360deg);
+  }
+}
+
+/* Magic text animation */
+@keyframes magicText {
+  0%, 100% {
+    text-shadow: 0 0 5px var(--agatha-glow);
+  }
+  50% {
+    text-shadow: 0 0 15px var(--agatha-glow), 0 0 30px var(--agatha-purple);
+  }
+}
+
+.animate-magic-pulse {
+  animation: magicPulse 3s ease-in-out infinite;
+}
+
+.animate-spell-cast {
+  animation: spellCast 10s linear infinite;
+}
+
+.animate-witchcraft {
+  animation: witchcraft 12s linear infinite;
+}
+
+.animate-magic-text {
+  animation: magicText 4s ease-in-out infinite;
+}
+
+.animate-witch-finger {
+  animation: magicPulse 2s ease-in-out infinite;
+}
+
+.animate-rune-appear {
+  animation: witchMagic 5s ease-in-out infinite;
+}
+
+.animate-dark-mist {
+  animation: magicPulse 15s ease-in-out infinite;
+}
+
+/* Twinkle animation for stars */
+@keyframes twinkle {
+  0% {
+    opacity: 0;
+    transform: scale(0.8);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.2);
+  }
+  100% {
+    opacity: 0.3;
+    transform: scale(1);
+  }
+}
+
+/* Card 3D transformations */
+.backface-hidden {
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
+}
+
+.rotate-y-0 {
+  transform: rotateY(0deg);
+}
+
+.rotate-y-180 {
+  transform: rotateY(180deg);
+}
+
+.transform-style-preserve-3d {
   transform-style: preserve-3d;
 }
 
-.card-container:hover .card-inner {
-  transform: rotateY(180deg);
-}
-
-.card-front, .card-back {
-  position: absolute;
-  width: 100%;
-  height: 100%;
-  -webkit-backface-visibility: hidden;
-  backface-visibility: hidden;
-  border-radius: 0.5rem;
-  overflow: hidden;
-}
-
-.card-back {
-  transform: rotateY(180deg);
-}
-
-/* Responsive adjustments */
-@media (max-width: 768px) {
-  .mystical-card {
-    padding: 1rem;
-  }
-  
-  .mystical-button {
-    padding: 0.5rem 1rem;
-  }
-}
-
-/* Custom loading animation */
-.loader {
-  width: 48px;
-  height: 48px;
-  border: 3px solid #E1BEE7;
-  border-radius: 50%;
-  display: inline-block;
-  position: relative;
-  box-sizing: border-box;
-  animation: rotation 1s linear infinite;
-}
-
-.loader::after {
-  content: '';  
-  box-sizing: border-box;
-  position: absolute;
-  left: 50%;
-  top: 50%;
-  transform: translate(-50%, -50%);
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
-  border: 3px solid transparent;
-  border-bottom-color: #FFD700;
-}
-
-@keyframes rotation {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
-}
-
-/* Add keyframes for the shimmer border animation */
-@keyframes shimmerBorder {
-  0% {
-    background-position: 0% 0%;
-  }
-  100% {
-    background-position: 200% 200%;
-  }
-}
-
-/* Add keyframes for the twinkling stars effect */
-@keyframes twinkle {
-  0%, 100% {
-    opacity: 0.1;
-    transform: scale(1);
-  }
-  50% {
-    opacity: 0.8;
-    transform: scale(1.2);
-  }
+.perspective-1200 {
+  perspective: 1200px;
 }

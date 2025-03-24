@@ -1,330 +1,197 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { useRouter } from 'next/navigation';
-import Link from 'next/link';
-import Image from 'next/image';
+import { motion } from 'framer-motion';
+import TarotCard from './TarotCard';
+import { cards } from '../data/cards';
 
-// Define a type for showcase card data
-interface ShowcaseCard {
-  id: string;
-  name: string;
-  description: string;
-  keywords: string[];
-  imagePath: string;
+interface MysticalCardDisplayProps {
+  onSelectCard?: (cardId: string) => void;
+  className?: string;
 }
 
-export default function MysticalCardDisplay() {
-  const router = useRouter();
+export default function MysticalCardDisplay({
+  onSelectCard,
+  className = '',
+}: MysticalCardDisplayProps) {
+  const [selectedCardId, setSelectedCardId] = useState<string | null>(null);
   const [mounted, setMounted] = useState(false);
-  const [selectedCard, setSelectedCard] = useState<string | null>(null);
-  const [imageErrors, setImageErrors] = useState<Record<string, boolean>>({});
-  const [stars, setStars] = useState<React.ReactNode[]>([]);
+  const [stars, setStars] = useState<JSX.Element[]>([]);
   
-  // Sample showcase cards with actual image paths
-  const showcaseCards: ShowcaseCard[] = [
-    {
-      id: "fool",
-      name: "The Fool",
-      description: "New beginnings, adventure, and the start of a journey into the unknown",
-      keywords: ["Beginnings", "Adventure", "Potential"],
-      imagePath: "/images/fool.jpg"
-    },
-    {
-      id: "magician",
-      name: "The Magician",
-      description: "Manifestation, resourcefulness, and the power to transform your reality",
-      keywords: ["Power", "Skill", "Manifestation"],
-      imagePath: "/images/magician.jpg"
-    },
-    {
-      id: "high-priestess",
-      name: "The High Priestess",
-      description: "Intuition, unconscious knowledge, and inner wisdom guiding your path",
-      keywords: ["Intuition", "Mystery", "Wisdom"],
-      imagePath: "/images/high-priestess.jpg"
-    },
-    {
-      id: "star",
-      name: "The Star",
-      description: "Hope, inspiration, and spiritual connection to the universe",
-      keywords: ["Hope", "Faith", "Inspiration"],
-      imagePath: "/images/star.jpg"
-    },
-    {
-      id: "moon",
-      name: "The Moon",
-      description: "Intuition, dreams, and navigating through the unknown and subconscious",
-      keywords: ["Intuition", "Dreams", "Illusion"],
-      imagePath: "/images/moon.jpg"
-    },
-    {
-      id: "sun",
-      name: "The Sun",
-      description: "Success, vitality, and the warmth of achieving clarity and happiness",
-      keywords: ["Joy", "Success", "Vitality"],
-      imagePath: "/images/sun.jpg"
-    }
-  ];
-
-  // Animation effect on mount and generate stars on client only
+  // Get a random selection of cards
+  const displayCards = useState(() => {
+    // Get 5 random cards
+    return [...cards]
+      .sort(() => Math.random() - 0.5)
+      .slice(0, 5)
+      .map(card => ({
+        ...card,
+        isReversed: Math.random() > 0.7,
+      }));
+  })[0];
+  
   useEffect(() => {
-    const timer = setTimeout(() => {
-      setMounted(true);
-      // Generate random stars in client-side only
-      const generatedStars = [];
-      for (let i = 0; i < 25; i++) {
+    setMounted(true);
+    
+    // Generate stars client-side only
+    const generateStars = () => {
+      const starsArray = [];
+      const numStars = 20;
+      
+      for (let i = 0; i < numStars; i++) {
         const size = Math.random() * 3 + 1;
-        const top = Math.random() * 100;
         const left = Math.random() * 100;
-        const delay = Math.random() * 5;
+        const top = Math.random() * 100;
+        const delay = Math.random() * 3;
+        const duration = Math.random() * 3 + 3;
         
-        generatedStars.push(
-          <div 
+        starsArray.push(
+          <div
             key={i}
-            className="twinkle absolute rounded-full bg-white"
+            className="absolute rounded-full bg-agatha-accent"
             style={{
               width: `${size}px`,
               height: `${size}px`,
-              top: `${top}%`,
               left: `${left}%`,
-              animationDelay: `${delay}s`
+              top: `${top}%`,
+              opacity: 0,
+              boxShadow: `0 0 ${size * 2}px ${size}px rgba(176, 38, 255, 0.6)`,
+              animation: `twinkle ${duration}s ease-in-out ${delay}s infinite alternate`,
             }}
           />
         );
       }
-      setStars(generatedStars);
-    }, 500);
+      
+      setStars(starsArray);
+    };
     
-    return () => clearTimeout(timer);
+    generateStars();
   }, []);
-
-  // Handle card selection
+  
   const handleCardClick = (cardId: string) => {
-    if (selectedCard === cardId) {
-      // If already selected, start a reading
-      router.push('/reading');
-    } else {
-      setSelectedCard(cardId);
+    setSelectedCardId(cardId === selectedCardId ? null : cardId);
+    if (onSelectCard) {
+      onSelectCard(cardId);
     }
   };
-
-  // Handle image error
-  const handleImageError = (cardId: string) => {
-    setImageErrors(prev => ({ ...prev, [cardId]: true }));
-  };
-
-  // Generate a symbolic representation for the card
-  const getSymbol = (cardId: string) => {
-    const symbols: Record<string, string> = {
-      "fool": "☼",
-      "magician": "✦",
-      "high-priestess": "☽",
-      "empress": "♀",
-      "emperor": "♂",
-      "lovers": "❤",
-      "star": "★",
-      "moon": "☾",
-      "sun": "☀"
-    };
-    return symbols[cardId] || "✧";
-  };
-
+  
+  if (!mounted) {
+    return null;
+  }
+  
   return (
-    <div className="w-full max-w-5xl mx-auto my-16 relative">
-      {/* Title */}
-      <h2 className={`mystical-subtitle text-center mb-12 transition-all duration-1000 ${mounted ? 'opacity-100' : 'opacity-0'}`}>
-        Let the cards guide your journey
-      </h2>
+    <div className={`relative w-full h-[500px] overflow-hidden ${className}`}>
+      {/* Dark mist background effect */}
+      <div className="absolute inset-0 bg-gradient-radial from-agatha-deeper via-agatha-dark to-agatha-black opacity-70"></div>
       
-      {/* Organized card display area */}
-      <div className="relative w-full bg-mystical-dark/40 rounded-xl border border-mystical-light/10 overflow-hidden p-8">
-        {/* Background stars - only rendered client-side */}
-        {mounted && stars}
-        
-        {/* Organized card layout in two rows */}
-        <div className="w-full flex flex-col gap-12">
-          {/* First row - featured cards */}
-          <div className="flex justify-center flex-wrap gap-6 md:gap-8">
-            {showcaseCards.slice(0, 3).map((card, index) => (
-              <div
-                key={card.id}
-                className={`
-                  transition-all duration-700 transform
-                  ${mounted ? 'opacity-100 scale-100' : 'opacity-0 scale-90'}
-                  ${selectedCard && selectedCard !== card.id ? 'opacity-30 scale-95' : ''}
-                  ${selectedCard === card.id ? 'z-10 scale-110' : 'z-0'}
-                `}
-                style={{
-                  transitionDelay: `${index * 0.2}s`
-                }}
-                onClick={() => handleCardClick(card.id)}
-              >
-                <div className="w-32 md:w-40 aspect-[2/3] bg-gradient-to-br from-mystical-primary to-mystical-accent/50 rounded-lg shadow-lg border border-mystical-gold/30 hover:shadow-glow-purple transition-all duration-300 relative overflow-hidden cursor-pointer">
-                  {/* Card image - only render if mounted to avoid hydration mismatch */}
-                  {mounted && !imageErrors[card.id] && (
-                    <div className="absolute inset-0 w-full h-full">
-                      <Image
-                        src={card.imagePath}
-                        alt={card.name}
-                        fill
-                        sizes="(max-width: 768px) 100vw, 160px"
-                        className="object-cover"
-                        onError={() => handleImageError(card.id)}
-                        priority
-                      />
-                    </div>
-                  )}
-                  
-                  {/* Fallback for when image fails to load - only render if mounted */}
-                  {mounted && imageErrors[card.id] && (
-                    <div className="w-full h-full bg-gradient-to-br from-mystical-primary to-mystical-accent/50 p-3">
-                      <div className="w-full h-full rounded-md bg-mystical-primary/70 backdrop-blur-sm flex flex-col justify-between p-3">
-                        <div className="text-center">
-                          <h3 className="font-mystical text-mystical-gold text-sm">{card.name}</h3>
-                        </div>
-                        
-                        <div className="my-2 flex justify-center">
-                          <div className="w-10 h-10 rounded-full bg-mystical-accent/30 flex items-center justify-center border border-mystical-light/20">
-                            <span className="font-mystical text-mystical-gold text-xl">
-                              {getSymbol(card.id)}
-                            </span>
-                          </div>
-                        </div>
-                        
-                        <div className="text-2xs text-mystical-light/80 text-center">
-                          {card.keywords.join(' • ')}
-                        </div>
-                      </div>
-                    </div>
-                  )}
-                  
-                  {/* Always show card placeholder during SSR */}
-                  {!mounted && (
-                    <div className="w-full h-full bg-gradient-to-br from-mystical-primary to-mystical-accent/50 flex items-center justify-center">
-                      <div className="h-10 w-10 rounded-full bg-mystical-dark/40 flex items-center justify-center">
-                        <span className="font-mystical text-mystical-gold text-xl">
-                          {getSymbol(card.id)}
-                        </span>
-                      </div>
-                    </div>
-                  )}
-                  
-                  {/* Overlay with card name */}
-                  <div className="absolute bottom-0 left-0 right-0 p-2 bg-mystical-dark/70 backdrop-blur-sm border-t border-mystical-gold/20">
-                    <h3 className="font-mystical text-mystical-gold text-center text-xs md:text-sm">{card.name}</h3>
-                  </div>
-                  
-                  {/* Highlight effect */}
-                  <div className={`absolute inset-0 border-2 border-mystical-gold/0 rounded-lg transition-all duration-300 ${selectedCard === card.id ? 'border-mystical-gold/70' : 'border-mystical-gold/0'}`}></div>
-                </div>
-              </div>
-            ))}
-          </div>
-          
-          {/* Second row - additional cards with slightly smaller display */}
-          <div className="flex justify-center flex-wrap gap-6 md:gap-8">
-            {showcaseCards.slice(3).map((card, index) => (
-              <div
-                key={card.id}
-                className={`
-                  transition-all duration-700 transform
-                  ${mounted ? 'opacity-100 scale-100' : 'opacity-0 scale-90'}
-                  ${selectedCard && selectedCard !== card.id ? 'opacity-30 scale-95' : ''}
-                  ${selectedCard === card.id ? 'z-10 scale-110' : 'z-0'}
-                `}
-                style={{
-                  transitionDelay: `${(index + 3) * 0.2}s`
-                }}
-                onClick={() => handleCardClick(card.id)}
-              >
-                <div className="w-28 md:w-36 aspect-[2/3] bg-gradient-to-br from-mystical-primary to-mystical-accent/50 rounded-lg shadow-lg border border-mystical-gold/30 hover:shadow-glow-purple transition-all duration-300 relative overflow-hidden cursor-pointer">
-                  {/* Card image - only render if mounted */}
-                  {mounted && !imageErrors[card.id] && (
-                    <div className="absolute inset-0 w-full h-full">
-                      <Image
-                        src={card.imagePath}
-                        alt={card.name}
-                        fill
-                        sizes="(max-width: 768px) 100vw, 144px"
-                        className="object-cover"
-                        onError={() => handleImageError(card.id)}
-                        priority
-                      />
-                    </div>
-                  )}
-                  
-                  {/* Fallback for when image fails to load - only render if mounted */}
-                  {mounted && imageErrors[card.id] && (
-                    <div className="w-full h-full bg-gradient-to-br from-mystical-primary to-mystical-accent/50 p-3">
-                      <div className="w-full h-full rounded-md bg-mystical-primary/70 backdrop-blur-sm flex flex-col justify-between p-3">
-                        <div className="text-center">
-                          <h3 className="font-mystical text-mystical-gold text-xs">{card.name}</h3>
-                        </div>
-                        
-                        <div className="my-2 flex justify-center">
-                          <div className="w-8 h-8 rounded-full bg-mystical-accent/30 flex items-center justify-center border border-mystical-light/20">
-                            <span className="font-mystical text-mystical-gold text-lg">
-                              {getSymbol(card.id)}
-                            </span>
-                          </div>
-                        </div>
-                        
-                        <div className="text-2xs text-mystical-light/80 text-center">
-                          {card.keywords[0]}
-                        </div>
-                      </div>
-                    </div>
-                  )}
-                  
-                  {/* Always show card placeholder during SSR */}
-                  {!mounted && (
-                    <div className="w-full h-full bg-gradient-to-br from-mystical-primary to-mystical-accent/50 flex items-center justify-center">
-                      <div className="h-8 w-8 rounded-full bg-mystical-dark/40 flex items-center justify-center">
-                        <span className="font-mystical text-mystical-gold text-lg">
-                          {getSymbol(card.id)}
-                        </span>
-                      </div>
-                    </div>
-                  )}
-                  
-                  {/* Overlay with card name */}
-                  <div className="absolute bottom-0 left-0 right-0 p-1.5 bg-mystical-dark/70 backdrop-blur-sm border-t border-mystical-gold/20">
-                    <h3 className="font-mystical text-mystical-gold text-center text-xs">{card.name}</h3>
-                  </div>
-                  
-                  {/* Highlight effect */}
-                  <div className={`absolute inset-0 border-2 border-mystical-gold/0 rounded-lg transition-all duration-300 ${selectedCard === card.id ? 'border-mystical-gold/70' : 'border-mystical-gold/0'}`}></div>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-        
-        {/* Card description (shown when a card is selected) - only show if mounted */}
-        {mounted && selectedCard && (
-          <div className="absolute bottom-4 left-0 right-0 mx-auto w-4/5 bg-mystical-dark/80 backdrop-blur-md p-4 rounded border border-mystical-light/10 transition-all duration-500 animate-fade-in text-center">
-            <p className="text-mystical-light text-sm">
-              {showcaseCards.find(card => card.id === selectedCard)?.description}
-            </p>
-            
-            <div className="mt-3 flex justify-center">
-              <button
-                className="mystical-button text-sm px-4 py-2"
-                onClick={() => router.push('/reading')}
-              >
-                Begin Your Reading
-              </button>
-            </div>
-          </div>
-        )}
+      {/* Magic circle on the floor */}
+      <div className="absolute inset-0 flex items-center justify-center opacity-30">
+        <div className="w-[400px] h-[400px] rounded-full border-2 border-agatha-rune/30 animate-magic-pulse"></div>
+        <div className="absolute w-[320px] h-[320px] rounded-full border border-agatha-rune/50 animate-spell-cast"></div>
+        <div className="absolute w-[250px] h-[250px] rounded-full border border-agatha-rune/70 animate-witchcraft"></div>
+        <div className="absolute w-4 h-4 bg-agatha-vibrant rounded-full shadow-agatha-glow blur-sm"></div>
       </div>
       
-      {/* Call to action */}
-      <div className={`text-center mt-12 transition-all duration-1000 delay-700 ${mounted ? 'opacity-100' : 'opacity-0'}`}>
-        <Link href="/reading" className="mystical-button inline-block">
-          Explore All Readings
-        </Link>
+      {/* Magical stars */}
+      <div className="absolute inset-0">{stars}</div>
+      
+      {/* Magic runes */}
+      <div className="absolute top-10 left-1/4 font-witchcraft text-3xl text-agatha-rune/30 animate-magic-text">ᛦ</div>
+      <div className="absolute bottom-10 right-1/4 font-witchcraft text-3xl text-agatha-rune/30 animate-magic-text">ᛏ</div>
+      <div className="absolute top-1/3 right-10 font-witchcraft text-3xl text-agatha-rune/30 animate-magic-text">ᛉ</div>
+      <div className="absolute bottom-1/3 left-10 font-witchcraft text-3xl text-agatha-rune/30 animate-magic-text">ᚦ</div>
+      
+      {/* Floating cards */}
+      <div className="relative w-full h-full flex items-center justify-center">
+        {displayCards.map((card, index) => {
+          // Calculate position based on index
+          const isSelected = card.id === selectedCardId;
+          const angleDegree = (360 / displayCards.length) * index;
+          const angleRad = (angleDegree * Math.PI) / 180;
+          const radius = isSelected ? 0 : 140; // Cards move to center when selected
+          const xPos = Math.cos(angleRad) * radius;
+          const yPos = Math.sin(angleRad) * radius;
+          
+          // Random floating animation values
+          const floatY = Math.random() * 10 - 5;
+          const floatDuration = Math.random() * 3 + 4;
+          const rotateAmount = Math.random() * 5 - 2.5;
+          
+          return (
+            <motion.div
+              key={card.id}
+              className={`absolute ${isSelected ? 'z-10' : 'z-0'}`}
+              style={{
+                cursor: 'pointer',
+              }}
+              animate={{
+                x: xPos,
+                y: yPos,
+                scale: isSelected ? 1.2 : 0.8,
+                rotate: isSelected ? 0 : rotateAmount,
+              }}
+              transition={{
+                type: 'spring',
+                stiffness: 70,
+                damping: 15,
+              }}
+              whileHover={{
+                scale: isSelected ? 1.25 : 0.9,
+                filter: 'brightness(1.1)',
+                transition: { duration: 0.3 },
+              }}
+            >
+              {/* Pulsing magical aura around selected card */}
+              {isSelected && (
+                <div className="absolute -inset-4 rounded-xl bg-agatha-glow/30 blur-md animate-magic-pulse"></div>
+              )}
+              
+              {/* Purple energy connection lines between cards */}
+              {!isSelected && index > 0 && (
+                <div
+                  className="absolute top-1/2 left-1/2 h-0.5 bg-gradient-to-r from-agatha-purple/70 to-transparent"
+                  style={{
+                    width: '140px',
+                    transformOrigin: 'left center',
+                    transform: `rotate(${(index - 1) * (360 / displayCards.length)}deg)`,
+                    opacity: 0.3,
+                  }}
+                ></div>
+              )}
+              
+              {/* Floating card animation */}
+              <div
+                className="transform-gpu will-change-transform"
+                style={{
+                  animation: `float ${floatDuration}s ease-in-out infinite alternate`,
+                  transform: `translateY(${floatY}px)`,
+                }}
+              >
+                <TarotCard
+                  card={card}
+                  isReversed={card.isReversed}
+                  isFlipped={isSelected}
+                  onClick={() => handleCardClick(card.id)}
+                  className="w-32"
+                />
+              </div>
+            </motion.div>
+          );
+        })}
+        
+        {/* Center magical glow */}
+        <div className="absolute inset-0 flex items-center justify-center">
+          <div className="w-24 h-24 rounded-full bg-agatha-deeper border border-agatha-purple/50 flex items-center justify-center shadow-inner">
+            <div className="w-16 h-16 rounded-full bg-gradient-radial from-agatha-purple to-agatha-deeper animate-magic-pulse opacity-60"></div>
+            <div className="absolute w-20 h-20 rounded-full border border-agatha-vibrant/30 animate-spell-cast"></div>
+            <div className="absolute w-4 h-4 bg-agatha-vibrant rounded-full shadow-agatha-glow animate-witchcraft blur-sm"></div>
+          </div>
+        </div>
+      </div>
+      
+      {/* Instructional text */}
+      <div className="absolute bottom-6 left-0 right-0 text-center text-agatha-mist/80 font-mystical text-sm">
+        Click a card to reveal its meaning
       </div>
     </div>
   );

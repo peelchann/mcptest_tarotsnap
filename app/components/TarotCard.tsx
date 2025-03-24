@@ -20,249 +20,193 @@ export default function TarotCard({
   className = '' 
 }: TarotCardProps) {
   const [hovered, setHovered] = useState(false);
-  const [animated, setAnimated] = useState(false);
+  const [mounted, setMounted] = useState(false);
+  const [stars, setStars] = useState<JSX.Element[]>([]);
   const [imageError, setImageError] = useState(false);
-  const [stars, setStars] = useState<React.ReactNode[]>([]);
   
-  // Set animation state after mount and generate stars client-side only
   useEffect(() => {
-    const timer = setTimeout(() => {
-      setAnimated(true);
+    setMounted(true);
+    
+    // Generate stars client-side only
+    const generateStars = () => {
+      const starElements = [];
+      const numStars = Math.floor(Math.random() * 8) + 5;
       
-      // Generate stars client-side only
-      const generatedStars = [];
-      for (let i = 0; i < 20; i++) {
-        const size = Math.random() * 2 + 1;
-        const top = Math.random() * 100;
+      for (let i = 0; i < numStars; i++) {
+        const size = Math.random() * 3 + 1;
         const left = Math.random() * 100;
-        const opacity = Math.random() * 0.5 + 0.2;
-        const animationDelay = Math.random() * 2;
+        const top = Math.random() * 100;
+        const delay = Math.random() * 2;
+        const duration = Math.random() * 3 + 2;
+        const opacity = Math.random() * 0.7 + 0.3;
         
-        generatedStars.push(
-          <div 
+        starElements.push(
+          <div
             key={i}
-            className="absolute rounded-full bg-white animate-pulse-subtle"
+            className="absolute rounded-full bg-purple-300"
             style={{
               width: `${size}px`,
               height: `${size}px`,
-              top: `${top}%`,
               left: `${left}%`,
-              opacity,
-              animationDelay: `${animationDelay}s`
+              top: `${top}%`,
+              opacity: 0,
+              boxShadow: `0 0 ${size * 2}px ${size}px rgba(168, 85, 247, 0.7)`,
+              animation: `twinkle ${duration}s ease-in-out ${delay}s infinite alternate`,
             }}
           />
         );
       }
-      setStars(generatedStars);
-    }, 100);
+      
+      setStars(starElements);
+    };
     
-    return () => clearTimeout(timer);
+    generateStars();
   }, []);
   
   // Set the rotation for reversed cards
   const rotation = isReversed ? 'rotate-180' : '';
   
-  // Enhanced placeholder for when we don't have actual images
-  const frontGradient = isReversed 
-    ? 'linear-gradient(to bottom right, #37204a, #9C27B0, #37204a)'
-    : 'linear-gradient(to bottom right, #1F1F3D, #9C27B0, #1F1F3D)';
-  
-  const placeholderStyle = {
-    backgroundImage: frontGradient,
-    backgroundSize: 'cover',
+  // Card gradient styles with Agatha's purple color scheme (fallback if image fails)
+  const cardGradientStyle = {
+    backgroundImage: `linear-gradient(135deg, var(--agatha-dark) 0%, var(--agatha-purple) 50%, var(--agatha-deeper) 100%)`,
+    backgroundSize: '200% 200%',
+    animation: 'gradientShift 10s ease infinite',
   };
   
-  // Generate a symbolic representation for the card based on arcana and number/suit
-  const getSymbol = () => {
-    if (card.arcana === 'major') {
-      // Map some major arcana to specific symbols
-      const majorSymbols: Record<string, string> = {
-        '0': '☼', // The Fool
-        '1': '✦', // The Magician
-        '2': '☽', // The High Priestess
-        '3': '♀', // The Empress
-        '4': '♂', // The Emperor
-        '5': '⚜', // The Hierophant
-        '6': '❤', // The Lovers
-        '7': '⛥', // The Chariot
-        '8': '∞', // Strength
-        '9': '☄', // The Hermit
-        '10': '⊕', // Wheel of Fortune
-        '11': '⚖', // Justice
-        '12': '✝', // The Hanged Man
-        '13': '☠', // Death
-        '14': '⚱', // Temperance
-        '15': '⛧', // The Devil
-        '16': '⚡', // The Tower
-        '17': '★', // The Star
-        '18': '☾', // The Moon
-        '19': '☀', // The Sun
-        '20': '⚰', // Judgement
-        '21': '⊛', // The World
-      };
-      return majorSymbols[card.number.toString()] || '✧';
-    } else {
-      // For minor arcana, use suit symbols
-      const suitSymbols: Record<string, string> = {
-        'wands': '⚒',
-        'cups': '⚱',
-        'swords': '⚔',
-        'pentacles': '⛤',
-      };
-      return suitSymbols[card.suit || ''] || '✧';
-    }
+  // Card back design with witchcraft symbols
+  const cardBackStyle = {
+    backgroundImage: `radial-gradient(circle at center, var(--agatha-purple) 0%, var(--agatha-deeper) 100%)`,
+    backgroundSize: '200% 200%',
+    animation: 'pulseBackground 8s ease infinite',
   };
+  
+  if (!mounted) {
+    return null;
+  }
   
   return (
     <div 
-      className={`relative cursor-pointer transition-all duration-500 ${className} ${animated ? 'opacity-100' : 'opacity-0'}`}
+      className={`relative cursor-pointer transition-all duration-500 ${className}`}
       onClick={onClick}
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
     >
-      <div 
-        className={`
-          relative w-full aspect-[2/3] rounded-lg overflow-hidden 
-          transition-all duration-1000 transform-gpu 
-          ${isFlipped ? 'rotate-y-0' : 'rotate-y-180'} 
-          ${hovered ? 'scale-105 shadow-glow-purple' : ''}
-        `}
-      >
+      {/* Magical effect when hovered */}
+      {hovered && (
+        <div className="absolute -inset-4 bg-agatha-glow/20 rounded-2xl blur-md z-0 animate-magic-pulse"></div>
+      )}
+      
+      <div className={`
+        relative w-full aspect-[2/3] rounded-lg overflow-hidden 
+        transition-transform duration-1000 transform-gpu 
+        ${isFlipped ? 'rotate-y-0' : 'rotate-y-180'} 
+        ${hovered ? 'scale-105 shadow-agatha-glow' : ''}
+        z-10
+      `}>
+        {/* Decorative runes that appear when hovered */}
+        {hovered && (
+          <div className="absolute -inset-2 z-0 opacity-70">
+            {stars}
+            <div className="absolute top-0 left-1/2 -translate-x-1/2 font-witchcraft text-xl text-agatha-rune animate-rune-appear">᛭</div>
+            <div className="absolute bottom-0 left-1/2 -translate-x-1/2 font-witchcraft text-xl text-agatha-rune animate-rune-appear">⍥</div>
+            <div className="absolute left-0 top-1/2 -translate-y-1/2 font-witchcraft text-xl text-agatha-rune animate-rune-appear">ᛯ</div>
+            <div className="absolute right-0 top-1/2 -translate-y-1/2 font-witchcraft text-xl text-agatha-rune animate-rune-appear">ᛏ</div>
+          </div>
+        )}
+        
         {/* Card Front */}
-        <div 
-          className={`
-            absolute inset-0 transition-opacity duration-1000 
-            ${isFlipped ? 'opacity-100' : 'opacity-0'}
-          `}
-        >
+        <div className={`absolute inset-0 transition-opacity duration-1000 ${isFlipped ? 'opacity-100' : 'opacity-0'}`}>
           <div className={`w-full h-full rounded-lg shadow-lg ${rotation}`}>
-            {/* Card Image - Using real image with enhanced fallback */}
+            {/* Card Image */}
             <div 
-              className="w-full h-full rounded-lg border-2 border-mystical-gold/30 shadow-lg overflow-hidden relative" 
+              className="w-full h-full rounded-lg border-2 border-agatha-rune/50 shadow-lg overflow-hidden" 
             >
-              {!imageError && card.image && (
-                <Image
-                  src={card.image}
-                  alt={card.name}
-                  fill
-                  sizes="(max-width: 768px) 100vw, 300px"
-                  className="object-cover"
-                  onError={() => setImageError(true)}
-                  priority
-                />
-              )}
-              
-              {/* Fallback for when image fails to load or isn't available */}
-              {(imageError || !card.image) && (
-                <div 
-                  className="w-full h-full"
-                  style={placeholderStyle}
-                >
-                  {/* Stars background */}
-                  {stars}
+              {/* Actual Tarot Card Image */}
+              {card.imagePath && !imageError ? (
+                <div className="relative w-full h-full">
+                  <Image 
+                    src={card.imagePath}
+                    alt={card.name}
+                    fill
+                    className="object-cover rounded-md"
+                    onError={() => setImageError(true)}
+                    sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                    priority
+                  />
+                  {/* Purple overlay for Agatha style */}
+                  <div className="absolute inset-0 bg-agatha-purple/30 mix-blend-overlay"></div>
                   
-                  {/* Card content with improved styling */}
-                  <div className="w-full h-full flex flex-col justify-between p-4 bg-mystical-primary/50 rounded-md backdrop-blur-sm relative z-10">
-                    {/* Card header */}
-                    <div className="text-center relative">
-                      {/* Decorative element */}
-                      <div className="absolute -top-1 left-1/2 transform -translate-x-1/2 w-16 h-1 bg-gradient-to-r from-transparent via-mystical-gold/50 to-transparent"></div>
-                      
-                      <h3 className="font-mystical text-mystical-gold text-lg mt-2 tracking-wider">
-                        {card.name}
-                      </h3>
-                      <p className="text-xs text-mystical-light/70 mt-1">
-                        {card.arcana.charAt(0).toUpperCase() + card.arcana.slice(1)} Arcana
-                        {card.suit && ` of ${card.suit.charAt(0).toUpperCase() + card.suit.slice(1)}`}
+                  {/* Card title overlay at the bottom */}
+                  <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-agatha-dark/90 to-transparent p-3">
+                    <div className="text-center">
+                      <h3 className="font-witchcraft text-agatha-vibrant text-lg">{card.name}</h3>
+                      <p className="text-xs text-agatha-mist/90 font-mystical mt-1">
+                        {card.keywords.slice(0, 3).join(' • ')}
                       </p>
                     </div>
+                  </div>
+                </div>
+              ) : (
+                <div className="w-full h-full" style={cardGradientStyle}>
+                  <div className="w-full h-full flex flex-col justify-between p-4 bg-agatha-black/40 rounded-md backdrop-blur-sm">
+                    <div className="text-center">
+                      <h3 className="font-witchcraft text-agatha-vibrant text-lg">{card.name}</h3>
+                      <p className="text-xs text-agatha-mist/90 font-mystical">{card.arcana.charAt(0).toUpperCase() + card.arcana.slice(1)} Arcana</p>
+                    </div>
                     
-                    {/* Card central symbol */}
-                    <div className="flex justify-center my-4 relative">
-                      <div className="w-20 h-20 rounded-full bg-mystical-accent/30 flex items-center justify-center border border-mystical-light/20 backdrop-blur-sm shadow-glow-sm">
-                        <span className="font-mystical text-mystical-gold text-3xl">{getSymbol()}</span>
+                    <div className="flex justify-center my-2">
+                      <div className="w-12 h-12 rounded-full bg-agatha-purple/30 flex items-center justify-center border border-agatha-accent/50 shadow-agatha-glow">
+                        <span className="font-witchcraft text-agatha-vibrant animate-magic-text">{card.number}</span>
                       </div>
                     </div>
                     
-                    {/* Card keywords with enhanced styling */}
-                    <div className="mt-2 relative">
-                      {/* Decorative element */}
-                      <div className="absolute -bottom-1 left-1/2 transform -translate-x-1/2 w-16 h-1 bg-gradient-to-r from-transparent via-mystical-gold/50 to-transparent"></div>
-                      
-                      <div className="text-xs text-mystical-light/80 text-center">
-                        {card.keywords.slice(0, 3).map((keyword, index) => (
-                          <span key={keyword} className="inline-block">
-                            {index > 0 && (
-                              <span className="mx-1 text-mystical-gold/50">•</span>
-                            )}
-                            <span className="tracking-wide">{keyword}</span>
-                          </span>
-                        ))}
-                      </div>
+                    {/* Card symbols */}
+                    <div className="flex justify-center space-x-2 my-1">
+                      {Array(3).fill(0).map((_, i) => (
+                        <span key={i} className="text-agatha-accent text-xs">
+                          {['✦', '✧', '✴', '✵', '❂', '⚝'][Math.floor(Math.random() * 6)]}
+                        </span>
+                      ))}
+                    </div>
+                    
+                    <div className="text-xs text-agatha-mist/90 text-center font-mystical">
+                      {card.keywords.slice(0, 3).join(' • ')}
                     </div>
                   </div>
                 </div>
               )}
-              
-              {/* Overlay for card */}
-              <div className="absolute inset-0 bg-gradient-to-b from-mystical-dark/10 via-transparent to-mystical-dark/30 pointer-events-none"></div>
-              
-              {/* Card title overlay - always visible even with image */}
-              <div className="absolute bottom-0 left-0 right-0 p-3 bg-mystical-dark/70 backdrop-blur-sm border-t border-mystical-gold/20">
-                <h3 className="font-mystical text-mystical-gold text-center">
-                  {card.name}
-                </h3>
-              </div>
             </div>
           </div>
         </div>
         
-        {/* Card Back with enhanced design */}
-        <div 
-          className={`
-            absolute inset-0 transition-opacity duration-1000 
-            ${isFlipped ? 'opacity-0' : 'opacity-100'}
-          `}
-        >
-          <div className="w-full h-full rounded-lg bg-mystical-primary border-2 border-mystical-gold/30 shadow-lg p-1 overflow-hidden">
-            <div className="w-full h-full rounded-md bg-gradient-to-br from-mystical-primary to-mystical-accent/30 flex items-center justify-center relative">
-              {/* Animated back pattern */}
-              <div className="absolute inset-0 opacity-20">
-                {Array.from({ length: 5 }).map((_, i) => (
-                  <div 
-                    key={i}
-                    className="absolute w-full h-full border-2 border-mystical-gold/30 rounded-full animate-pulse-subtle"
-                    style={{
-                      top: '50%',
-                      left: '50%',
-                      transform: 'translate(-50%, -50%)',
-                      width: `${(i + 1) * 20}%`,
-                      height: `${(i + 1) * 20}%`,
-                      animationDelay: `${i * 0.2}s`,
-                    }}
-                  />
-                ))}
-              </div>
-              
-              {/* Central emblem */}
-              <div className="relative z-10 flex flex-col items-center">
-                <div className="text-3xl text-mystical-gold font-mystical animate-pulse-subtle">✧ ✦ ✧</div>
-                <div className="mt-2 text-xs text-mystical-gold/70 font-mystical tracking-widest">TAROTSNAP</div>
+        {/* Card Back */}
+        <div className={`absolute inset-0 transition-opacity duration-1000 ${isFlipped ? 'opacity-0' : 'opacity-100'}`}>
+          <div className="w-full h-full rounded-lg bg-agatha-deeper border-2 border-agatha-rune/50 shadow-lg p-1">
+            <div 
+              className="w-full h-full rounded-md flex items-center justify-center"
+              style={cardBackStyle}
+            >
+              {/* Witchcraft symbol on back of card */}
+              <div className="relative">
+                <div className="absolute inset-0 flex items-center justify-center opacity-20">
+                  <div className="w-24 h-24 rounded-full border-2 border-agatha-rune/50 animate-magic-pulse"></div>
+                </div>
+                <div className="absolute inset-0 flex items-center justify-center opacity-30">
+                  <div className="w-16 h-16 rounded-full border border-agatha-rune/70 animate-spell-cast"></div>
+                </div>
+                <div className="text-3xl text-agatha-vibrant font-witchcraft animate-magic-text">
+                  ✧ ⛧ ✧
+                </div>
               </div>
             </div>
           </div>
         </div>
       </div>
       
-      {/* Card Meaning with enhanced animation */}
+      {/* Card Meaning (displayed when flipped) */}
       {isFlipped && (
-        <div 
-          className={`
-            mt-4 text-sm text-center opacity-0 transition-all duration-700 delay-500
-            ${isFlipped ? 'opacity-80' : 'opacity-0'} animate-fade-in
-          `}
-        >
-          <p className="text-mystical-light backdrop-blur-sm bg-mystical-dark/30 p-3 rounded-md border border-mystical-light/10">
+        <div className="mt-4 text-sm text-center">
+          <p className="text-agatha-mist font-mystical">
             {isReversed ? card.meaning.reversed : card.meaning.upright}
           </p>
         </div>

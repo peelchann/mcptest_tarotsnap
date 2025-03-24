@@ -16,7 +16,6 @@
 # next.js
 /.next/
 /out/
-.swc/
 
 # production
 /build
@@ -24,11 +23,6 @@
 # misc
 .DS_Store
 *.pem
-.vscode/
-.idea/
-.log/
-*.log
-.npm
 
 # debug
 npm-debug.log*
@@ -36,12 +30,8 @@ yarn-debug.log*
 yarn-error.log*
 .pnpm-debug.log*
 
-# local env files
-.env*.local
-.env
-.env.development
-.env.test
-.env.production
+# env files (can opt-in for committing if needed)
+.env*
 
 # vercel
 .vercel
