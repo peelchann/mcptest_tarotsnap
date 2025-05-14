@@ -80,6 +80,29 @@ export function useSpotlightEffect() {
   };
 }
 
+// Skeleton loader for card images
+export function CardSkeleton() {
+  return (
+    <div className="w-full h-full flex items-center justify-center bg-agatha-dark/80 animate-pulse rounded-md overflow-hidden">
+      <div className="relative w-3/4 h-3/4">
+        {/* Background pulse animation */}
+        <div className="absolute inset-0 bg-agatha-purple/20 animate-pulse rounded-md"></div>
+        
+        {/* Magic symbol */}
+        <div className="absolute inset-0 flex items-center justify-center">
+          <div className="font-witchcraft text-4xl text-agatha-purple/40 animate-magic-pulse">
+            ✧
+          </div>
+        </div>
+        
+        {/* Decorative elements */}
+        <div className="absolute top-1/4 left-1/4 w-1 h-1 bg-agatha-purple/30 rounded-full animate-magic-pulse"></div>
+        <div className="absolute bottom-1/3 right-1/4 w-1 h-1 bg-agatha-accent/30 rounded-full animate-magic-pulse"></div>
+      </div>
+    </div>
+  );
+}
+
 // Reusable component for card image display
 export function CardImage({ 
   card, 
@@ -90,15 +113,22 @@ export function CardImage({
   imageError: boolean, 
   setImageError: (error: boolean) => void 
 }) {
-  if (card.imagePath && !imageError) {
+  const [isLoading, setIsLoading] = useState(true);
+  
+  // Normalize image path to ensure consistency
+  const normalizedImagePath = card.imagePath?.toLowerCase().replace(/\s+/g, '-');
+  
+  if (normalizedImagePath && !imageError) {
     return (
       <div className="relative w-full h-full">
+        {isLoading && <CardSkeleton />}
         <Image 
-          src={card.imagePath}
+          src={normalizedImagePath}
           alt={card.name}
           fill
-          className="object-cover object-center rounded-md"
+          className={`object-cover object-center rounded-md transition-opacity duration-500 ${isLoading ? 'opacity-0' : 'opacity-100'}`}
           onError={() => setImageError(true)}
+          onLoad={() => setIsLoading(false)}
           sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
           priority
         />
@@ -108,10 +138,21 @@ export function CardImage({
     );
   }
   
+  // Fallback card display when image is unavailable
   return (
     <div className="w-full h-full flex items-center justify-center" style={cardGradientStyle}>
-      <div className="font-witchcraft text-4xl text-agatha-vibrant animate-magic-text">
-        {card.number}
+      <div className="relative w-full h-full flex flex-col items-center justify-center">
+        {/* Decorative magical circle */}
+        <div className="absolute w-32 h-32 rounded-full border border-agatha-purple/30 animate-magic-pulse"></div>
+        <div className="absolute w-24 h-24 rounded-full border border-agatha-rune/40 animate-witchcraft" style={{animationDuration: '12s'}}></div>
+        
+        {/* Card number and name */}
+        <div className="font-witchcraft text-4xl text-agatha-vibrant animate-magic-text mb-2">
+          {card.number}
+        </div>
+        <div className="font-mystical text-sm text-agatha-mist text-center px-4">
+          {card.name}
+        </div>
       </div>
     </div>
   );

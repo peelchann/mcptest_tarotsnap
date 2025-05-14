@@ -269,34 +269,40 @@ export const cards: TarotCard[] = [
 
 // Function to get a random card
 export const getRandomCard = (): TarotCard => {
-  const cardIndex = Math.floor(Math.random() * cards.length);
-  const card = { ...cards[cardIndex] };
-  card.isReversed = Math.random() > 0.7;
+  // Get a random card
+  const randomCard = { ...cards[Math.floor(Math.random() * cards.length)] };
   
-  // Ensure there's always an image path
-  if (!card.imagePath) {
-    card.imagePath = `/images/tarot/${card.id}.jpg`;
+  // Randomize if it's reversed
+  randomCard.isReversed = Math.random() > 0.7;
+  
+  // Ensure image path exists and is normalized
+  if (!randomCard.imagePath) {
+    const cardId = randomCard.id.toLowerCase().replace(/\s+/g, '-');
+    randomCard.imagePath = `/images/tarot/${cardId}.jpg`;
   }
   
-  return card;
+  return randomCard;
 };
 
 // Function to get multiple random cards without duplicates
 export const getRandomCards = (count: number): TarotCard[] => {
+  // Make a copy of the cards array and shuffle it
   const shuffled = [...cards].sort(() => 0.5 - Math.random());
-  const result: TarotCard[] = [];
   
-  for (let i = 0; i < Math.min(count, shuffled.length); i++) {
-    const card = { ...shuffled[i] };
-    card.isReversed = Math.random() > 0.7;
+  // Take the first 'count' cards
+  const selectedCards = shuffled.slice(0, count);
+  
+  // Process each card (set reversed state, ensure image path)
+  return selectedCards.map(card => {
+    const processedCard = { ...card };
+    processedCard.isReversed = Math.random() > 0.7;
     
-    // Ensure there's always an image path
-    if (!card.imagePath) {
-      card.imagePath = `/images/tarot/${card.id}.jpg`;
+    // Ensure image path exists and is normalized
+    if (!processedCard.imagePath) {
+      const cardId = processedCard.id.toLowerCase().replace(/\s+/g, '-');
+      processedCard.imagePath = `/images/tarot/${cardId}.jpg`;
     }
     
-    result.push(card);
-  }
-  
-  return result;
+    return processedCard;
+  });
 }; 

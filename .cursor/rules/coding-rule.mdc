@@ -1,0 +1,78 @@
+---
+description: 
+globs: 
+alwaysApply: true
+---
+# Core Cursor Rules
+
+Control how the Agent model behaves with reusable, scoped instructions.  
+These rules provide persistent, system-level guidance so that every code completion or edit adheres to your project’s conventions and workflows.
+
+---
+
+## 1. Coding Preferences
+
+### 1.1 Simplicity  
+- **Rule:** Always prioritize the simplest implementation that satisfies the requirements.  
+- **Why:** Minimizes complexity, reduces bugs, and makes future changes easier.  
+- **When to apply:** Every time new functionality is added or existing code is refactored.
+
+### 1.2 No Duplication  
+- **Rule:** Avoid repeating code; search for and reuse existing functions, classes, or modules.  
+- **Why:** Ensures DRY (Don't Repeat Yourself), improves maintainability, and prevents subtle inconsistencies.  
+- **How:** If you find yourself writing similar logic twice, extract it into a shared helper or service module.
+
+### 1.3 Organization  
+- **Rule:** Keep files concise (ideally under 200–300 lines). When a file grows too large, refactor into smaller modules.  
+- **Why:** Smaller files are easier to navigate, review, and test.  
+- **How:** Group related functions or components into feature-specific directories.
+
+### 1.4 Documentation  
+- **Rule:** After completing a major component or module, generate a brief Markdown summary in `/docs/[component].md`.  
+- **Why:** Provides at-a-glance context for teammates and future you.  
+- **How:** Include component purpose, public APIs, and example usage.
+
+---
+
+## 2. Workflow Preferences
+
+### 2.1 Focus Only on Requested Changes  
+- **Rule:** Modify *only* the parts of the codebase explicitly specified in the request.  
+- **Why:** Prevents unintentional side-effects or “hallucinated” refactorings.  
+- **How:** Before editing, confirm the exact file(s) and lines to change.
+
+### 2.2 Break Tasks into Stages  
+- **Rule:** Divide larger tasks into sequential stages; pause after each for approval.  
+- **Why:** Allows incremental validation, reduces large-scale rework, and keeps you aligned with goals.  
+- **How:** Draft a `plan.md` outlining each stage, then implement stages one by one.
+
+### 2.3 Plan Before Big Changes  
+- **Rule:** For substantial features, write a `plan.md` that outlines steps, dependencies, and risk areas.  
+- **Why:** Provides clarity, surfaces potential blockers early, and aligns expectations.  
+- **How:** Share `plan.md` for review before coding begins.
+
+### 2.4 Log Progress  
+- **Rule:** After each stage, update `progress.md` with what was done and append upcoming tasks to `TODO.txt`.  
+- **Why:** Creates a clear audit trail of what’s complete, in-progress, and pending.  
+- **How:** Commit both files alongside code changes.
+
+---
+
+## 3. Communication Preferences
+
+### 3.1 Summaries  
+- **Rule:** Upon completing each component or stage, provide a concise summary of changes and outcomes.  
+- **Why:** Keeps stakeholders informed and documents intent behind changes.  
+- **How:** Summaries go in pull request descriptions or `progress.md`.
+
+### 3.2 Change Scale & Clarification  
+- **Change Scale:**  
+  - **Small:** Minor tweaks or one-file edits.  
+  - **Medium:** Multi-file changes within a single feature.  
+  - **Large:** Architectural or cross-cutting modifications spanning multiple modules.  
+- **Clarification:** If a request is ambiguous, ask a clarifying question *before* making any changes.  
+- **Why:** Ensures alignment on scope and avoids wasted effort.  
+- **How:** Tag ambiguous items with `@todo clarify` and request input.
+
+
+---
