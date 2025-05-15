@@ -21,7 +21,7 @@ export default function Home() {
         ${mounted ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-10'}
         text-center pt-12 pb-6
       `}>
-        <h1 className="font-witchcraft text-5xl md:text-6xl mb-2 text-agatha-vibrant animate-magic-text">
+        <h1 className="font-witchcraft text-5xl md:text-5xl mb-3 text-agatha-light leading-tight drop-shadow-light-text animate-magic-text">
           <span className="relative inline-block">
             Agatha's
             <span className="absolute -top-6 -right-6 text-3xl text-agatha-accent animate-witch-finger">✦</span>
@@ -29,13 +29,13 @@ export default function Home() {
           <span className="text-agatha-vibrant">Tarot</span>
           <span className="text-agatha-accent">Snap</span>
         </h1>
-        <p className="font-mystical text-xl mb-3 max-w-md mx-auto text-agatha-mist">
+        <p className="font-mystical text-base md:text-lg mb-4 max-w-md mx-auto text-agatha-light leading-normal">
           Peer into the shadows of fate with dark magic divination
         </p>
         <div className="flex justify-center space-x-4 my-3">
-          <div className="h-0.5 w-20 md:w-32 bg-gradient-to-r from-transparent via-agatha-purple to-transparent"></div>
+          <div className="h-0.5 w-20 md:w-32 bg-gradient-to-r from-transparent via-agatha-accent to-transparent"></div>
           <div className="text-agatha-rune animate-magic-pulse text-xl">✧</div>
-          <div className="h-0.5 w-20 md:w-32 bg-gradient-to-r from-transparent via-agatha-purple to-transparent"></div>
+          <div className="h-0.5 w-20 md:w-32 bg-gradient-to-r from-transparent via-agatha-accent to-transparent"></div>
         </div>
       </header>
 
@@ -51,7 +51,7 @@ export default function Home() {
       {/* Reading options in a nice grid */}
       <section className="bg-agatha-deeper/50 backdrop-blur-sm py-14 my-8">
         <div className="container mx-auto px-4">
-          <h2 className="font-witchcraft text-2xl text-center text-agatha-vibrant mb-10 animate-magic-text">
+          <h2 className="font-witchcraft text-3xl text-center text-agatha-light mb-10 leading-tight animate-magic-text">
             Uncover the Mysteries of Your Destiny
           </h2>
           
@@ -63,11 +63,11 @@ export default function Home() {
             {/* Single Card Reading */}
             <div className="bg-agatha-dark/80 backdrop-blur-sm border border-agatha-purple/30 rounded-lg p-6 transform transition-all duration-500 hover:shadow-agatha-glow hover:scale-105">
               <div className="relative">
-                <div className="font-witchcraft text-xl mb-1 text-agatha-vibrant">Single Card</div>
+                <div className="font-witchcraft text-xl mb-1 text-agatha-light">Single Card</div>
                 <div className="absolute -top-2 -right-2 text-agatha-rune/40 font-witchcraft text-sm animate-magic-pulse">✧</div>
               </div>
-              <div className="h-0.5 w-16 mx-auto bg-agatha-purple/40 mb-4"></div>
-              <p className="text-agatha-mist/90 text-sm mb-6 font-mystical">
+              <div className="h-0.5 w-16 mx-auto bg-agatha-accent/60 mb-4"></div>
+              <p className="text-agatha-light text-sm mb-6 font-mystical leading-relaxed">
                 A quick glimpse into your immediate destiny
               </p>
               
@@ -78,12 +78,13 @@ export default function Home() {
               
               <Link href="/reading/single" className="
                 block w-full text-center py-2 px-4 rounded
-                bg-gradient-to-r from-agatha-purple/80 to-agatha-deeper/80
-                text-agatha-mist hover:text-white 
-                border border-agatha-accent/20
+                bg-gradient-to-r from-agatha-purple to-agatha-deeper
+                text-agatha-light
+                border border-agatha-accent
                 transition-all duration-300
-                hover:shadow-agatha-glow hover:border-agatha-accent/50
-                font-mystical
+                hover:shadow-cta hover:scale-105
+                focus:ring-2 focus:ring-agatha-accent focus:outline-none
+                font-mystical font-bold
               ">
                 Draw a Card
               </Link>
@@ -92,11 +93,11 @@ export default function Home() {
             {/* Three Card Reading */}
             <div className="bg-agatha-dark/80 backdrop-blur-sm border border-agatha-purple/30 rounded-lg p-6 transform transition-all duration-500 hover:shadow-agatha-glow hover:scale-105">
               <div className="relative">
-                <div className="font-witchcraft text-xl mb-1 text-agatha-vibrant">Three Cards</div>
+                <div className="font-witchcraft text-xl mb-1 text-agatha-light">Three Cards</div>
                 <div className="absolute -top-2 -right-2 text-agatha-rune/40 font-witchcraft text-sm animate-magic-pulse">✦</div>
               </div>
-              <div className="h-0.5 w-16 mx-auto bg-agatha-purple/40 mb-4"></div>
-              <p className="text-agatha-mist/90 text-sm mb-6 font-mystical">
+              <div className="h-0.5 w-16 mx-auto bg-agatha-accent/60 mb-4"></div>
+              <p className="text-agatha-light text-sm mb-6 font-mystical leading-relaxed">
                 Past whispers, present forces, future shadows
               </p>
               
@@ -108,12 +109,13 @@ export default function Home() {
               
               <Link href="/reading/three" className="
                 block w-full text-center py-2 px-4 rounded
-                bg-gradient-to-r from-agatha-purple/80 to-agatha-deeper/80
-                text-agatha-mist hover:text-white 
-                border border-agatha-accent/20
+                bg-gradient-to-r from-agatha-purple to-agatha-deeper
+                text-agatha-light
+                border border-agatha-accent
                 transition-all duration-300
-                hover:shadow-agatha-glow hover:border-agatha-accent/50
-                font-mystical
+                hover:shadow-cta hover:scale-105
+                focus:ring-2 focus:ring-agatha-accent focus:outline-none
+                font-mystical font-bold
               ">
                 Begin Reading
               </Link>
@@ -122,11 +124,11 @@ export default function Home() {
             {/* Celtic Cross */}
             <div className="bg-agatha-dark/80 backdrop-blur-sm border border-agatha-purple/30 rounded-lg p-6 transform transition-all duration-500 hover:shadow-agatha-glow hover:scale-105">
               <div className="relative">
-                <div className="font-witchcraft text-xl mb-1 text-agatha-vibrant">Witch's Cross</div>
+                <div className="font-witchcraft text-xl mb-1 text-agatha-light">Witch's Cross</div>
                 <div className="absolute -top-2 -right-2 text-agatha-rune/40 font-witchcraft text-sm animate-magic-pulse">ᛏ</div>
               </div>
-              <div className="h-0.5 w-16 mx-auto bg-agatha-purple/40 mb-4"></div>
-              <p className="text-agatha-mist/90 text-sm mb-6 font-mystical">
+              <div className="h-0.5 w-16 mx-auto bg-agatha-accent/60 mb-4"></div>
+              <p className="text-agatha-light text-sm mb-6 font-mystical leading-relaxed">
                 Dark divination revealing all paths of fate
               </p>
               
@@ -141,12 +143,13 @@ export default function Home() {
               
               <Link href="/reading/celtic" className="
                 block w-full text-center py-2 px-4 rounded
-                bg-gradient-to-r from-agatha-purple/80 to-agatha-deeper/80
-                text-agatha-mist hover:text-white 
-                border border-agatha-accent/20
+                bg-gradient-to-r from-agatha-purple to-agatha-deeper
+                text-agatha-light
+                border border-agatha-accent
                 transition-all duration-300
-                hover:shadow-agatha-glow hover:border-agatha-accent/50
-                font-mystical
+                hover:shadow-cta hover:scale-105
+                focus:ring-2 focus:ring-agatha-accent focus:outline-none
+                font-mystical font-bold
               ">
                 Deep Dive
               </Link>
@@ -177,10 +180,10 @@ export default function Home() {
           <div className="absolute inset-0 bg-gradient-radial from-agatha-purple/5 to-transparent"></div>
           
           <div className="relative z-10">
-            <h2 className="font-witchcraft text-2xl mb-2 text-agatha-vibrant text-center">Unveil Your Destiny</h2>
-            <div className="h-0.5 w-24 mx-auto bg-agatha-purple/40 mb-4"></div>
+            <h2 className="font-witchcraft text-3xl mb-2 text-agatha-light text-center leading-tight">Unveil Your Destiny</h2>
+            <div className="h-0.5 w-24 mx-auto bg-agatha-accent/60 mb-4"></div>
             
-            <p className="mb-6 text-agatha-mist font-mystical text-center">
+            <p className="mb-6 text-agatha-light font-mystical text-center text-base leading-relaxed">
               Let Agatha's dark arts guide your path and reveal the threads of fate that bind your past, 
               present, and future. Tap into ancient witchcraft to illuminate what remains hidden.
             </p>
@@ -189,23 +192,24 @@ export default function Home() {
               <Link href="/about" className="
                 py-2 px-6 rounded
                 bg-agatha-deeper 
-                text-agatha-mist hover:text-agatha-accent 
-                border border-agatha-purple/30
+                text-agatha-light
+                border border-agatha-purple
                 transition-all duration-300
-                hover:shadow-agatha-glow hover:border-agatha-purple/50
+                hover:shadow-agatha-glow hover:border-agatha-accent
+                focus:ring-2 focus:ring-agatha-accent focus:outline-none
                 font-mystical
               ">
                 About the Craft
               </Link>
               <Link href="/reading" className="
                 py-2 px-6 rounded
-                bg-gradient-to-r from-agatha-purple/80 to-agatha-deeper
-                text-agatha-mist hover:text-white 
-                border border-agatha-accent/30
+                bg-gradient-to-r from-agatha-purple to-agatha-deeper
+                text-agatha-light
+                border border-agatha-accent
                 transition-all duration-300
-                hover:shadow-agatha-glow hover:border-agatha-accent/60
-                font-mystical
-                animate-magic-pulse
+                hover:shadow-cta hover:scale-105
+                focus:ring-2 focus:ring-agatha-accent focus:outline-none
+                font-mystical font-bold
               ">
                 Begin Divination
               </Link>
@@ -216,16 +220,16 @@ export default function Home() {
       
       {/* Footer with witchcraft symbols */}
       <footer className={`
-        mt-auto py-6 text-sm text-agatha-mist/60 text-center border-t border-agatha-purple/20
+        mt-auto py-6 text-sm text-agatha-light text-center border-t border-agatha-purple/20
         transition-all duration-1000 delay-900
         ${mounted ? 'opacity-100' : 'opacity-0'}
       `}>
         <div className="flex items-center justify-center space-x-2">
-          <span className="text-agatha-rune/40">⚝</span>
+          <span className="text-agatha-rune/60">⚝</span>
           <p>TarotSnap © {new Date().getFullYear()}</p>
-          <span className="text-agatha-rune/40">⚝</span>
+          <span className="text-agatha-rune/60">⚝</span>
         </div>
-        <p className="font-witchcraft mt-1 text-xs text-agatha-rune/40">The power of divination in your hands</p>
+        <p className="font-witchcraft mt-1 text-xs text-agatha-rune/80">The power of divination in your hands</p>
       </footer>
     </div>
   );

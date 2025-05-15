@@ -18,13 +18,14 @@ module.exports = {
         agatha: {
           dark: '#190029',
           deeper: '#32004A',
-          purple: '#4A0072',
-          accent: '#8E24AA',
-          vibrant: '#6A0DAD',
-          mist: 'rgba(110, 33, 172, 0.4)',
-          glow: 'rgba(147, 51, 234, 0.8)',
-          rune: '#B026FF',
+          purple: '#5C0096',
+          accent: '#A035C0',
+          vibrant: '#8829D0',
+          mist: 'rgba(149, 65, 211, 0.7)',
+          glow: 'rgba(147, 51, 234, 0.9)',
+          rune: '#CB6BFF',
           black: '#0A0A0A',
+          light: '#E9D1FD',
         },
       },
       fontFamily: {
@@ -163,10 +164,12 @@ module.exports = {
         'witch-rune': '0 0 8px rgba(176, 38, 255, 0.6), inset 0 0 6px rgba(110, 33, 172, 0.8)',
         'dark-magic': '0 10px 25px -5px rgba(25, 0, 41, 0.8), 0 8px 10px -6px rgba(25, 0, 41, 0.6)',
         'spell-aura': '0 0 15px rgba(176, 38, 255, 0.5), 0 0 30px rgba(110, 33, 172, 0.3), 0 0 45px rgba(74, 0, 114, 0.2)',
+        'cta': '0 0 0 2px rgba(176, 38, 255, 1), 0 0 15px rgba(110, 33, 172, 0.6)',
       },
       dropShadow: {
         'agatha': '0 0 8px rgba(176, 38, 255, 0.6)',
         'dark-text': '0 2px 4px rgba(10, 10, 10, 0.8)',
+        'light-text': '0 1px 2px rgba(233, 209, 253, 0.4)',
       },
       textShadow: {
         'witch': '0 0 8px rgba(176, 38, 255, 0.6), 0 0 12px rgba(110, 33, 172, 0.4)',
@@ -181,6 +184,16 @@ module.exports = {
       backdropBlur: {
         'mist': '8px',
       },
+      fontSize: {
+        '3xl': '1.875rem',
+        '4xl': '2.25rem',
+        '5xl': '3rem',
+      },
+      lineHeight: {
+        'tight': '1.1',
+        'normal': '1.5',
+        'relaxed': '1.75',
+      }
     },
   },
   plugins: [],

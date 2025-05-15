@@ -25,8 +25,8 @@ export default function StarsBackground() {
     
     if (!canvasRef.current) return;
     
-    const canvas = canvasRef.current;
-    const ctx = canvas.getContext('2d');
+    const canvasElement = canvasRef.current;
+    const ctx = canvasElement.getContext('2d');
     
     if (!ctx) {
       setIsCanvasSupported(false);
@@ -35,9 +35,9 @@ export default function StarsBackground() {
     
     // Set canvas dimensions
     const setCanvasDimensions = () => {
-      if (!canvas) return;
-      canvas.width = window.innerWidth;
-      canvas.height = window.innerHeight;
+      if (!canvasElement) return;
+      canvasElement.width = window.innerWidth;
+      canvasElement.height = window.innerHeight;
     };
     
     setCanvasDimensions();
@@ -55,8 +55,8 @@ export default function StarsBackground() {
     ];
     
     for (let i = 0; i < starCount; i++) {
-      const x = Math.random() * canvas.width;
-      const y = Math.random() * canvas.height;
+      const x = Math.random() * canvasElement.width;
+      const y = Math.random() * canvasElement.height;
       const size = Math.random() * 2;
       const speed = Math.random() * 0.2 + 0.1;
       const brightness = Math.random() * 0.5 + 0.5;
@@ -68,7 +68,7 @@ export default function StarsBackground() {
     // Animation function
     let animationFrame: number;
     const animate = () => {
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      ctx.clearRect(0, 0, canvasElement.width, canvasElement.height);
       
       // Draw stars
       stars.forEach(star => {
@@ -79,7 +79,7 @@ export default function StarsBackground() {
         ctx.fill();
         
         // Update star position for next frame
-        star.y = (star.y + star.speed) % canvas.height;
+        star.y = (star.y + star.speed) % canvasElement.height;
         
         // Randomly adjust brightness for twinkling effect
         star.brightness += Math.random() * 0.1 - 0.05;
