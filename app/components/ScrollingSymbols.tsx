@@ -78,16 +78,6 @@ export default function ScrollingSymbols({
     const allSymbols = Array(copies).fill(symbols).flat();
     
     return allSymbols.map((symbol, index) => {
-      // Generate a random shade of purple for each symbol
-      const hue = 270 + Math.floor(Math.random() * 40) - 20; // Purple range
-      const saturation = 60 + Math.floor(Math.random() * 40); // 60-100%
-      const lightness = 50 + Math.floor(Math.random() * 30); // 50-80%
-      const color = `hsl(${hue}, ${saturation}%, ${lightness}%)`;
-      
-      // Add random glow intensity
-      const glowSize = Math.floor(Math.random() * 8) + 2; // 2-10px
-      const glowColor = `hsl(${hue}, ${saturation}%, ${lightness + 10}%)`;
-      
       return (
         <div 
           key={`${symbol}-${index}`} 
@@ -96,13 +86,11 @@ export default function ScrollingSymbols({
             ${isVertical ? 'w-full py-3' : 'h-full px-3'}
             transition-opacity duration-300
             text-2xl font-bold
-            opacity-${Math.random() > 0.7 ? '100' : Math.random() > 0.5 ? '70' : '40'}
+            opacity-20 text-gold-300
             transform ${Math.random() > 0.8 ? 'scale-125' : Math.random() > 0.5 ? 'scale-110' : 'scale-100'}
             ${Math.random() > 0.9 ? 'animate-magic-pulse' : ''}
           `}
           style={{
-            color: color,
-            textShadow: `0 0 ${glowSize}px ${glowColor}`,
             transform: `${Math.random() > 0.8 ? 'rotate(' + (Math.random() * 30 - 15) + 'deg)' : ''}`,
           }}
         >

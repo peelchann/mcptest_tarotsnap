@@ -4,7 +4,7 @@ import StarsBackground, { StarsFallback } from "./components/StarsBackground";
 import ScrollingSymbols from "./components/ScrollingSymbols";
 
 export const metadata: Metadata = {
-  title: "TarotSnap - Agatha's Dark Tarot Reading",
+  title: "TarotSnap",
   description: "Peer into the shadows of fate with dark magic divination",
 };
 
@@ -20,7 +20,7 @@ export default function RootLayout({
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="" />
         <link href="https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap" rel="stylesheet" />
       </head>
-      <body className="antialiased bg-agatha-dark text-agatha-mist font-body min-h-screen" suppressHydrationWarning>
+      <body className="antialiased bg-gradient-to-b from-agatha-navy to-agatha-mid text-agatha-mist font-body min-h-screen" suppressHydrationWarning>
         {/* Static fallback stars that show immediately during initial load */}
         <StarsFallback />
         

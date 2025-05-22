@@ -27,6 +27,10 @@ module.exports = {
           black: '#0A0A0A',
           light: '#E9D1FD',
         },
+        'agatha-navy': '#1E1E3F',
+        'agatha-mid': '#2E2E5F',
+        'gold-400': '#C8AD7F',
+        'gold-500': '#B8986A',
       },
       fontFamily: {
         mystical: ['Cinzel', 'serif'],
