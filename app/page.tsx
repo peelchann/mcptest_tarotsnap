@@ -1,299 +1,273 @@
 'use client';
 
-import { useState, useEffect } from 'react';
-import Link from 'next/link';
-import { TarotCarousel } from './components/TarotCarousel';
-import { cards } from './data/cards';
-import Image from 'next/image';
-import SpreadCard from './components/SpreadCard';
-import { AnimatedContainer, StaggeredContainer, MysticalButton } from './components/ui/animations';
-import { MysticalParticles, FloatingRunes } from './components/ui/MysticalParticles';
+import { useState } from 'react';
 import { motion } from 'framer-motion';
+import { useRouter } from 'next/navigation';
+import { Button } from '@/app/components/ui/button';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/app/components/ui/card';
+import { Input } from '@/app/components/ui/input';
+import { Textarea } from '@/app/components/ui/textarea';
+import { MysticalParticles } from './components/ui/MysticalParticles';
+import { 
+  Sparkles, 
+  Moon, 
+  Stars, 
+  Eye, 
+  Heart, 
+  ArrowRight,
+  MessageCircle,
+  Zap,
+  Crown
+} from 'lucide-react';
 
-export default function Home() {
-  const [mounted, setMounted] = useState(false);
-  
-  // Animation effect on mount
-  useEffect(() => {
-    setMounted(true);
-  }, []);
+const containerVariants = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: {
+      staggerChildren: 0.2,
+      duration: 0.6
+    }
+  }
+};
 
-  // Find specific cards for display, default to first card if not found or no imagePath
-  const singleCardImage = cards.find(card => card.id === 'the-fool')?.imagePath || cards[0]?.imagePath || '/images/tarot/default.png';
-  const threeCardImage = cards.find(card => card.id === 'judgement')?.imagePath || cards[1]?.imagePath || '/images/tarot/default.png';
-  const witchCrossImage = cards.find(card => card.id === 'the-world')?.imagePath || cards[2]?.imagePath || '/images/tarot/default.png';
+const itemVariants = {
+  hidden: { 
+    opacity: 0, 
+    y: 30,
+    scale: 0.9
+  },
+  visible: {
+    opacity: 1,
+    y: 0,
+    scale: 1,
+    transition: {
+      type: "spring",
+      stiffness: 300,
+      damping: 24
+    }
+  }
+};
+
+const features = [
+  {
+    icon: Eye,
+    title: "Divine Insights",
+    description: "Gain profound insights into your life's path through ancient tarot wisdom"
+  },
+  {
+    icon: MessageCircle,
+    title: "AI Guidance",
+    description: "Chat with our mystical AI oracle for personalized interpretations"
+  },
+  {
+    icon: Zap,
+    title: "Instant Readings",
+    description: "Get immediate, accurate readings whenever you need guidance"
+  }
+];
+
+export default function HomePage() {
+  const [question, setQuestion] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
+  const router = useRouter();
+
+  const handleStartReading = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsLoading(true);
+    
+    // Store the question in session storage
+    if (question.trim()) {
+      sessionStorage.setItem('tarot-question', question.trim());
+    }
+    
+    // Navigate to single card reading
+    setTimeout(() => {
+      router.push('/reading/single');
+    }, 1000);
+  };
 
   return (
-    <div className="flex flex-col min-h-screen relative overflow-hidden">
-      {/* Mystical Background Effects */}
-      <MysticalParticles count={15} />
-      <FloatingRunes />
+    <div className="min-h-screen relative overflow-hidden">
+      <MysticalParticles />
       
-      {/* Animated gradient overlay */}
-      <motion.div 
-        className="absolute inset-0 bg-gradient-to-br from-purple-900/10 via-transparent to-indigo-900/10 pointer-events-none"
-        animate={{
-          opacity: [0.3, 0.6, 0.3],
-        }}
-        transition={{
-          duration: 8,
-          repeat: Infinity,
-          ease: "easeInOut"
-        }}
-      />
-
-      {/* Header with enhanced animations */}
-      <AnimatedContainer 
-        className="text-center pt-12 pb-6 max-w-2xl mx-auto relative z-10"
-        delay={0.2}
+      <motion.div
+        variants={containerVariants}
+        initial="hidden"
+        animate="visible"
+        className="container mx-auto px-4 py-16 relative z-10"
       >
-        <motion.h1 
-          className="font-witchcraft text-5xl md:text-5xl mb-3 text-gold-400 leading-tight drop-shadow-light-text text-[3rem]"
-          animate={{
-            textShadow: [
-              "0 0 10px rgba(251, 191, 36, 0.5)",
-              "0 0 20px rgba(251, 191, 36, 0.8)",
-              "0 0 10px rgba(251, 191, 36, 0.5)"
-            ]
-          }}
-          transition={{
-            duration: 3,
-            repeat: Infinity,
-            ease: "easeInOut"
-          }}
-        >
-          TarotSnap
-        </motion.h1>
-        
-        <AnimatedContainer delay={0.4}>
-          <p className="font-mystical text-base md:text-lg mb-4 max-w-md mx-auto text-agatha-light leading-normal text-[1.25rem]">
-            Peer into the shadows of fate with dark magic divination
-          </p>
-        </AnimatedContainer>
-        
-        <AnimatedContainer delay={0.6}>
-          <div className="flex justify-center space-x-4 my-3">
-            <motion.div 
-              className="h-0.5 w-20 md:w-32 bg-gradient-to-r from-transparent via-gold-400 to-transparent"
-              animate={{ opacity: [0.5, 1, 0.5] }}
-              transition={{ duration: 2, repeat: Infinity }}
-            />
-            <motion.div 
-              className="text-gold-400 text-xl"
-              animate={{ 
-                rotate: [0, 360],
-                scale: [1, 1.2, 1]
-              }}
-              transition={{ 
-                duration: 4, 
-                repeat: Infinity,
-                ease: "easeInOut"
-              }}
-            >
-              ✧
-            </motion.div>
-            <motion.div 
-              className="h-0.5 w-20 md:w-32 bg-gradient-to-r from-transparent via-gold-400 to-transparent"
-              animate={{ opacity: [0.5, 1, 0.5] }}
-              transition={{ duration: 2, repeat: Infinity, delay: 1 }}
-            />
-          </div>
-        </AnimatedContainer>
-      </AnimatedContainer>
-
-      {/* Enhanced 3-Card Spread Panel */}
-      <main className="flex-grow container mx-auto px-4 py-8 relative z-10">
-        <StaggeredContainer className="grid grid-cols-1 md:grid-cols-3 gap-6 lg:gap-8 max-w-5xl mx-auto">
-          <motion.div
-            variants={{
-              hidden: { opacity: 0, y: 50, rotateY: -15 },
-              visible: { opacity: 1, y: 0, rotateY: 0 }
-            }}
-            whileHover={{ 
-              y: -10,
-              rotateY: 5,
-              transition: { type: "spring", stiffness: 300 }
-            }}
-          >
-            <SpreadCard 
-              title="Single Card Draw"
-              description="Pull a single card for quick insight or daily guidance. Simple, direct, and illuminating."
-              buttonText="Draw a Card"
-              linkHref="/reading/single"
-              imageSrc={singleCardImage}
-              imageAlt="Single Tarot Card Spread"
-            />
-          </motion.div>
-          
-          <motion.div
-            variants={{
-              hidden: { opacity: 0, y: 50, scale: 0.9 },
-              visible: { opacity: 1, y: 0, scale: 1 }
-            }}
-            whileHover={{ 
-              y: -10,
-              scale: 1.05,
-              transition: { type: "spring", stiffness: 300 }
-            }}
-          >
-            <SpreadCard 
-              title="Three Card Spread"
-              description="Explore past, present, and future influences, or gain clarity on a specific situation with three interconnected cards."
-              buttonText="Begin Reading"
-              linkHref="/reading/three-card"
-              imageSrc={threeCardImage}
-              imageAlt="Three Card Tarot Spread"
-            />
-          </motion.div>
-          
-          <motion.div
-            variants={{
-              hidden: { opacity: 0, y: 50, rotateY: 15 },
-              visible: { opacity: 1, y: 0, rotateY: 0 }
-            }}
-            whileHover={{ 
-              y: -10,
-              rotateY: -5,
-              transition: { type: "spring", stiffness: 300 }
-            }}
-          >
-            <SpreadCard 
-              title="Witch's Cross Spread"
-              description="Delve deeper with the Witch's Cross, a comprehensive spread for uncovering complex dynamics and hidden truths."
-              buttonText="Deep Dive"
-              linkHref="/reading/witch-cross"
-              imageSrc={witchCrossImage}
-              imageAlt="Witch's Cross Tarot Spread"
-            />
-          </motion.div>
-        </StaggeredContainer>
-      </main>
-      
-      {/* Enhanced call to action */}
-      <AnimatedContainer 
-        className="container mx-auto px-4 mb-12 relative z-10"
-        delay={1.0}
-      >
+        {/* Hero Section */}
         <motion.div 
-          className="bg-agatha-deeper/70 backdrop-blur-md border border-agatha-rune/30 rounded-lg p-8 max-w-2xl mx-auto shadow-lg relative overflow-hidden"
-          whileHover={{
-            boxShadow: "0 0 30px rgba(147, 51, 234, 0.3)",
-            borderColor: "rgba(147, 51, 234, 0.5)"
-          }}
-          transition={{ duration: 0.3 }}
+          variants={itemVariants}
+          className="text-center mb-16"
         >
-          {/* Enhanced decorative runes with animation */}
-          {[
-            { rune: 'ᛏ', position: 'top-3 left-3' },
-            { rune: 'ᛦ', position: 'bottom-3 right-3' },
-            { rune: 'ᚾ', position: 'top-3 right-3' },
-            { rune: 'ᛉ', position: 'bottom-3 left-3' }
-          ].map((item, index) => (
-            <motion.div 
-              key={index}
-              className={`absolute ${item.position} text-agatha-rune/20 font-witchcraft text-xl`}
-              animate={{
-                opacity: [0.2, 0.6, 0.2],
-                rotate: [0, 360]
-              }}
-              transition={{
-                duration: 6,
-                repeat: Infinity,
-                delay: index * 1.5
-              }}
-            >
-              {item.rune}
-            </motion.div>
-          ))}
+          <div className="inline-flex items-center gap-2 mb-6">
+            <Crown className="w-8 h-8 text-accent" />
+            <span className="text-accent font-semibold text-lg">TarotSnap</span>
+          </div>
           
-          {/* Enhanced purple glow effect */}
-          <motion.div 
-            className="absolute inset-0 bg-gradient-radial from-agatha-purple/5 to-transparent"
-            animate={{
-              opacity: [0.3, 0.7, 0.3]
-            }}
-            transition={{
-              duration: 4,
-              repeat: Infinity
-            }}
-          />
+          <h1 className="text-5xl md:text-7xl font-bold mb-6 bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
+            Unlock the Mysteries
+            <br />
+            <span className="text-4xl md:text-6xl">of Your Future</span>
+          </h1>
           
-          <div className="relative z-10">
-            <motion.h2 
-              className="font-witchcraft text-3xl mb-2 text-agatha-light text-center leading-tight"
-              animate={{
-                textShadow: [
-                  "0 0 5px rgba(168, 85, 247, 0.5)",
-                  "0 0 15px rgba(168, 85, 247, 0.8)",
-                  "0 0 5px rgba(168, 85, 247, 0.5)"
-                ]
-              }}
-              transition={{
-                duration: 3,
-                repeat: Infinity
-              }}
-            >
-              Unveil Your Destiny
-            </motion.h2>
-            
-            <motion.div 
-              className="h-0.5 w-24 mx-auto bg-agatha-accent/60 mb-4"
-              animate={{
-                width: ["6rem", "8rem", "6rem"],
-                opacity: [0.6, 1, 0.6]
-              }}
-              transition={{
-                duration: 2,
-                repeat: Infinity
-              }}
-            />
-            
-            <AnimatedContainer delay={0.2}>
-              <p className="mb-6 text-agatha-light font-mystical text-center text-base leading-relaxed">
-                Let Agatha's dark arts guide your path and reveal the threads of fate that bind your past, 
-                present, and future. Tap into ancient witchcraft to illuminate what remains hidden.
-              </p>
-            </AnimatedContainer>
-            
-            <AnimatedContainer delay={0.4}>
-              <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                <MysticalButton className="py-3 px-6 rounded-xl bg-agatha-mid text-gold-400 font-semibold border border-gold-400 transition-all duration-300 hover:bg-gold-500 hover:text-[#1E1E3F] focus:ring-2 focus:ring-gold-500 focus:outline-none font-mystical">
-                  <Link href="/about">About the Craft</Link>
-                </MysticalButton>
-                
-                <MysticalButton className="py-3 px-6 rounded-xl bg-gold-400 text-[#1E1E3F] font-semibold border border-gold-400 transition-all duration-300 hover:bg-gold-500 focus:ring-2 focus:ring-gold-500 focus:outline-none font-mystical">
-                  <Link href="/reading">Begin Divination</Link>
-                </MysticalButton>
-              </div>
-            </AnimatedContainer>
+          <p className="text-xl text-muted-foreground max-w-2xl mx-auto mb-8">
+            Experience the ancient art of tarot reading reimagined for the digital age. 
+            Get instant insights, divine guidance, and chat with our mystical AI oracle.
+          </p>
+          
+          <div className="flex items-center justify-center gap-4 text-sm text-muted-foreground">
+            <div className="flex items-center gap-1">
+              <Sparkles className="w-4 h-4 text-accent" />
+              <span>Authentic Readings</span>
+            </div>
+            <div className="flex items-center gap-1">
+              <Moon className="w-4 h-4 text-accent" />
+              <span>AI-Powered</span>
+            </div>
+            <div className="flex items-center gap-1">
+              <Stars className="w-4 h-4 text-accent" />
+              <span>Instant Guidance</span>
+            </div>
           </div>
         </motion.div>
-      </AnimatedContainer>
-      
-      {/* Enhanced footer */}
-      <AnimatedContainer 
-        className="mt-auto py-6 text-sm text-agatha-light text-center border-t border-agatha-purple/20 relative z-10"
-        delay={1.2}
-      >
-        <div className="flex items-center justify-center space-x-2">
-          <motion.span 
-            className="text-agatha-rune/60"
-            animate={{ rotate: [0, 360] }}
-            transition={{ duration: 8, repeat: Infinity }}
-          >
-            ⚝
-          </motion.span>
-          <p>TarotSnap © {new Date().getFullYear()}</p>
-          <motion.span 
-            className="text-agatha-rune/60"
-            animate={{ rotate: [360, 0] }}
-            transition={{ duration: 8, repeat: Infinity }}
-          >
-            ⚝
-          </motion.span>
-        </div>
-        <p className="font-witchcraft mt-1 text-xs text-agatha-rune/80">The power of divination in your hands</p>
-      </AnimatedContainer>
+
+        {/* Features Grid */}
+        <motion.div 
+          variants={itemVariants}
+          className="grid md:grid-cols-3 gap-6 mb-16"
+        >
+          {features.map((feature, index) => (
+            <Card key={index} className="border-primary/20 bg-card/50 backdrop-blur-sm hover:bg-card/80 transition-all duration-300 group">
+              <CardHeader className="text-center">
+                <div className="mx-auto mb-4 p-3 rounded-full bg-primary/10 w-fit group-hover:scale-110 transition-transform duration-300">
+                  <feature.icon className="w-6 h-6 text-primary" />
+                </div>
+                <CardTitle className="text-lg">{feature.title}</CardTitle>
+                <CardDescription>{feature.description}</CardDescription>
+              </CardHeader>
+            </Card>
+          ))}
+        </motion.div>
+
+        {/* Question Form */}
+        <motion.div 
+          variants={itemVariants}
+          className="max-w-2xl mx-auto"
+        >
+          <Card className="border-primary/30 bg-card/70 backdrop-blur-md">
+            <CardHeader className="text-center">
+              <CardTitle className="text-2xl flex items-center justify-center gap-2">
+                <Heart className="w-6 h-6 text-accent" />
+                Ask Your Question
+              </CardTitle>
+              <CardDescription className="text-base">
+                Focus your intention and ask the universe for guidance. 
+                What wisdom do you seek today?
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <form onSubmit={handleStartReading} className="space-y-6">
+                <div>
+                  <label htmlFor="question" className="block text-sm font-medium mb-2">
+                    Your Question (Optional)
+                  </label>
+                  <Textarea
+                    id="question"
+                    placeholder="What guidance do I need for my path ahead? What should I focus on today? How can I overcome my current challenges?"
+                    value={question}
+                    onChange={(e) => setQuestion(e.target.value)}
+                    className="min-h-[100px] bg-background/50 border-primary/20 focus:border-primary/50"
+                  />
+                  <p className="text-xs text-muted-foreground mt-2">
+                    Leave blank for a general reading about your current energy
+                  </p>
+                </div>
+                
+                <Button 
+                  type="submit" 
+                  variant="mystical" 
+                  size="xl"
+                  className="w-full"
+                  disabled={isLoading}
+                >
+                  {isLoading ? (
+                    <div className="flex items-center gap-2">
+                      <div className="w-4 h-4 border-2 border-current border-t-transparent rounded-full animate-spin" />
+                      Preparing Your Reading...
+                    </div>
+                  ) : (
+                    <div className="flex items-center gap-2">
+                      <Sparkles className="w-5 h-5" />
+                      Draw Your Card
+                      <ArrowRight className="w-5 h-5" />
+                    </div>
+                  )}
+                </Button>
+              </form>
+            </CardContent>
+          </Card>
+        </motion.div>
+
+        {/* How It Works */}
+        <motion.div 
+          variants={itemVariants}
+          className="mt-20 text-center"
+        >
+          <h2 className="text-3xl font-bold mb-12">How TarotSnap Works</h2>
+          <div className="grid md:grid-cols-3 gap-8 max-w-4xl mx-auto">
+            <div className="space-y-4">
+              <div className="w-12 h-12 mx-auto bg-primary/20 rounded-full flex items-center justify-center text-primary font-bold text-xl">
+                1
+              </div>
+              <h3 className="text-xl font-semibold">Ask Your Question</h3>
+              <p className="text-muted-foreground">
+                Focus your intention and ask what guidance you seek from the universe
+              </p>
+            </div>
+            <div className="space-y-4">
+              <div className="w-12 h-12 mx-auto bg-primary/20 rounded-full flex items-center justify-center text-primary font-bold text-xl">
+                2
+              </div>
+              <h3 className="text-xl font-semibold">Draw Your Card</h3>
+              <p className="text-muted-foreground">
+                Let intuition guide you as you select a card from our mystical deck
+              </p>
+            </div>
+            <div className="space-y-4">
+              <div className="w-12 h-12 mx-auto bg-primary/20 rounded-full flex items-center justify-center text-primary font-bold text-xl">
+                3
+              </div>
+              <h3 className="text-xl font-semibold">Receive Insights</h3>
+              <p className="text-muted-foreground">
+                Get your reading and chat with our AI oracle for deeper understanding
+              </p>
+            </div>
+          </div>
+        </motion.div>
+
+        {/* Testimonial/Quote */}
+        <motion.div 
+          variants={itemVariants}
+          className="mt-20 text-center"
+        >
+          <Card className="max-w-3xl mx-auto border-accent/20 bg-gradient-to-r from-primary/5 to-accent/5">
+            <CardContent className="p-8">
+              <blockquote className="text-lg italic text-foreground/90 mb-4">
+                "The future belongs to those who believe in the beauty of their dreams. 
+                Let the ancient wisdom of tarot illuminate your path forward."
+              </blockquote>
+              <div className="flex items-center justify-center gap-1 text-accent">
+                <Stars className="w-4 h-4" />
+                <Stars className="w-4 h-4" />
+                <Stars className="w-4 h-4" />
+              </div>
+            </CardContent>
+          </Card>
+        </motion.div>
+      </motion.div>
     </div>
   );
 }

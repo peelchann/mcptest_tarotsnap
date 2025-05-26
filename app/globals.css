@@ -4,25 +4,229 @@
 @tailwind components;
 @tailwind utilities;
 
-:root {
-  --background: #0F0F1A;
-  --foreground: #E1BEE7;
-  --mystical-dark: #0F0F1A;
-  --mystical-primary: #1F1F3D;
-  --mystical-accent: #9C27B0;
-  --mystical-light: #E1BEE7;
-  --mystical-gold: #FFD700;
+@layer base {
+  :root {
+    /* Brand Colors - Mystical Theme */
+    --background: 220 13% 9%;
+    --foreground: 280 5% 96%;
+    --card: 220 13% 12%;
+    --card-foreground: 280 5% 96%;
+    --popover: 220 13% 12%;
+    --popover-foreground: 280 5% 96%;
+    
+    /* Primary - Deep Mystical Purple */
+    --primary: 271 81% 56%;
+    --primary-foreground: 280 5% 96%;
+    
+    /* Secondary - Cosmic Blue */
+    --secondary: 220 13% 15%;
+    --secondary-foreground: 280 5% 96%;
+    
+    /* Accent - Golden Mystical */
+    --accent: 45 93% 58%;
+    --accent-foreground: 220 13% 9%;
+    
+    /* Muted Colors */
+    --muted: 220 13% 15%;
+    --muted-foreground: 280 3% 65%;
+    
+    /* Border and Input */
+    --border: 220 13% 20%;
+    --input: 220 13% 20%;
+    --ring: 271 81% 56%;
+    
+    /* Semantic Colors */
+    --destructive: 0 62% 30%;
+    --destructive-foreground: 280 5% 96%;
+    --warning: 45 93% 58%;
+    --warning-foreground: 220 13% 9%;
+    --success: 142 76% 36%;
+    --success-foreground: 280 5% 96%;
+    
+    /* Mystical Effects */
+    --mystical-glow: 271 81% 56%;
+    --cosmic-bg: linear-gradient(135deg, hsl(220 13% 9%) 0%, hsl(271 20% 15%) 100%);
+    
+    /* Radius */
+    --radius: 0.75rem;
+  }
+
+  .light {
+    --background: 280 5% 96%;
+    --foreground: 220 13% 9%;
+    --card: 280 5% 100%;
+    --card-foreground: 220 13% 9%;
+    --popover: 280 5% 100%;
+    --popover-foreground: 220 13% 9%;
+    
+    --primary: 271 81% 56%;
+    --primary-foreground: 280 5% 96%;
+    
+    --secondary: 280 5% 90%;
+    --secondary-foreground: 220 13% 9%;
+    
+    --accent: 45 93% 58%;
+    --accent-foreground: 220 13% 9%;
+    
+    --muted: 280 5% 90%;
+    --muted-foreground: 220 5% 45%;
+    
+    --border: 280 5% 85%;
+    --input: 280 5% 85%;
+    --ring: 271 81% 56%;
+    
+    --mystical-glow: 271 81% 56%;
+    --cosmic-bg: linear-gradient(135deg, hsl(280 5% 96%) 0%, hsl(271 20% 90%) 100%);
+  }
+}
+
+@layer base {
+  * {
+    border-color: hsl(var(--border));
+  }
   
-  /* Agatha Harkness style colors */
-  --agatha-dark: #190029;
-  --agatha-deeper: #32004A;
-  --agatha-purple: #4A0072;
-  --agatha-accent: #8E24AA;
-  --agatha-vibrant: #6A0DAD;
-  --agatha-mist: rgba(110, 33, 172, 0.4);
-  --agatha-glow: rgba(147, 51, 234, 0.8);
-  --agatha-rune: #B026FF;
-  --agatha-black: #0A0A0A;
+  body {
+    background-color: hsl(var(--background));
+    color: hsl(var(--foreground));
+    background: var(--cosmic-bg);
+    font-feature-settings: "rlig" 1, "calt" 1;
+  }
+}
+
+/* Mystical animations */
+@keyframes float {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-10px); }
+}
+
+@keyframes sparkle {
+  0%, 100% { opacity: 0.3; transform: scale(0.8); }
+  50% { opacity: 1; transform: scale(1.2); }
+}
+
+@keyframes cosmic-pulse {
+  0%, 100% { box-shadow: 0 0 20px hsl(var(--mystical-glow) / 0.3); }
+  50% { box-shadow: 0 0 40px hsl(var(--mystical-glow) / 0.6); }
+}
+
+.float-animation {
+  animation: float 3s ease-in-out infinite;
+}
+
+.sparkle-animation {
+  animation: sparkle 2s ease-in-out infinite;
+}
+
+.cosmic-pulse {
+  animation: cosmic-pulse 2s ease-in-out infinite;
+}
+
+.font-witchcraft {
+  font-family: 'Cinzel', serif;
+}
+
+.font-mystical {
+  font-family: 'Lato', sans-serif;
+}
+
+.mystical-card {
+  @apply bg-gradient-to-br from-purple-900/30 via-purple-800/20 to-indigo-900/30 backdrop-blur-sm border border-purple-400/30 rounded-lg shadow-lg;
+}
+
+.mystical-title {
+  @apply font-witchcraft text-4xl md:text-5xl mb-4 text-center bg-gradient-to-r from-purple-300 to-gold-400 bg-clip-text text-transparent drop-shadow-md;
+}
+
+.mystical-subtitle {
+  @apply font-witchcraft text-2xl mb-3 text-center text-purple-200;
+}
+
+.mystical-button {
+  @apply py-3 px-6 rounded-xl bg-purple-700 text-gold-400 font-semibold border border-gold-400 transition-all duration-300 hover:bg-gold-500 hover:text-purple-900 focus:ring-2 focus:ring-gold-500 focus:outline-none;
+}
+
+.mystical-input {
+  @apply w-full p-3 bg-purple-900/40 border border-purple-400/50 rounded-lg text-purple-100 placeholder-purple-300/60 focus:border-gold-400 focus:ring-2 focus:ring-gold-400/50 focus:outline-none transition-all duration-300 backdrop-blur-sm;
+}
+
+/* Custom color classes */
+.text-gold-400 {
+  color: #facc15;
+}
+
+.bg-gold-400 {
+  background-color: #facc15;
+}
+
+.bg-gold-500 {
+  background-color: #eab308;
+}
+
+.border-gold-400 {
+  border-color: #facc15;
+}
+
+.ring-gold-400 {
+  --tw-ring-color: #facc15;
+}
+
+.ring-gold-500 {
+  --tw-ring-color: #eab308;
+}
+
+.from-gold-400 {
+  --tw-gradient-from: #facc15;
+}
+
+.to-gold-400 {
+  --tw-gradient-to: #facc15;
+}
+
+.drop-shadow-light-text {
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
+}
+
+/* Agatha Harkness themed colors */
+.text-agatha-light {
+  color: #E1BEE7;
+}
+
+.text-agatha-rune {
+  color: #B026FF;
+}
+
+.bg-agatha-deeper {
+  background-color: #32004A;
+}
+
+.bg-agatha-mid {
+  background-color: #4A0072;
+}
+
+.border-agatha-purple {
+  border-color: #4A0072;
+}
+
+.border-agatha-rune {
+  border-color: #B026FF;
+}
+
+/* Enhanced floating animation */
+.mystical-float {
+  animation: float 6s ease-in-out infinite;
+}
+
+@keyframes glow {
+  0%, 100% { 
+    filter: drop-shadow(0 0 5px rgba(147, 51, 234, 0.5)); 
+  }
+  50% { 
+    filter: drop-shadow(0 0 20px rgba(147, 51, 234, 0.8)); 
+  }
+}
+
+.mystical-glow {
+  animation: glow 3s ease-in-out infinite;
 }
 
 @theme inline {
@@ -93,6 +297,10 @@ body {
   ::-webkit-scrollbar-thumb:hover {
     background: var(--agatha-accent);
     box-shadow: inset 0 0 6px var(--agatha-glow);
+  }
+  
+  ::-webkit-scrollbar-thumb:active {
+    background: var(--agatha-vibrant);
   }
 }
 
@@ -230,11 +438,6 @@ body {
 /* Animation utilities */
 .animate-float {
   animation: float 6s ease-in-out infinite;
-}
-
-@keyframes float {
-  0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(-10px); }
 }
 
 @keyframes glow {

@@ -1,356 +1,411 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import Link from 'next/link';
-import TarotCard from '../../components/TarotCard';
-import { getRandomCard } from '../../data/cards';
-import type { TarotCard as TarotCardType } from '../../data/cards';
-import { AnimatedContainer, MysticalButton, cardFlip } from '../../components/ui/animations';
-import { MysticalParticles, FloatingRunes } from '../../components/ui/MysticalParticles';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useRouter } from 'next/navigation';
+import { Button } from '@/app/components/ui/button';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/app/components/ui/card';
+import { Textarea } from '@/app/components/ui/textarea';
+import { MysticalParticles } from '@/app/components/ui/MysticalParticles';
+import { cards, TarotCard } from '@/app/data/cards';
+import { 
+  Sparkles, 
+  MessageCircle, 
+  ArrowLeft, 
+  RefreshCw,
+  Send,
+  Bot,
+  User,
+  Heart
+} from 'lucide-react';
+
+interface ChatMessage {
+  id: string;
+  role: 'user' | 'assistant';
+  content: string;
+  timestamp: Date;
+}
 
 export default function SingleCardReading() {
-  const [card, setCard] = useState<TarotCardType | null>(null);
-  const [isFlipped, setIsFlipped] = useState(false);
-  const [isReversed, setIsReversed] = useState(false);
+  const router = useRouter();
   const [question, setQuestion] = useState('');
-  const [isReadingStarted, setIsReadingStarted] = useState(false);
-  const [isCardDrawn, setIsCardDrawn] = useState(false);
-  const [isReadingComplete, setIsReadingComplete] = useState(false);
+  const [selectedCard, setSelectedCard] = useState<TarotCard | null>(null);
+  const [isDrawing, setIsDrawing] = useState(false);
+  const [showReading, setShowReading] = useState(false);
+  const [chatMessages, setChatMessages] = useState<ChatMessage[]>([]);
+  const [newMessage, setNewMessage] = useState('');
+  const [isThinking, setIsThinking] = useState(false);
+  const [currentStep, setCurrentStep] = useState<'question' | 'draw' | 'reading' | 'chat'>('question');
 
-  // Reset reading state when component loads
   useEffect(() => {
-    // Reset everything on mount
-    setCard(null);
-    setIsFlipped(false);
-    setIsReadingStarted(false);
-    setIsCardDrawn(false);
-    setIsReadingComplete(false);
-    
-    // 50% chance of card being reversed
-    setIsReversed(Math.random() > 0.5);
+    // Get question from session storage
+    const storedQuestion = sessionStorage.getItem('tarot-question');
+    if (storedQuestion) {
+      setQuestion(storedQuestion);
+      setCurrentStep('draw');
+    }
   }, []);
 
-  // Start the reading process
-  const startReading = () => {
-    setIsReadingStarted(true);
-  };
-
-  // Draw a card
-  const drawCard = () => {
-    // Get a random card
-    const randomCard = getRandomCard();
-    setCard(randomCard);
-    setIsCardDrawn(true);
+  const drawCard = async () => {
+    setIsDrawing(true);
     
-    // Flip the card after a delay
+    // Simulate card drawing with mystical delay
     setTimeout(() => {
-      setIsFlipped(true);
-      setTimeout(() => {
-        setIsReadingComplete(true);
-      }, 1000);
+      const randomCard = cards[Math.floor(Math.random() * cards.length)];
+      setSelectedCard(randomCard);
+      setIsDrawing(false);
+      setShowReading(true);
+      setCurrentStep('reading');
+      
+      // Add initial AI interpretation
+      const initialReading = generateCardReading(randomCard, question);
+      setChatMessages([{
+        id: Date.now().toString(),
+        role: 'assistant',
+        content: initialReading,
+        timestamp: new Date()
+      }]);
+      
+      setTimeout(() => setCurrentStep('chat'), 2000);
     }, 2000);
   };
 
-  // Start a new reading
-  const newReading = () => {
-    setCard(null);
-    setIsFlipped(false);
-    setIsReversed(Math.random() > 0.5);
+  const generateCardReading = (card: TarotCard, userQuestion: string) => {
+    const questionContext = userQuestion ? 
+      `Regarding your question: "${userQuestion}"` : 
+      "For your general guidance today";
+    
+    return `${questionContext}
+
+**${card.name}** has appeared to guide you.
+
+${card.meaning.upright}
+
+**Key Insights:**
+• This card suggests ${card.name.toLowerCase()} energy is present in your situation
+• Pay attention to themes of ${card.keywords.join(', ')}
+• The universe is encouraging you to embrace this card's wisdom
+
+**For deeper understanding, feel free to ask me specific questions about:**
+- How this card relates to your current situation
+- What actions you should take based on this guidance
+- Specific aspects of the card's symbolism
+- Follow-up questions about your path forward
+
+What would you like to explore further about this reading?`;
+  };
+
+  const handleSendMessage = async () => {
+    if (!newMessage.trim() || !selectedCard) return;
+
+    const userMessage: ChatMessage = {
+      id: Date.now().toString(),
+      role: 'user',
+      content: newMessage.trim(),
+      timestamp: new Date()
+    };
+
+    setChatMessages(prev => [...prev, userMessage]);
+    setNewMessage('');
+    setIsThinking(true);
+
+    // Simulate AI response
+    setTimeout(() => {
+      const aiResponse = generateAIResponse(newMessage, selectedCard, question);
+      const assistantMessage: ChatMessage = {
+        id: (Date.now() + 1).toString(),
+        role: 'assistant',
+        content: aiResponse,
+        timestamp: new Date()
+      };
+
+      setChatMessages(prev => [...prev, assistantMessage]);
+      setIsThinking(false);
+    }, 1500);
+  };
+
+  const generateAIResponse = (userMessage: string, card: TarotCard, originalQuestion: string) => {
+    // This would be replaced with actual AI integration
+    const responses = [
+      `Great question! In the context of **${card.name}**, this suggests that you should focus on ${card.meaning.upright.toLowerCase()}. The card's energy encourages you to trust your intuition and move forward with confidence.`,
+      
+      `The **${card.name}** speaks directly to your concern. This card often appears when ${card.meaning.upright.toLowerCase()}. Consider how this applies to your current situation and what steps you can take to align with this energy.`,
+      
+      `Interesting perspective! **${card.name}** in your reading indicates that ${card.meaning.upright.toLowerCase()}. The universe is guiding you to pay attention to the themes of ${card.keywords.join(', ')} that this card represents.`,
+      
+      `Thank you for sharing that. **${card.name}** is a powerful card that suggests ${card.meaning.upright.toLowerCase()}. In relation to your original question${originalQuestion ? ` about "${originalQuestion}"` : ''}, this card encourages you to embrace change and trust the process.`
+    ];
+
+    return responses[Math.floor(Math.random() * responses.length)];
+  };
+
+  const startNewReading = () => {
+    setSelectedCard(null);
+    setShowReading(false);
+    setChatMessages([]);
     setQuestion('');
-    setIsReadingStarted(false);
-    setIsCardDrawn(false);
-    setIsReadingComplete(false);
+    setCurrentStep('question');
+    sessionStorage.removeItem('tarot-question');
   };
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center p-6 relative overflow-hidden">
-      {/* Enhanced mystical background */}
-      <MysticalParticles count={25} />
-      <FloatingRunes />
+    <div className="min-h-screen relative overflow-hidden">
+      <MysticalParticles />
       
-      {/* Dynamic background gradient */}
-      <motion.div 
-        className="absolute inset-0 bg-gradient-to-br from-purple-900/20 via-indigo-900/10 to-violet-900/20 pointer-events-none"
-        animate={{
-          opacity: [0.4, 0.8, 0.4],
-        }}
-        transition={{
-          duration: 6,
-          repeat: Infinity,
-          ease: "easeInOut"
-        }}
-      />
-      
-      {/* Animated title */}
-      <AnimatedContainer className="relative z-10 mb-8">
-        <motion.h1 
-          className="mystical-title mb-6"
-          animate={{
-            textShadow: [
-              "0 0 10px rgba(147, 51, 234, 0.5)",
-              "0 0 20px rgba(147, 51, 234, 0.8)",
-              "0 0 10px rgba(147, 51, 234, 0.5)"
-            ]
-          }}
-          transition={{
-            duration: 3,
-            repeat: Infinity
-          }}
-        >
-          Single Card Reading
-        </motion.h1>
-      </AnimatedContainer>
-      
-      <div className="relative z-10 w-full max-w-4xl">
+      <div className="container mx-auto px-4 py-8 relative z-10">
+        {/* Header */}
+        <div className="flex items-center justify-between mb-8">
+          <Button 
+            variant="ghost" 
+            onClick={() => router.push('/')}
+            className="flex items-center gap-2"
+          >
+            <ArrowLeft className="w-4 h-4" />
+            Back to Home
+          </Button>
+          
+          <div className="flex items-center gap-2">
+            <Sparkles className="w-6 h-6 text-accent" />
+            <h1 className="text-2xl font-bold">Single Card Reading</h1>
+          </div>
+          
+          <Button 
+            variant="outline" 
+            onClick={startNewReading}
+            className="flex items-center gap-2"
+          >
+            <RefreshCw className="w-4 h-4" />
+            New Reading
+          </Button>
+        </div>
+
         <AnimatePresence mode="wait">
-          {!isReadingStarted ? (
-            <motion.div 
-              key="question-phase"
-              className="mystical-card max-w-md w-full mx-auto"
-              initial={{ opacity: 0, scale: 0.8, y: 50 }}
-              animate={{ opacity: 1, scale: 1, y: 0 }}
-              exit={{ opacity: 0, scale: 0.8, y: -50 }}
-              transition={{ type: "spring", stiffness: 200, damping: 20 }}
+          {/* Question Display/Input */}
+          {currentStep === 'question' && (
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -20 }}
+              className="max-w-2xl mx-auto"
             >
-              <motion.div
-                animate={{
-                  boxShadow: [
-                    "0 0 20px rgba(147, 51, 234, 0.3)",
-                    "0 0 40px rgba(147, 51, 234, 0.6)",
-                    "0 0 20px rgba(147, 51, 234, 0.3)"
-                  ]
-                }}
-                transition={{
-                  duration: 4,
-                  repeat: Infinity
-                }}
-                className="p-6 rounded-lg"
-              >
-                <AnimatedContainer delay={0.2}>
-                  <h2 className="mystical-subtitle mb-4">What question seeks answer?</h2>
-                </AnimatedContainer>
-                
-                <AnimatedContainer delay={0.4}>
-                  <p className="mb-6 text-sm">
-                    Focus your energy and intention as you prepare to draw a card.
-                    You may ask a specific question or simply reflect on your current situation.
-                  </p>
-                </AnimatedContainer>
-                
-                <AnimatedContainer delay={0.6}>
-                  <motion.textarea
-                    className="mystical-input w-full mb-4 min-h-20"
-                    placeholder="Enter your question here... (optional)"
-                    value={question}
-                    onChange={(e) => setQuestion(e.target.value)}
-                    whileFocus={{
-                      boxShadow: "0 0 15px rgba(147, 51, 234, 0.5)",
-                      borderColor: "rgba(147, 51, 234, 0.8)"
-                    }}
-                  />
-                </AnimatedContainer>
-                
-                <AnimatedContainer delay={0.8}>
-                  <MysticalButton 
-                    className="mystical-button w-full"
-                    onClick={startReading}
-                  >
-                    Begin Reading
-                  </MysticalButton>
-                </AnimatedContainer>
-              </motion.div>
+              <Card className="border-primary/30 bg-card/70 backdrop-blur-md">
+                <CardHeader className="text-center">
+                  <CardTitle className="text-2xl flex items-center justify-center gap-2">
+                    <Heart className="w-6 h-6 text-accent" />
+                    What guidance do you seek?
+                  </CardTitle>
+                  <CardDescription>
+                    Focus your intention and ask the universe for guidance
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <div className="space-y-4">
+                    <Textarea
+                      placeholder="What question would you like the cards to answer?"
+                      value={question}
+                      onChange={(e) => setQuestion(e.target.value)}
+                      className="min-h-[100px] bg-background/50 border-primary/20"
+                    />
+                    <Button 
+                      onClick={() => setCurrentStep('draw')}
+                      variant="mystical" 
+                      size="lg"
+                      className="w-full"
+                    >
+                      <Sparkles className="w-5 h-5 mr-2" />
+                      Continue to Card Draw
+                    </Button>
+                  </div>
+                </CardContent>
+              </Card>
             </motion.div>
-          ) : (
-            <motion.div 
-              key="reading-phase"
-              className="w-full flex flex-col items-center"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ duration: 0.8 }}
+          )}
+
+          {/* Card Drawing */}
+          {currentStep === 'draw' && (
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -20 }}
+              className="text-center"
             >
               {question && (
                 <motion.div 
-                  className="mb-6 italic text-mystical-light/70 text-center max-w-md"
-                  initial={{ opacity: 0, y: -20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.3 }}
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  className="mb-8"
                 >
-                  <motion.span
-                    animate={{
-                      textShadow: [
-                        "0 0 5px rgba(251, 191, 36, 0.5)",
-                        "0 0 10px rgba(251, 191, 36, 0.8)",
-                        "0 0 5px rgba(251, 191, 36, 0.5)"
-                      ]
-                    }}
-                    transition={{
-                      duration: 2,
-                      repeat: Infinity
-                    }}
-                  >
-                    "{question}"
-                  </motion.span>
+                  <Card className="max-w-2xl mx-auto border-accent/20 bg-card/50">
+                    <CardContent className="p-6">
+                      <p className="text-lg font-medium mb-2">Your Question:</p>
+                      <p className="text-muted-foreground italic">"{question}"</p>
+                    </CardContent>
+                  </Card>
                 </motion.div>
               )}
-              
-              <div className="w-full flex flex-col items-center justify-center mb-8">
-                <AnimatePresence mode="wait">
-                  {!isCardDrawn ? (
-                    <motion.div 
-                      key="draw-phase"
-                      className="text-center"
-                      initial={{ opacity: 0, scale: 0.8 }}
-                      animate={{ opacity: 1, scale: 1 }}
-                      exit={{ opacity: 0, scale: 0.8 }}
-                      transition={{ type: "spring", stiffness: 200 }}
-                    >
-                      <motion.p 
-                        className="mystical-subtitle mb-6"
-                        animate={{
-                          y: [0, -5, 0],
-                        }}
-                        transition={{
-                          duration: 2,
-                          repeat: Infinity,
-                          ease: "easeInOut"
-                        }}
-                      >
-                        Focus your energy and draw your card
-                      </motion.p>
-                      
-                      <motion.div
-                        animate={{
-                          scale: [1, 1.1, 1],
-                          boxShadow: [
-                            "0 0 20px rgba(251, 191, 36, 0.5)",
-                            "0 0 40px rgba(251, 191, 36, 0.8)",
-                            "0 0 20px rgba(251, 191, 36, 0.5)"
-                          ]
-                        }}
-                        transition={{
-                          duration: 2,
-                          repeat: Infinity
-                        }}
-                      >
-                        <MysticalButton 
-                          className="mystical-button"
-                          onClick={drawCard}
-                        >
-                          Draw Card
-                        </MysticalButton>
-                      </motion.div>
-                    </motion.div>
-                  ) : (
-                    <motion.div 
-                      key="card-phase"
-                      className="max-w-xs w-full"
-                      initial={{ opacity: 0, rotateY: -90 }}
-                      animate={{ opacity: 1, rotateY: 0 }}
-                      transition={{ 
-                        type: "spring", 
-                        stiffness: 100, 
-                        damping: 15,
-                        delay: 0.5 
-                      }}
-                    >
-                      {card && (
+
+              <div className="max-w-md mx-auto">
+                <motion.div
+                  className="relative mb-8"
+                  animate={isDrawing ? { scale: [1, 1.1, 1] } : {}}
+                  transition={{ duration: 0.5, repeat: isDrawing ? Infinity : 0 }}
+                >
+                  <div className="w-48 h-72 mx-auto bg-gradient-to-b from-primary/20 to-accent/20 rounded-lg border-2 border-primary/30 flex items-center justify-center cosmic-pulse">
+                    {isDrawing ? (
+                      <div className="text-center">
+                        <div className="w-8 h-8 border-2 border-accent border-t-transparent rounded-full animate-spin mx-auto mb-4" />
+                        <p className="text-accent">Drawing your card...</p>
+                      </div>
+                    ) : (
+                      <Sparkles className="w-16 h-16 text-primary" />
+                    )}
+                  </div>
+                </motion.div>
+
+                <Button 
+                  onClick={drawCard}
+                  disabled={isDrawing}
+                  variant="mystical"
+                  size="xl"
+                  className="cosmic-pulse"
+                >
+                  {isDrawing ? 'Drawing...' : 'Draw Your Card'}
+                </Button>
+              </div>
+            </motion.div>
+          )}
+
+          {/* Card Reading */}
+          {(currentStep === 'reading' || currentStep === 'chat') && selectedCard && (
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              className="grid lg:grid-cols-2 gap-8"
+            >
+              {/* Card Display */}
+              <div className="space-y-6">
+                {question && (
+                  <Card className="border-accent/20 bg-card/50">
+                    <CardContent className="p-6">
+                      <p className="text-sm font-medium mb-2">Your Question:</p>
+                      <p className="text-muted-foreground italic">"{question}"</p>
+                    </CardContent>
+                  </Card>
+                )}
+
+                <motion.div
+                  initial={{ scale: 0, rotate: 180 }}
+                  animate={{ scale: 1, rotate: 0 }}
+                  transition={{ type: "spring", stiffness: 300, damping: 20 }}
+                  className="text-center"
+                >
+                  <Card className="border-primary/30 bg-card/70 backdrop-blur-md">
+                    <CardContent className="p-6">
+                      <div className="relative w-64 h-96 mx-auto mb-6">
+                        <img
+                          src={selectedCard.imagePath}
+                          alt={selectedCard.name}
+                          className="w-full h-full object-cover rounded-lg shadow-lg cosmic-pulse"
+                        />
+                      </div>
+                      <h2 className="text-2xl font-bold mb-2 text-accent">{selectedCard.name}</h2>
+                      <p className="text-muted-foreground">{selectedCard.meaning.upright}</p>
+                    </CardContent>
+                  </Card>
+                </motion.div>
+              </div>
+
+              {/* Chat Interface */}
+              <div className="space-y-6">
+                <Card className="border-primary/30 bg-card/70 backdrop-blur-md h-[600px] flex flex-col">
+                  <CardHeader>
+                    <CardTitle className="flex items-center gap-2">
+                      <MessageCircle className="w-5 h-5 text-accent" />
+                      AI Oracle Chat
+                    </CardTitle>
+                    <CardDescription>
+                      Discuss your reading with our mystical AI guide
+                    </CardDescription>
+                  </CardHeader>
+                  
+                  <CardContent className="flex-1 flex flex-col p-0">
+                    {/* Messages */}
+                    <div className="flex-1 overflow-y-auto p-6 space-y-4">
+                      {chatMessages.map((message) => (
                         <motion.div
-                          animate={{
-                            y: [0, -10, 0],
-                          }}
-                          transition={{
-                            duration: 3,
-                            repeat: Infinity,
-                            ease: "easeInOut"
-                          }}
+                          key={message.id}
+                          initial={{ opacity: 0, y: 10 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          className={`flex gap-3 ${message.role === 'user' ? 'justify-end' : 'justify-start'}`}
                         >
-                          <TarotCard 
-                            card={card}
-                            isReversed={isReversed}
-                            isFlipped={isFlipped}
-                            className="mx-auto"
-                          />
+                          <div className={`flex gap-3 max-w-[80%] ${message.role === 'user' ? 'flex-row-reverse' : 'flex-row'}`}>
+                            <div className={`w-8 h-8 rounded-full flex items-center justify-center ${
+                              message.role === 'user' ? 'bg-primary' : 'bg-accent'
+                            }`}>
+                              {message.role === 'user' ? <User className="w-4 h-4" /> : <Bot className="w-4 h-4" />}
+                            </div>
+                            <div className={`rounded-lg p-3 ${
+                              message.role === 'user' 
+                                ? 'bg-primary text-primary-foreground' 
+                                : 'bg-muted text-muted-foreground'
+                            }`}>
+                              <pre className="whitespace-pre-wrap font-sans text-sm">{message.content}</pre>
+                            </div>
+                          </div>
+                        </motion.div>
+                      ))}
+                      
+                      {isThinking && (
+                        <motion.div
+                          initial={{ opacity: 0 }}
+                          animate={{ opacity: 1 }}
+                          className="flex gap-3 justify-start"
+                        >
+                          <div className="w-8 h-8 rounded-full bg-accent flex items-center justify-center">
+                            <Bot className="w-4 h-4" />
+                          </div>
+                          <div className="bg-muted rounded-lg p-3">
+                            <div className="flex gap-1">
+                              <div className="w-2 h-2 bg-current rounded-full animate-pulse"></div>
+                              <div className="w-2 h-2 bg-current rounded-full animate-pulse" style={{ animationDelay: '0.2s' }}></div>
+                              <div className="w-2 h-2 bg-current rounded-full animate-pulse" style={{ animationDelay: '0.4s' }}></div>
+                            </div>
+                          </div>
                         </motion.div>
                       )}
-                    </motion.div>
-                  )}
-                </AnimatePresence>
-              </div>
-              
-              <AnimatePresence>
-                {isReadingComplete && (
-                  <motion.div 
-                    className="mystical-card p-6 max-w-md w-full text-center mt-6"
-                    initial={{ opacity: 0, y: 50, scale: 0.8 }}
-                    animate={{ opacity: 1, y: 0, scale: 1 }}
-                    transition={{ 
-                      type: "spring", 
-                      stiffness: 200, 
-                      damping: 20,
-                      delay: 0.3 
-                    }}
-                  >
-                    <motion.div
-                      animate={{
-                        boxShadow: [
-                          "0 0 20px rgba(147, 51, 234, 0.3)",
-                          "0 0 30px rgba(147, 51, 234, 0.5)",
-                          "0 0 20px rgba(147, 51, 234, 0.3)"
-                        ]
-                      }}
-                      transition={{
-                        duration: 3,
-                        repeat: Infinity
-                      }}
-                      className="p-6 rounded-lg"
-                    >
-                      <motion.h2 
-                        className="mystical-subtitle mb-4"
-                        animate={{
-                          textShadow: [
-                            "0 0 5px rgba(251, 191, 36, 0.5)",
-                            "0 0 15px rgba(251, 191, 36, 0.8)",
-                            "0 0 5px rgba(251, 191, 36, 0.5)"
-                          ]
-                        }}
-                        transition={{
-                          duration: 2,
-                          repeat: Infinity
-                        }}
+                    </div>
+                    
+                    {/* Message Input */}
+                    <div className="border-t border p-4">
+                      <form 
+                        onSubmit={(e) => { e.preventDefault(); handleSendMessage(); }}
+                        className="flex gap-2"
                       >
-                        {isReversed ? 'Reversed' : 'Upright'} {card?.name}
-                      </motion.h2>
-                      
-                      <AnimatedContainer delay={0.2}>
-                        <div className="mb-6">
-                          <p className="mb-4">
-                            The {card?.name} represents {isReversed ? card?.meaning.reversed.toLowerCase() : card?.meaning.upright.toLowerCase()}.
-                          </p>
-                          <p className="text-sm text-mystical-light/70">
-                            Reflect on how this card's energy relates to your question or current situation.
-                          </p>
-                        </div>
-                      </AnimatedContainer>
-                      
-                      <AnimatedContainer delay={0.4}>
-                        <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                          <MysticalButton 
-                            className="mystical-button bg-opacity-50 hover:bg-opacity-70"
-                            onClick={newReading}
-                          >
-                            New Reading
-                          </MysticalButton>
-                          
-                          <MysticalButton className="mystical-button">
-                            <Link href="/">Return Home</Link>
-                          </MysticalButton>
-                        </div>
-                      </AnimatedContainer>
-                    </motion.div>
-                  </motion.div>
-                )}
-              </AnimatePresence>
+                        <Textarea
+                          placeholder="Ask about your reading..."
+                          value={newMessage}
+                          onChange={(e) => setNewMessage(e.target.value)}
+                          className="min-h-[60px] resize-none"
+                          onKeyDown={(e) => {
+                            if (e.key === 'Enter' && !e.shiftKey) {
+                              e.preventDefault();
+                              handleSendMessage();
+                            }
+                          }}
+                        />
+                        <Button 
+                          type="submit" 
+                          size="icon"
+                          disabled={!newMessage.trim() || isThinking}
+                          className="self-end"
+                        >
+                          <Send className="w-4 h-4" />
+                        </Button>
+                      </form>
+                    </div>
+                  </CardContent>
+                </Card>
+              </div>
             </motion.div>
           )}
         </AnimatePresence>
