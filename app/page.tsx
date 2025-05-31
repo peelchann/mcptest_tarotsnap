@@ -107,10 +107,10 @@ export default function HomePage() {
             <span className="text-accent font-semibold text-lg">TarotSnap</span>
           </div>
           
-          <h1 className="text-5xl md:text-7xl font-bold mb-6 bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
+          <h1 className="text-5xl md:text-7xl font-bold mb-6 text-gold-400 drop-shadow-[0_2px_8px_rgba(200,173,127,0.5)]">
             Unlock the Mysteries
             <br />
-            <span className="text-4xl md:text-6xl">of Your Future</span>
+            <span className="text-4xl md:text-6xl text-gold-400">of Your Future</span>
           </h1>
           
           <p className="text-xl text-muted-foreground max-w-2xl mx-auto mb-8">
