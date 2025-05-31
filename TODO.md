@@ -26,21 +26,21 @@
 
 ## 🎯 **PHASE 1: FUNCTIONAL MVP (Week 1-2) - IMMEDIATE PRIORITY**
 
-### 🔥 **P1: OpenAI Integration - Day 1-2** 
+### 🔥 **P1: Claude 3.5 Sonnet Integration - Day 1-2** 
 **Status:** ❌ **BLOCKING - START TODAY**
-- **Decision:** Start with OpenAI GPT-3.5 Turbo (cost-effective, reliable)
+- **Decision:** Claude 3.5 Sonnet (superior creative writing, mystical tone)
 - **Tasks:**
-  - Install OpenAI SDK: `npm install openai`
-  - Create environment variable setup for API key
+  - Install Anthropic SDK: `npm install @anthropic-ai/sdk`
+  - Create environment variable setup for Claude API key
   - Create API route: `app/api/reading/route.ts`
   - Design tarot reading prompts for authentic mystical experience
-  - Test prompt engineering with sample questions
+  - Test prompt engineering with sample questions (Claude excels at creative content)
 - **Files to Create:**
   - `app/api/reading/route.ts`
-  - `lib/openai.ts` (AI client configuration)
-  - `lib/tarot-prompts.ts` (prompt templates)
-  - `.env.local` (API key storage)
-- **Success Criteria:** API returns meaningful tarot readings for user questions
+  - `lib/claude.ts` (Claude client configuration)
+  - `lib/tarot-prompts.ts` (prompt templates optimized for Claude)
+  - `.env.local` (ANTHROPIC_API_KEY storage)
+- **Success Criteria:** Claude returns flowing, mystical tarot readings with authentic tone
 
 ### 🔥 **P2: Frontend-Backend Connection - Day 3-4**
 **Status:** ❌ **HIGH PRIORITY**
@@ -149,16 +149,16 @@
 ## 📋 **IMMEDIATE NEXT ACTIONS (This Week)**
 
 ### **TODAY (Day 1):**
-1. Set up OpenAI account and get API key
-2. Install OpenAI SDK: `npm install openai`
-3. Create basic API route structure
-4. Test simple AI completion with tarot-style prompts
+1. Set up Anthropic account and get Claude API key
+2. Install Anthropic SDK: `npm install @anthropic-ai/sdk`
+3. Create basic API route structure for Claude
+4. Test Claude with tarot-style prompts (focus on mystical tone)
 
 ### **Tomorrow (Day 2):**
-1. Refine prompt engineering for authentic tarot readings
-2. Create structured response format (cards + interpretation)
-3. Test API with various question types
-4. Document prompt templates
+1. Refine prompt engineering for Claude's strengths (creative, flowing language)
+2. Create structured response format optimized for Claude
+3. Test API with various question types (Claude handles nuance well)
+4. Document prompt templates that leverage Claude's creative abilities
 
 ### **Day 3-4:**
 1. Connect frontend single reading page to API
@@ -176,11 +176,13 @@
 
 ## 💡 **KEY STRATEGIC DECISIONS MADE**
 
-### **✅ API Choice: OpenAI GPT-3.5 Turbo**
-- Cost-effective for MVP ($20-50 covers thousands of readings)
-- Reliable and well-documented
-- Good quality for tarot content
-- Easy upgrade path to GPT-4/Claude for premium users
+### **✅ API Choice: Claude 3.5 Sonnet** 
+- **Superior creative writing** for mystical/spiritual content
+- **Excellent tone consistency** - more natural, flowing language
+- **Better safety filtering** - good for tarot/spiritual content
+- **Competitive pricing** - similar to GPT-4 (~$12-35 per 1000 readings)
+- **Longer context windows** - can handle detailed tarot spreads
+- **Easy upgrade path** to Claude 3 Opus for premium users
 
 ### **✅ Freemium Model: Experience First**
 - Free: 3 readings per day (enough to experience value)
@@ -223,6 +225,37 @@
 POST /api/reading
 Body: { question: string, spread?: "single" }
 Response: { cards: Card[], interpretation: string, timestamp: Date }
+// Claude excels at structured JSON responses with creative content
+```
+
+### **Claude-Specific Implementation:**
+```typescript
+// lib/claude.ts
+import Anthropic from '@anthropic-ai/sdk';
+
+const anthropic = new Anthropic({
+  apiKey: process.env.ANTHROPIC_API_KEY,
+});
+
+export async function generateTarotReading(question: string) {
+  const response = await anthropic.messages.create({
+    model: "claude-3-5-sonnet-20241022",
+    max_tokens: 1000,
+    temperature: 0.8, // Higher creativity for mystical content
+    messages: [{
+      role: "user", 
+      content: tarotPrompt + question
+    }]
+  });
+  return response.content;
+}
+```
+
+### **Cost Optimization:**
+```typescript
+// Claude pricing: ~$3 per 1000 input tokens, ~$15 per 1000 output tokens
+// Estimated cost per reading: $0.012-0.035 (competitive with GPT-4)
+// Budget: $50-100/month covers 1500-4000 readings
 ```
 
 ### **Rate Limiting Strategy:**
