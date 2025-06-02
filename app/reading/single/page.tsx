@@ -7,7 +7,7 @@ import { Button } from '@/app/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/app/components/ui/card';
 import { Textarea } from '@/app/components/ui/textarea';
 import { MysticalParticles } from '@/app/components/ui/MysticalParticles';
-import { cards, TarotCard } from '@/app/data/cards';
+import { TarotReading } from '@/lib/openrouter';
 import { 
   Sparkles, 
   MessageCircle, 
@@ -16,7 +16,8 @@ import {
   Send,
   Bot,
   User,
-  Heart
+  Heart,
+  AlertTriangle
 } from 'lucide-react';
 
 interface ChatMessage {
@@ -29,13 +30,15 @@ interface ChatMessage {
 export default function SingleCardReading() {
   const router = useRouter();
   const [question, setQuestion] = useState('');
-  const [selectedCard, setSelectedCard] = useState<TarotCard | null>(null);
+  const [reading, setReading] = useState<TarotReading | null>(null);
   const [isDrawing, setIsDrawing] = useState(false);
   const [showReading, setShowReading] = useState(false);
   const [chatMessages, setChatMessages] = useState<ChatMessage[]>([]);
   const [newMessage, setNewMessage] = useState('');
   const [isThinking, setIsThinking] = useState(false);
   const [currentStep, setCurrentStep] = useState<'question' | 'draw' | 'reading' | 'chat'>('question');
+  const [error, setError] = useState<string | null>(null);
+  const [rateLimited, setRateLimited] = useState(false);
 
   useEffect(() => {
     // Get question from session storage
@@ -47,56 +50,66 @@ export default function SingleCardReading() {
   }, []);
 
   const drawCard = async () => {
+    if (!question.trim()) {
+      setError('Please enter a question before drawing your card.');
+      return;
+    }
+
     setIsDrawing(true);
+    setError(null);
     
-    // Simulate card drawing with mystical delay
-    setTimeout(() => {
-      const randomCard = cards[Math.floor(Math.random() * cards.length)];
-      setSelectedCard(randomCard);
+    try {
+      const response = await fetch('/api/reading', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          question: question.trim()
+        }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        if (response.status === 429) {
+          setRateLimited(true);
+          setError(data.error || 'Daily reading limit reached. Please try again tomorrow.');
+        } else {
+          setError(data.error || 'Failed to generate reading. Please try again.');
+        }
+        setIsDrawing(false);
+        return;
+      }
+
+      // Successfully got reading
+      setReading(data.reading);
       setIsDrawing(false);
       setShowReading(true);
       setCurrentStep('reading');
       
-      // Add initial AI interpretation
-      const initialReading = generateCardReading(randomCard, question);
-      setChatMessages([{
+      // Add initial AI interpretation to chat
+      const initialMessage: ChatMessage = {
         id: Date.now().toString(),
         role: 'assistant',
-        content: initialReading,
+        content: data.reading.interpretation,
         timestamp: new Date()
-      }]);
+      };
       
+      setChatMessages([initialMessage]);
+      
+      // Transition to chat after showing reading
       setTimeout(() => setCurrentStep('chat'), 2000);
-    }, 2000);
-  };
-
-  const generateCardReading = (card: TarotCard, userQuestion: string) => {
-    const questionContext = userQuestion ? 
-      `Regarding your question: "${userQuestion}"` : 
-      "For your general guidance today";
-    
-    return `${questionContext}
-
-**${card.name}** has appeared to guide you.
-
-${card.meaning.upright}
-
-**Key Insights:**
-• This card suggests ${card.name.toLowerCase()} energy is present in your situation
-• Pay attention to themes of ${card.keywords.join(', ')}
-• The universe is encouraging you to embrace this card's wisdom
-
-**For deeper understanding, feel free to ask me specific questions about:**
-- How this card relates to your current situation
-- What actions you should take based on this guidance
-- Specific aspects of the card's symbolism
-- Follow-up questions about your path forward
-
-What would you like to explore further about this reading?`;
+      
+    } catch (error) {
+      console.error('Error drawing card:', error);
+      setError('Unable to connect to reading service. Please check your connection and try again.');
+      setIsDrawing(false);
+    }
   };
 
   const handleSendMessage = async () => {
-    if (!newMessage.trim() || !selectedCard) return;
+    if (!newMessage.trim() || !reading) return;
 
     const userMessage: ChatMessage = {
       id: Date.now().toString(),
@@ -109,42 +122,73 @@ What would you like to explore further about this reading?`;
     setNewMessage('');
     setIsThinking(true);
 
-    // Simulate AI response
-    setTimeout(() => {
-      const aiResponse = generateAIResponse(newMessage, selectedCard, question);
-      const assistantMessage: ChatMessage = {
+    try {
+      // Create a follow-up question context
+      const followUpContext = `Previous reading context:
+Original question: "${question}"
+Card drawn: ${reading.card}
+Card meaning: ${reading.meaning}
+Previous interpretation: ${reading.interpretation}
+
+User's follow-up question: ${userMessage.content}
+
+Please provide a thoughtful response that builds on the previous reading and addresses their specific question.`;
+
+      const response = await fetch('/api/reading', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          question: followUpContext
+        }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        // Handle API errors gracefully
+        const errorMessage = data.error || 'Unable to get response. Please try again.';
+        const assistantMessage: ChatMessage = {
+          id: (Date.now() + 1).toString(),
+          role: 'assistant',
+          content: `I apologize, but I'm having trouble responding right now. ${errorMessage}`,
+          timestamp: new Date()
+        };
+        setChatMessages(prev => [...prev, assistantMessage]);
+      } else {
+        // Use the new interpretation as the response
+        const assistantMessage: ChatMessage = {
+          id: (Date.now() + 1).toString(),
+          role: 'assistant',
+          content: data.reading.interpretation,
+          timestamp: new Date()
+        };
+        setChatMessages(prev => [...prev, assistantMessage]);
+      }
+
+    } catch (error) {
+      console.error('Error sending message:', error);
+      const errorMessage: ChatMessage = {
         id: (Date.now() + 1).toString(),
         role: 'assistant',
-        content: aiResponse,
+        content: 'I apologize, but I\'m having trouble connecting right now. Please try your question again in a moment.',
         timestamp: new Date()
       };
-
-      setChatMessages(prev => [...prev, assistantMessage]);
+      setChatMessages(prev => [...prev, errorMessage]);
+    } finally {
       setIsThinking(false);
-    }, 1500);
-  };
-
-  const generateAIResponse = (userMessage: string, card: TarotCard, originalQuestion: string) => {
-    // This would be replaced with actual AI integration
-    const responses = [
-      `Great question! In the context of **${card.name}**, this suggests that you should focus on ${card.meaning.upright.toLowerCase()}. The card's energy encourages you to trust your intuition and move forward with confidence.`,
-      
-      `The **${card.name}** speaks directly to your concern. This card often appears when ${card.meaning.upright.toLowerCase()}. Consider how this applies to your current situation and what steps you can take to align with this energy.`,
-      
-      `Interesting perspective! **${card.name}** in your reading indicates that ${card.meaning.upright.toLowerCase()}. The universe is guiding you to pay attention to the themes of ${card.keywords.join(', ')} that this card represents.`,
-      
-      `Thank you for sharing that. **${card.name}** is a powerful card that suggests ${card.meaning.upright.toLowerCase()}. In relation to your original question${originalQuestion ? ` about "${originalQuestion}"` : ''}, this card encourages you to embrace change and trust the process.`
-    ];
-
-    return responses[Math.floor(Math.random() * responses.length)];
+    }
   };
 
   const startNewReading = () => {
-    setSelectedCard(null);
+    setReading(null);
     setShowReading(false);
     setChatMessages([]);
     setQuestion('');
     setCurrentStep('question');
+    setError(null);
+    setRateLimited(false);
     sessionStorage.removeItem('tarot-question');
   };
 
@@ -179,6 +223,29 @@ What would you like to explore further about this reading?`;
           </Button>
         </div>
 
+        {/* Error Display */}
+        {error && (
+          <motion.div
+            initial={{ opacity: 0, y: -10 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="max-w-2xl mx-auto mb-6"
+          >
+            <Card className="border-red-500/50 bg-red-50/10">
+              <CardContent className="p-4">
+                <div className="flex items-center gap-2 text-red-400">
+                  <AlertTriangle className="w-5 h-5" />
+                  <p>{error}</p>
+                </div>
+                {rateLimited && (
+                  <p className="text-sm text-muted-foreground mt-2">
+                    You can have 3 free readings per day. Consider signing up for unlimited access.
+                  </p>
+                )}
+              </CardContent>
+            </Card>
+          </motion.div>
+        )}
+
         <AnimatePresence mode="wait">
           {/* Question Display/Input */}
           {currentStep === 'question' && (
@@ -205,12 +272,17 @@ What would you like to explore further about this reading?`;
                       value={question}
                       onChange={(e) => setQuestion(e.target.value)}
                       className="min-h-[100px] bg-background/50 border-primary/20"
+                      maxLength={500}
                     />
+                    <div className="text-right text-sm text-muted-foreground">
+                      {question.length}/500 characters
+                    </div>
                     <Button 
                       onClick={() => setCurrentStep('draw')}
                       variant="mystical" 
                       size="lg"
                       className="w-full"
+                      disabled={question.trim().length < 5}
                     >
                       <Sparkles className="w-5 h-5 mr-2" />
                       Continue to Card Draw
@@ -254,7 +326,7 @@ What would you like to explore further about this reading?`;
                     {isDrawing ? (
                       <div className="text-center">
                         <div className="w-8 h-8 border-2 border-accent border-t-transparent rounded-full animate-spin mx-auto mb-4" />
-                        <p className="text-accent">Drawing your card...</p>
+                        <p className="text-accent">Consulting the cosmos...</p>
                       </div>
                     ) : (
                       <Sparkles className="w-16 h-16 text-primary" />
@@ -276,7 +348,7 @@ What would you like to explore further about this reading?`;
           )}
 
           {/* Card Reading */}
-          {(currentStep === 'reading' || currentStep === 'chat') && selectedCard && (
+          {(currentStep === 'reading' || currentStep === 'chat') && reading && (
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
@@ -301,15 +373,37 @@ What would you like to explore further about this reading?`;
                 >
                   <Card className="border-primary/30 bg-card/70 backdrop-blur-md">
                     <CardContent className="p-6">
-                      <div className="relative w-64 h-96 mx-auto mb-6">
-                        <img
-                          src={selectedCard.imagePath}
-                          alt={selectedCard.name}
-                          className="w-full h-full object-cover rounded-lg shadow-lg cosmic-pulse"
-                        />
+                      <div className="relative w-64 h-96 mx-auto mb-6 bg-gradient-to-b from-primary/20 to-accent/20 rounded-lg border-2 border-primary/30 flex items-center justify-center">
+                        <div className="text-center text-primary">
+                          <Sparkles className="w-16 h-16 mx-auto mb-4" />
+                          <p className="text-lg font-medium">{reading.card}</p>
+                        </div>
                       </div>
-                      <h2 className="text-2xl font-bold mb-2 text-accent">{selectedCard.name}</h2>
-                      <p className="text-muted-foreground">{selectedCard.meaning.upright}</p>
+                      <h2 className="text-2xl font-bold mb-2 text-accent">{reading.card}</h2>
+                      <p className="text-muted-foreground">{reading.meaning}</p>
+                      
+                      {/* Reading Details */}
+                      <div className="mt-6 space-y-4 text-left">
+                        <div>
+                          <h3 className="font-semibold text-accent mb-2">Interpretation</h3>
+                          <p className="text-sm text-muted-foreground">{reading.interpretation}</p>
+                        </div>
+                        
+                        <div>
+                          <h3 className="font-semibold text-accent mb-2">Guidance</h3>
+                          <p className="text-sm text-muted-foreground">{reading.guidance}</p>
+                        </div>
+                        
+                        <div>
+                          <h3 className="font-semibold text-accent mb-2">Energy</h3>
+                          <p className="text-sm text-muted-foreground">{reading.energy}</p>
+                        </div>
+                        
+                        <div>
+                          <h3 className="font-semibold text-accent mb-2">Timeframe</h3>
+                          <p className="text-sm text-muted-foreground">{reading.timeframe}</p>
+                        </div>
+                      </div>
                     </CardContent>
                   </Card>
                 </motion.div>
