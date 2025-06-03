@@ -1,5 +1,234 @@
 ---
-description:
-globs:
+description: 
+globs: 
 alwaysApply: false
 ---
+# Memory Bank Core Command Execution Rules
+
+**System Purpose:** Provide structured development workflow through custom Cursor modes  
+**Project:** TarotSnap - AI-powered tarot reading application  
+**Current Focus:** Phase 1 - Claude 3.5 Sonnet Integration  
+
+---
+
+## 🎯 **COMMAND DETECTION & ROUTING**
+
+### **Mode Commands**
+When user types any of these commands, immediately respond and load appropriate mode:
+
+- **"VAN"** → VAN Mode (Project initialization and context setup)
+- **"PLAN"** → PLAN Mode (Task planning and sprint organization)  
+- **"CREATIVE"** → CREATIVE Mode (Design decisions and architectural choices)
+- **"IMPLEMENT"** → IMPLEMENT Mode (Code implementation workflow)
+- **"QA"** → QA Mode (Testing and validation)
+
+### **Command Response Pattern**
+1. **Immediate Acknowledgment:** "OK [MODE]" 
+2. **Memory Bank Check:** Read current state from Memory Bank files
+3. **Mode Map Loading:** Load appropriate visual map for workflow guidance
+4. **Context Application:** Apply current project context and task focus
+5. **Process Execution:** Follow mode-specific workflow
+
+---
+
+## 📚 **MEMORY BANK FILE SYSTEM**
+
+### **Core Memory Files (Always Read First)**
+```
+read_file({
+  target_file: "tasks.md",
+  should_read_entire_file: true
+})
+
+read_file({
+  target_file: "activeContext.md", 
+  should_read_entire_file: true
+})
+
+read_file({
+  target_file: "progress.md",
+  should_read_entire_file: true
+})
+
+read_file({
+  target_file: "projectbrief.md",
+  should_read_entire_file: true
+})
+```
+
+### **Mode-Specific Rule Loading**
+After reading Memory Bank files, load the appropriate mode map:
+
+**For IMPLEMENT Mode:**
+```
+read_file({
+  target_file: ".cursor/rules/isolation_rules/visual-maps/implement-mode-map.mdc",
+  should_read_entire_file: true
+})
+```
+
+---
+
+## 🔄 **WORKFLOW EXECUTION PRINCIPLES**
+
+### **1. Context Continuity**
+- Always read Memory Bank files before starting any mode
+- Maintain awareness of current project phase and active tasks
+- Preserve context across sessions and mode transitions
+- Update Memory Bank files after significant progress
+
+### **2. Task-Driven Focus**
+- Identify current active task from tasks.md
+- Apply complexity level (Level 1-4) appropriate workflow
+- Focus on single task completion before mode transitions
+- Document progress and blockers clearly
+
+### **3. Quality Assurance**
+- Follow verification checklists for each complexity level
+- Ensure code quality meets project standards
+- Test functionality before marking tasks complete
+- Update documentation and progress tracking
+
+### **4. Mode Isolation**
+- Each mode has specific purpose and workflow
+- Load only relevant rules for current mode
+- Avoid mixing mode responsibilities
+- Clear transition triggers between modes
+
+---
+
+## 🎯 **CURRENT PROJECT CONTEXT APPLICATION**
+
+### **TarotSnap Specific Context**
+- **Tech Stack:** Next.js 14, TypeScript, Tailwind CSS, Claude 3.5 Sonnet
+- **Current Phase:** Phase 1 - AI Integration 
+- **Active Task:** T001 - Claude API Integration (Level 3 complexity)
+- **Priority:** Transform UI prototype into functional AI application
+
+### **Development Philosophy**
+- **Functional over perfect** - working features > polished animations
+- **Simplicity first** - follow existing cursor coding rules
+- **Experience-driven** - focus on user value and mystical authenticity
+- **Iterative approach** - complete small working increments
+
+### **Success Criteria**
+- Claude API returns mystical, authentic tarot readings
+- Frontend connects seamlessly to AI backend
+- Response times under 3 seconds
+- User experience maintains mystical theme
+- Code quality follows TypeScript strict mode
+
+---
+
+## 🚨 **ERROR HANDLING & RECOVERY**
+
+### **Common Issues & Solutions**
+
+#### **API Integration Errors**
+- **Issue:** Claude API connection failures
+- **Solution:** Implement retry logic and graceful error messages
+- **Fallback:** Temporary mock responses during development
+
+#### **Frontend-Backend Mismatches**
+- **Issue:** Response format doesn't match frontend expectations
+- **Solution:** Create TypeScript interfaces for API contracts
+- **Prevention:** Test integration early and often
+
+#### **Memory Bank File Issues**
+- **Issue:** Missing or corrupted Memory Bank files
+- **Solution:** Recreate from current project state
+- **Prevention:** Regular updates after each task completion
+
+### **Mode Transition Errors**
+- **Issue:** Attempting mode switch with incomplete current task
+- **Solution:** Complete verification checklist first
+- **Override:** Use CREATIVE mode for design decision blockers
+
+---
+
+## 📋 **VERIFICATION REQUIREMENTS**
+
+### **Before Mode Transitions**
+- [ ] Current task status updated in tasks.md
+- [ ] Progress documented in progress.md
+- [ ] Active context reflects current state
+- [ ] Any blockers or decisions documented
+
+### **For Task Completion**
+- [ ] All acceptance criteria met
+- [ ] Code follows project standards
+- [ ] No TypeScript errors or warnings
+- [ ] Functionality tested and verified
+- [ ] Documentation updated
+
+### **For Phase Completion**
+- [ ] All phase tasks completed
+- [ ] Sprint retrospective documented
+- [ ] Next phase context prepared
+- [ ] Stakeholder communication completed
+
+---
+
+## 🔄 **MODE TRANSITION MATRIX**
+
+### **Current Mode → Target Mode**
+
+**IMPLEMENT → QA**
+- **Trigger:** Task implementation complete, needs testing
+- **Requirement:** Verification checklist satisfied
+- **Purpose:** Validate functionality and user experience
+
+**IMPLEMENT → CREATIVE**
+- **Trigger:** Major design decision needed during implementation
+- **Requirement:** Document specific decision point
+- **Purpose:** Resolve architectural or UX design questions
+
+**QA → PLAN**
+- **Trigger:** Current sprint complete, need next sprint planning
+- **Requirement:** All current tasks validated and documented
+- **Purpose:** Plan next development phase
+
+**Any Mode → VAN**
+- **Trigger:** Need project context refresh or new team member onboarding
+- **Requirement:** None (emergency context reset)
+- **Purpose:** Establish or refresh project understanding
+
+---
+
+## 💡 **OPTIMIZATION GUIDELINES**
+
+### **Efficient Rule Loading**
+- Load only current mode rules (avoid memory bloat)
+- Use file reading commands efficiently
+- Cache context between related operations
+- Update Memory Bank incrementally
+
+### **Context Preservation**
+- Always update activeContext.md before long operations
+- Document key decisions in progress.md
+- Maintain task status accuracy in tasks.md
+- Preserve implementation context for handoffs
+
+### **Quality Control**
+- Verify TypeScript compilation before task completion
+- Test user-facing functionality manually
+- Check mobile responsiveness for UI changes
+- Validate API performance benchmarks
+
+---
+
+## 🎯 **IMMEDIATE EXECUTION CONTEXT**
+
+### **For Next Session Starting:**
+- **Mode:** IMPLEMENT 
+- **Task:** T001 - Claude 3.5 Sonnet API Integration
+- **Files to Create:** API route, Claude client, prompt templates
+- **Success Criteria:** Functional AI tarot reading backend
+
+### **Key Implementation Notes:**
+- Focus on Claude's creative writing strengths
+- Design prompts for mystical, authentic tone
+- Ensure response format matches frontend components
+- Test with sample tarot questions for quality
+- Maintain sub-3 second response times
+
