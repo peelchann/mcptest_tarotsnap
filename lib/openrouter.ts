@@ -1,4 +1,5 @@
 import OpenAI from 'openai';
+import { cards } from '@/app/data/cards';
 
 // Lazy initialization function for OpenAI client
 function getOpenAIClient() {
@@ -12,7 +13,7 @@ function getOpenAIClient() {
   });
 }
 
-// Comprehensive tarot card database
+// Comprehensive tarot card database (keeping for reference but not using for readings)
 export const tarotCards = [
   // Major Arcana
   { name: 'The Fool', meaning: 'New beginnings, innocence, spontaneity, free spirit', reversed: 'Recklessness, taken advantage of, inconsideration' },
@@ -66,17 +67,18 @@ export interface TarotReading {
   guidance: string;
   energy: string;
   timeframe: string;
+  imagePath?: string;
 }
 
 export async function generateTarotReading(question: string): Promise<TarotReading> {
   try {
-    // Select a random card
-    const selectedCard = tarotCards[Math.floor(Math.random() * tarotCards.length)];
+    // Select a random card from our Major Arcana deck (cards with images)
+    const selectedCard = cards[Math.floor(Math.random() * cards.length)];
     
     // Enhanced mystical prompt optimized for various AI models
     const prompt = `You are an ancient, wise tarot reader with deep mystical knowledge. A seeker has drawn "${selectedCard.name}" and asks: "${question}"
 
-    The card's traditional meaning: ${selectedCard.meaning}
+    The card's traditional meaning: ${selectedCard.keywords.join(', ')}
 
     Channel your mystical wisdom and provide a reading with these exact sections:
 
@@ -118,11 +120,12 @@ export async function generateTarotReading(question: string): Promise<TarotReadi
 
     return {
       card: selectedCard.name,
-      meaning: selectedCard.meaning,
+      meaning: selectedCard.keywords.join(', '),
       interpretation: sections.interpretation || "The universe speaks through this card with a message tailored just for you.",
       guidance: sections.guidance || "Trust in the wisdom of the cards and follow your intuition.",
       energy: sections.energy || "A mystical energy surrounds you, full of potential and transformation.",
-      timeframe: sections.timeframe || "Divine timing is at work in your situation."
+      timeframe: sections.timeframe || "Divine timing is at work in your situation.",
+      imagePath: selectedCard.imagePath
     };
 
   } catch (error) {

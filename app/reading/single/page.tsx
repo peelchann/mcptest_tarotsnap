@@ -8,6 +8,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/app
 import { Textarea } from '@/app/components/ui/textarea';
 import { MysticalParticles } from '@/app/components/ui/MysticalParticles';
 import { TarotReading } from '@/lib/openrouter';
+import Image from 'next/image';
 import { 
   Sparkles, 
   MessageCircle, 
@@ -373,10 +374,29 @@ Please provide a thoughtful response that builds on the previous reading and add
                 >
                   <Card className="border-primary/30 bg-card/70 backdrop-blur-md">
                     <CardContent className="p-6">
-                      <div className="relative w-64 h-96 mx-auto mb-6 bg-gradient-to-b from-primary/20 to-accent/20 rounded-lg border-2 border-primary/30 flex items-center justify-center">
-                        <div className="text-center text-primary">
-                          <Sparkles className="w-16 h-16 mx-auto mb-4" />
-                          <p className="text-lg font-medium">{reading.card}</p>
+                      <div className="relative w-64 h-96 mx-auto mb-6 rounded-lg border-2 border-primary/30 overflow-hidden">
+                        {reading.imagePath ? (
+                          <Image
+                            src={reading.imagePath}
+                            alt={reading.card}
+                            fill
+                            className="object-cover object-center"
+                            priority
+                            onError={(e) => {
+                              // Fallback to placeholder if image fails to load
+                              const target = e.target as HTMLImageElement;
+                              target.style.display = 'none';
+                              const fallback = target.nextElementSibling as HTMLElement;
+                              if (fallback) fallback.style.display = 'flex';
+                            }}
+                          />
+                        ) : null}
+                        {/* Fallback placeholder */}
+                        <div className="absolute inset-0 bg-gradient-to-b from-primary/20 to-accent/20 flex items-center justify-center text-center text-primary" style={{ display: reading.imagePath ? 'none' : 'flex' }}>
+                          <div>
+                            <Sparkles className="w-16 h-16 mx-auto mb-4" />
+                            <p className="text-lg font-medium">{reading.card}</p>
+                          </div>
                         </div>
                       </div>
                       <h2 className="text-2xl font-bold mb-2 text-accent">{reading.card}</h2>

@@ -25,7 +25,7 @@ export const cards: TarotCard[] = [
       upright: 'New beginnings, innocence, spontaneity, free spirit',
       reversed: 'Recklessness, taken advantage of, inconsideration'
     },
-    imagePath: '/images/tarot/the_fool.png'
+    imagePath: '/images/tarot/the-fool.jpg'
   },
   {
     id: 'the-magician',
@@ -37,7 +37,7 @@ export const cards: TarotCard[] = [
       upright: 'Manifestation, resourcefulness, power, inspired action',
       reversed: 'Manipulation, poor planning, untapped talents'
     },
-    imagePath: '/images/tarot/the_magician.png'
+    imagePath: '/images/tarot/the-magician.jpg'
   },
   {
     id: 'the-high-priestess',
@@ -49,7 +49,7 @@ export const cards: TarotCard[] = [
       upright: 'Intuition, sacred knowledge, divine feminine, the subconscious mind',
       reversed: 'Secrets, disconnected from intuition, withdrawal and silence'
     },
-    imagePath: '/images/tarot/the_high_priestess.png'
+    imagePath: '/images/tarot/the-high-priestess.jpg'
   },
   {
     id: 'the-empress',
@@ -61,7 +61,7 @@ export const cards: TarotCard[] = [
       upright: 'Femininity, beauty, nature, nurturing, abundance',
       reversed: 'Creative block, dependence on others, emptiness'
     },
-    imagePath: '/images/tarot/the_empress.png'
+    imagePath: '/images/tarot/the-empress.jpg'
   },
   {
     id: 'the-emperor',
@@ -73,7 +73,7 @@ export const cards: TarotCard[] = [
       upright: 'Authority, establishment, structure, paternal figure',
       reversed: 'Domination, excessive control, rigidity, stubbornness'
     },
-    imagePath: '/images/tarot/the_emperor.png'
+    imagePath: '/images/tarot/the-emperor.jpg'
   },
   {
     id: 'the-hierophant',
@@ -85,7 +85,7 @@ export const cards: TarotCard[] = [
       upright: 'Spiritual wisdom, tradition, conformity, morality',
       reversed: 'Personal beliefs, freedom, challenging the status quo'
     },
-    imagePath: '/images/tarot/the_hierophant.png'
+    imagePath: '/images/tarot/the-hierophant.jpg'
   },
   {
     id: 'the-lovers',
@@ -97,7 +97,7 @@ export const cards: TarotCard[] = [
       upright: 'Love, harmony, relationships, value alignment, choices',
       reversed: 'Self-love, disharmony, imbalance, misalignment of values'
     },
-    imagePath: '/images/tarot/the_lovers.png'
+    imagePath: '/images/tarot/the-lovers.jpg'
   },
   {
     id: 'the-chariot',
@@ -109,7 +109,7 @@ export const cards: TarotCard[] = [
       upright: 'Control, willpower, success, action, determination',
       reversed: 'Self-discipline, opposition, lack of direction'
     },
-    imagePath: '/images/tarot/the_chariot.png'
+    imagePath: '/images/tarot/the-chariot.jpg'
   },
   {
     id: 'strength',
@@ -121,7 +121,7 @@ export const cards: TarotCard[] = [
       upright: 'Courage, persuasion, influence, compassion, inner strength',
       reversed: 'Self-doubt, weakness, insecurity, low energy'
     },
-    imagePath: '/images/tarot/strength.png'
+    imagePath: '/images/tarot/strenght.jpg'
   },
   {
     id: 'the-hermit',
@@ -133,7 +133,7 @@ export const cards: TarotCard[] = [
       upright: 'Soul-searching, introspection, solitude, inner guidance',
       reversed: 'Isolation, withdrawal, lost your way, rejection'
     },
-    imagePath: '/images/tarot/the_hermit.png'
+    imagePath: '/images/tarot/the-hermit.jpg'
   },
   {
     id: 'wheel-of-fortune',
@@ -145,7 +145,7 @@ export const cards: TarotCard[] = [
       upright: 'Good luck, karma, life cycles, destiny, turning point',
       reversed: 'Bad luck, resistance to change, breaking cycles'
     },
-    imagePath: '/images/tarot/wheel_of_fortune.png'
+    imagePath: '/images/tarot/wheel-of-fortune.jpg'
   },
   {
     id: 'justice',
@@ -157,7 +157,7 @@ export const cards: TarotCard[] = [
       upright: 'Justice, fairness, truth, cause and effect, law',
       reversed: 'Unfairness, lack of accountability, dishonesty'
     },
-    imagePath: '/images/tarot/justice.png'
+    imagePath: '/images/tarot/justice.jpg'
   },
   {
     id: 'the-hanged-man',
@@ -169,7 +169,7 @@ export const cards: TarotCard[] = [
       upright: 'Pause, surrender, letting go, new perspectives',
       reversed: 'Delays, resistance, stalling, indecision'
     },
-    imagePath: '/images/tarot/the_hanged_man.png'
+    imagePath: '/images/tarot/the-hanged-man.jpg'
   },
   {
     id: 'death',
@@ -181,7 +181,7 @@ export const cards: TarotCard[] = [
       upright: 'End of cycle, beginnings, change, metamorphosis',
       reversed: 'Fear of change, holding on, stagnation, decay'
     },
-    imagePath: '/images/tarot/death.png'
+    imagePath: '/images/tarot/death.jpg'
   },
   {
     id: 'temperance',
@@ -193,7 +193,7 @@ export const cards: TarotCard[] = [
       upright: 'Balance, moderation, patience, purpose',
       reversed: 'Imbalance, excess, self-healing, realignment'
     },
-    imagePath: '/images/tarot/temperance.png'
+    imagePath: '/images/tarot/temperance.jpg'
   },
   {
     id: 'the-devil',
@@ -205,7 +205,7 @@ export const cards: TarotCard[] = [
       upright: 'Shadow self, attachment, addiction, restriction',
       reversed: 'Releasing limiting beliefs, exploring dark thoughts, detachment'
     },
-    imagePath: '/images/tarot/the_devil.png'
+    imagePath: '/images/tarot/the-devil.jpg'
   },
   {
     id: 'the-tower',
@@ -217,7 +217,7 @@ export const cards: TarotCard[] = [
       upright: 'Sudden change, upheaval, chaos, revelation, awakening',
       reversed: 'Fear of change, avoiding disaster, a narrow escape'
     },
-    imagePath: '/images/tarot/the_tower.png'
+    imagePath: '/images/tarot/the-tower.jpg'
   },
   {
     id: 'the-star',
@@ -229,7 +229,7 @@ export const cards: TarotCard[] = [
       upright: 'Hope, faith, purpose, renewal, spirituality',
       reversed: 'Lack of faith, despair, discouragement, insecurity'
     },
-    imagePath: '/images/tarot/the_star.png'
+    imagePath: '/images/tarot/the-star.jpg'
   },
   {
     id: 'the-moon',
@@ -241,7 +241,7 @@ export const cards: TarotCard[] = [
       upright: 'Illusion, fear, anxiety, subconscious, intuition',
       reversed: 'Release of fear, repressed emotions, inner confusion'
     },
-    imagePath: '/images/tarot/the_moon.png'
+    imagePath: '/images/tarot/the-moon.jpg'
   },
   {
     id: 'the-sun',
@@ -253,7 +253,7 @@ export const cards: TarotCard[] = [
       upright: 'Joy, success, celebration, positivity, vitality',
       reversed: 'Inner child, feeling down, overly optimistic'
     },
-    imagePath: '/images/tarot/the_sun.png'
+    imagePath: '/images/tarot/the-sun.jpg'
   },
   {
     id: 'judgement',
@@ -265,7 +265,7 @@ export const cards: TarotCard[] = [
       upright: 'Judgement, awakening, rebirth, inner calling, absolution',
       reversed: 'Self-doubt, inner critic, ignoring the call, legal repercussions'
     },
-    imagePath: '/images/tarot/judgement.png'
+    imagePath: '/images/tarot/the-judgement.jpg'
   },
   {
     id: 'the-world',
@@ -277,7 +277,7 @@ export const cards: TarotCard[] = [
       upright: 'Completion, integration, accomplishment, travel',
       reversed: 'Shortcuts, delays, lack of closure, frustration'
     },
-    imagePath: '/images/tarot/the_world.png'
+    imagePath: '/images/tarot/the-world.jpg'
   }
 ];
 
@@ -292,7 +292,7 @@ export const getRandomCard = (): TarotCard => {
   // Ensure image path exists and is normalized
   if (!randomCard.imagePath) {
     const cardId = randomCard.id.toLowerCase().replace(/\s+/g, '-');
-    randomCard.imagePath = `/images/tarot/${cardId}.png`;
+    randomCard.imagePath = `/images/tarot/${cardId}.jpg`;
   }
   
   return randomCard;
@@ -314,7 +314,7 @@ export const getRandomCards = (count: number): TarotCard[] => {
     // Ensure image path exists and is normalized
     if (!processedCard.imagePath) {
       const cardId = processedCard.id.toLowerCase().replace(/\s+/g, '-');
-      processedCard.imagePath = `/images/tarot/${cardId}.png`;
+      processedCard.imagePath = `/images/tarot/${cardId}.jpg`;
     }
     
     return processedCard;
