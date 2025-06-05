@@ -1,5 +1,6 @@
 import OpenAI from 'openai';
 import { cards } from '@/app/data/cards';
+import { generateInitialReadingPrompt, generateFollowUpPrompt, generateChatVariants } from './prompt-templates';
 
 // Lazy initialization function for OpenAI client
 function getOpenAIClient() {
@@ -75,37 +76,23 @@ export async function generateTarotReading(question: string): Promise<TarotReadi
     // Select a random card from our Major Arcana deck (cards with images)
     const selectedCard = cards[Math.floor(Math.random() * cards.length)];
     
-    // Enhanced mystical prompt optimized for various AI models
-    const prompt = `You are an ancient, wise tarot reader with deep mystical knowledge. A seeker has drawn "${selectedCard.name}" and asks: "${question}"
-
-    The card's traditional meaning: ${selectedCard.keywords.join(', ')}
-
-    Channel your mystical wisdom and provide a reading with these exact sections:
-
-    INTERPRETATION: Give a 2-3 sentence interpretation of how this card specifically relates to their question, weaving in the card's energy and symbolism.
-
-    GUIDANCE: Provide clear, actionable spiritual guidance (2-3 sentences) on what they should do or consider based on this card's message.
-
-    ENERGY: Describe the current energy surrounding them in 1-2 sentences using mystical, intuitive language.
-
-    TIMEFRAME: Give a mystical timeframe for when this energy/situation may manifest or resolve (e.g., "within the next lunar cycle", "as autumn approaches", "when Mercury turns direct").
-
-    Write in a mystical, wise tone as if you're an experienced tarot reader. Be specific to their question and the card drawn. Use evocative, spiritual language that feels authentic and helpful.`;
+    // Generate personalized prompt using new template system
+    const promptTemplate = generateInitialReadingPrompt(question, selectedCard.name, selectedCard.keywords);
 
     const completion = await getOpenAIClient().chat.completions.create({
       model: "meta-llama/llama-3.1-8b-instruct:free", // Free model on OpenRouter
       messages: [
         {
           role: "system",
-          content: "You are a wise, mystical tarot reader with deep spiritual insight. Provide authentic, helpful tarot readings."
+          content: promptTemplate.system
         },
         {
           role: "user",
-          content: prompt
+          content: promptTemplate.user
         }
       ],
-      max_tokens: 500,
-      temperature: 0.8,
+      max_tokens: 600,
+      temperature: 0.9, // Increased for more varied responses
     });
 
     const response = completion.choices[0]?.message?.content || "";
@@ -131,6 +118,46 @@ export async function generateTarotReading(question: string): Promise<TarotReadi
   } catch (error) {
     console.error('Error generating tarot reading:', error);
     throw new Error('Unable to channel the mystical energies at this time. Please try again.');
+  }
+}
+
+export async function generateFollowUpResponse(
+  originalQuestion: string,
+  cardName: string,
+  cardMeaning: string,
+  previousInterpretation: string,
+  followUpQuestion: string
+): Promise<string> {
+  try {
+    const promptTemplate = generateFollowUpPrompt({
+      originalQuestion,
+      cardName,
+      cardMeaning,
+      previousInterpretation,
+      followUpQuestion
+    });
+
+    const completion = await getOpenAIClient().chat.completions.create({
+      model: "meta-llama/llama-3.1-8b-instruct:free",
+      messages: [
+        {
+          role: "system",
+          content: promptTemplate.system
+        },
+        {
+          role: "user",
+          content: promptTemplate.user
+        }
+      ],
+      max_tokens: 300,
+      temperature: 0.85,
+    });
+
+    return completion.choices[0]?.message?.content || "The mystical energies encourage you to trust your inner wisdom as you navigate this question.";
+
+  } catch (error) {
+    console.error('Error generating follow-up response:', error);
+    throw new Error('Unable to channel the mystical energies for your follow-up question.');
   }
 }
 

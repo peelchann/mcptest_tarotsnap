@@ -7,6 +7,8 @@ import { Button } from '@/app/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/app/components/ui/card';
 import { Textarea } from '@/app/components/ui/textarea';
 import { MysticalParticles } from '@/app/components/ui/MysticalParticles';
+import { CardReveal } from '@/app/components/reading/CardReveal';
+import { ReadingInterpretation } from '@/app/components/reading/ReadingInterpretation';
 import { TarotReading } from '@/lib/openrouter';
 import Image from 'next/image';
 import { 
@@ -28,18 +30,21 @@ interface ChatMessage {
   timestamp: Date;
 }
 
+type ReadingStep = 'question' | 'draw' | 'cardReveal' | 'reading' | 'chat';
+
 export default function SingleCardReading() {
   const router = useRouter();
   const [question, setQuestion] = useState('');
   const [reading, setReading] = useState<TarotReading | null>(null);
   const [isDrawing, setIsDrawing] = useState(false);
-  const [showReading, setShowReading] = useState(false);
   const [chatMessages, setChatMessages] = useState<ChatMessage[]>([]);
   const [newMessage, setNewMessage] = useState('');
   const [isThinking, setIsThinking] = useState(false);
-  const [currentStep, setCurrentStep] = useState<'question' | 'draw' | 'reading' | 'chat'>('question');
+  const [currentStep, setCurrentStep] = useState<ReadingStep>('question');
   const [error, setError] = useState<string | null>(null);
   const [rateLimited, setRateLimited] = useState(false);
+  const [remainingReadings, setRemainingReadings] = useState<number>(3);
+  const [remainingFollowUps, setRemainingFollowUps] = useState<number>(10);
 
   useEffect(() => {
     // Get question from session storage
@@ -86,8 +91,12 @@ export default function SingleCardReading() {
       // Successfully got reading
       setReading(data.reading);
       setIsDrawing(false);
-      setShowReading(true);
-      setCurrentStep('reading');
+      setCurrentStep('cardReveal');
+      
+      // Update remaining readings counter
+      if (data.remainingReadings !== undefined) {
+        setRemainingReadings(data.remainingReadings);
+      }
       
       // Add initial AI interpretation to chat
       const initialMessage: ChatMessage = {
@@ -124,24 +133,19 @@ export default function SingleCardReading() {
     setIsThinking(true);
 
     try {
-      // Create a follow-up question context
-      const followUpContext = `Previous reading context:
-Original question: "${question}"
-Card drawn: ${reading.card}
-Card meaning: ${reading.meaning}
-Previous interpretation: ${reading.interpretation}
-
-User's follow-up question: ${userMessage.content}
-
-Please provide a thoughtful response that builds on the previous reading and addresses their specific question.`;
-
       const response = await fetch('/api/reading', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          question: followUpContext
+          question: userMessage.content,
+          followUp: {
+            originalQuestion: question,
+            cardName: reading.card,
+            cardMeaning: reading.meaning,
+            previousInterpretation: reading.interpretation
+          }
         }),
       });
 
@@ -158,14 +162,19 @@ Please provide a thoughtful response that builds on the previous reading and add
         };
         setChatMessages(prev => [...prev, assistantMessage]);
       } else {
-        // Use the new interpretation as the response
+        // Use the follow-up response
         const assistantMessage: ChatMessage = {
           id: (Date.now() + 1).toString(),
           role: 'assistant',
-          content: data.reading.interpretation,
+          content: data.response,
           timestamp: new Date()
         };
         setChatMessages(prev => [...prev, assistantMessage]);
+        
+        // Update remaining follow-ups counter
+        if (data.remainingFollowUps !== undefined) {
+          setRemainingFollowUps(data.remainingFollowUps);
+        }
       }
 
     } catch (error) {
@@ -184,18 +193,21 @@ Please provide a thoughtful response that builds on the previous reading and add
 
   const startNewReading = () => {
     setReading(null);
-    setShowReading(false);
     setChatMessages([]);
     setQuestion('');
     setCurrentStep('question');
     setError(null);
     setRateLimited(false);
+    setRemainingFollowUps(10); // Reset follow-up counter for new reading
     sessionStorage.removeItem('tarot-question');
   };
 
   return (
     <div className="min-h-screen relative overflow-hidden">
-      <MysticalParticles />
+      {/* Reduce particle opacity for better readability */}
+      <div className="opacity-30">
+        <MysticalParticles />
+      </div>
       
       <div className="container mx-auto px-4 py-8 relative z-10">
         {/* Header */}
@@ -203,21 +215,33 @@ Please provide a thoughtful response that builds on the previous reading and add
           <Button 
             variant="ghost" 
             onClick={() => router.push('/')}
-            className="flex items-center gap-2"
+            className="flex items-center gap-2 text-white hover:text-gold-300 hover:bg-white/10"
           >
             <ArrowLeft className="w-4 h-4" />
             Back to Home
           </Button>
           
           <div className="flex items-center gap-2">
-            <Sparkles className="w-6 h-6 text-accent" />
-            <h1 className="text-2xl font-bold">Single Card Reading</h1>
+            <Sparkles className="w-6 h-6 text-gold-400" />
+            <h1 className="text-2xl font-bold text-white">Single Card Reading</h1>
+          </div>
+          
+          {/* Usage Counters */}
+          <div className="flex items-center gap-4 text-sm text-white/80">
+            <div className="flex items-center gap-1">
+              <span>Readings: {remainingReadings}/3</span>
+            </div>
+            {currentStep === 'chat' && (
+              <div className="flex items-center gap-1">
+                <span>Questions: {remainingFollowUps}/10</span>
+              </div>
+            )}
           </div>
           
           <Button 
             variant="outline" 
             onClick={startNewReading}
-            className="flex items-center gap-2"
+            className="flex items-center gap-2 text-white hover:text-gold-300 hover:bg-white/10 border-white/30"
           >
             <RefreshCw className="w-4 h-4" />
             New Reading
@@ -256,13 +280,13 @@ Please provide a thoughtful response that builds on the previous reading and add
               exit={{ opacity: 0, y: -20 }}
               className="max-w-2xl mx-auto"
             >
-              <Card className="border-primary/30 bg-card/70 backdrop-blur-md">
+              <Card className="border-white/30 bg-white/10 backdrop-blur-md">
                 <CardHeader className="text-center">
-                  <CardTitle className="text-2xl flex items-center justify-center gap-2">
-                    <Heart className="w-6 h-6 text-accent" />
+                  <CardTitle className="text-2xl flex items-center justify-center gap-2 text-white">
+                    <Heart className="w-6 h-6 text-gold-400" />
                     What guidance do you seek?
                   </CardTitle>
-                  <CardDescription>
+                  <CardDescription className="text-white/80">
                     Focus your intention and ask the universe for guidance
                   </CardDescription>
                 </CardHeader>
@@ -272,17 +296,16 @@ Please provide a thoughtful response that builds on the previous reading and add
                       placeholder="What question would you like the cards to answer?"
                       value={question}
                       onChange={(e) => setQuestion(e.target.value)}
-                      className="min-h-[100px] bg-background/50 border-primary/20"
+                      className="min-h-[100px] bg-white/90 border-white/30 text-gray-800 placeholder:text-gray-500"
                       maxLength={500}
                     />
-                    <div className="text-right text-sm text-muted-foreground">
+                    <div className="text-right text-sm text-white/70">
                       {question.length}/500 characters
                     </div>
                     <Button 
                       onClick={() => setCurrentStep('draw')}
-                      variant="mystical" 
+                      className="w-full bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 text-white"
                       size="lg"
-                      className="w-full"
                       disabled={question.trim().length < 5}
                     >
                       <Sparkles className="w-5 h-5 mr-2" />
@@ -308,10 +331,10 @@ Please provide a thoughtful response that builds on the previous reading and add
                   animate={{ opacity: 1 }}
                   className="mb-8"
                 >
-                  <Card className="max-w-2xl mx-auto border-accent/20 bg-card/50">
+                  <Card className="max-w-2xl mx-auto border-white/20 bg-white/10 backdrop-blur-md">
                     <CardContent className="p-6">
-                      <p className="text-lg font-medium mb-2">Your Question:</p>
-                      <p className="text-muted-foreground italic">"{question}"</p>
+                      <p className="text-lg font-medium mb-2 text-white">Your Question:</p>
+                      <p className="text-white/80 italic">"{question}"</p>
                     </CardContent>
                   </Card>
                 </motion.div>
@@ -323,14 +346,14 @@ Please provide a thoughtful response that builds on the previous reading and add
                   animate={isDrawing ? { scale: [1, 1.1, 1] } : {}}
                   transition={{ duration: 0.5, repeat: isDrawing ? Infinity : 0 }}
                 >
-                  <div className="w-48 h-72 mx-auto bg-gradient-to-b from-primary/20 to-accent/20 rounded-lg border-2 border-primary/30 flex items-center justify-center cosmic-pulse">
+                  <div className="w-48 h-72 mx-auto bg-gradient-to-b from-purple-900/20 to-indigo-900/20 rounded-lg border-2 border-gold-400/50 flex items-center justify-center">
                     {isDrawing ? (
                       <div className="text-center">
-                        <div className="w-8 h-8 border-2 border-accent border-t-transparent rounded-full animate-spin mx-auto mb-4" />
-                        <p className="text-accent">Consulting the cosmos...</p>
+                        <div className="w-8 h-8 border-2 border-gold-400 border-t-transparent rounded-full animate-spin mx-auto mb-4" />
+                        <p className="text-gold-400">Consulting the cosmos...</p>
                       </div>
                     ) : (
-                      <Sparkles className="w-16 h-16 text-primary" />
+                      <Sparkles className="w-16 h-16 text-gold-400" />
                     )}
                   </div>
                 </motion.div>
@@ -338,9 +361,8 @@ Please provide a thoughtful response that builds on the previous reading and add
                 <Button 
                   onClick={drawCard}
                   disabled={isDrawing}
-                  variant="mystical"
-                  size="xl"
-                  className="cosmic-pulse"
+                  className="bg-gradient-to-r from-gold-500 to-amber-600 hover:from-gold-600 hover:to-amber-700 text-black font-semibold px-8 py-3 text-lg"
+                  size="lg"
                 >
                   {isDrawing ? 'Drawing...' : 'Draw Your Card'}
                 </Button>
@@ -348,8 +370,75 @@ Please provide a thoughtful response that builds on the previous reading and add
             </motion.div>
           )}
 
-          {/* Card Reading */}
-          {(currentStep === 'reading' || currentStep === 'chat') && reading && (
+          {/* Card Reveal Step - NEW */}
+          {currentStep === 'cardReveal' && reading && (
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -20 }}
+            >
+              <CardReveal 
+                reading={reading} 
+                onContinue={() => setCurrentStep('reading')} 
+              />
+            </motion.div>
+          )}
+
+          {/* Reading Interpretation Step */}
+          {currentStep === 'reading' && reading && (
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -20 }}
+            >
+              <ReadingInterpretation 
+                reading={reading} 
+                question={question} 
+              />
+              
+              {/* Continue to Chat Button */}
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 1.0, duration: 0.6 }}
+                className="text-center mt-8"
+              >
+                <Button
+                  onClick={() => {
+                    setCurrentStep('chat');
+                    // Add initial AI message to chat if not already present
+                    if (chatMessages.length === 0) {
+                      // Generate varied initial message using the templates
+                      const variants = [
+                        `I sense the energy of ${reading.card} continuing to work in your life. What aspect of this reading resonates most strongly with you?`,
+                        `The wisdom of ${reading.card} has many layers. What part of your question about '${question}' would you like to explore more deeply?`,
+                        `I feel there's more the cards want to reveal about your path. What's stirring in your heart as you reflect on this reading?`,
+                        `The mystical energies around ${reading.card} are still speaking. Is there a particular aspect of '${question}' you'd like to delve into further?`,
+                        `Your ${reading.card} reading holds deeper mysteries. What would you like to understand better about this guidance?`
+                      ];
+                      
+                      const randomVariant = variants[Math.floor(Math.random() * variants.length)];
+                      
+                      const initialMessage: ChatMessage = {
+                        id: Date.now().toString(),
+                        role: 'assistant',
+                        content: randomVariant,
+                        timestamp: new Date()
+                      };
+                      setChatMessages([initialMessage]);
+                    }
+                  }}
+                  className="bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white px-8 py-3 rounded-full font-semibold shadow-lg"
+                >
+                  <MessageCircle className="w-5 h-5 mr-2" />
+                  Continue with AI Oracle
+                </Button>
+              </motion.div>
+            </motion.div>
+          )}
+
+          {/* Original Card Reading (for chat) */}
+          {currentStep === 'chat' && reading && (
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
