@@ -109,7 +109,7 @@ export default function SingleCardReading() {
       setChatMessages([initialMessage]);
       
       // Transition to chat after showing reading
-      setTimeout(() => setCurrentStep('chat'), 2000);
+      setTimeout(() => setCurrentStep('chat'), 5000);
       
     } catch (error) {
       console.error('Error drawing card:', error);
@@ -255,14 +255,14 @@ export default function SingleCardReading() {
             animate={{ opacity: 1, y: 0 }}
             className="max-w-2xl mx-auto mb-6"
           >
-            <Card className="border-red-500/50 bg-red-50/10">
+            <Card className="border-red-400/50 bg-red-900/20 backdrop-blur-md">
               <CardContent className="p-4">
-                <div className="flex items-center gap-2 text-red-400">
+                <div className="flex items-center gap-2 text-red-300">
                   <AlertTriangle className="w-5 h-5" />
                   <p>{error}</p>
                 </div>
                 {rateLimited && (
-                  <p className="text-sm text-muted-foreground mt-2">
+                  <p className="text-sm text-white/70 mt-2">
                     You can have 3 free readings per day. Consider signing up for unlimited access.
                   </p>
                 )}
@@ -447,10 +447,10 @@ export default function SingleCardReading() {
               {/* Card Display */}
               <div className="space-y-6">
                 {question && (
-                  <Card className="border-accent/20 bg-card/50">
+                  <Card className="border-white/20 bg-white/10 backdrop-blur-md">
                     <CardContent className="p-6">
-                      <p className="text-sm font-medium mb-2">Your Question:</p>
-                      <p className="text-muted-foreground italic">"{question}"</p>
+                      <p className="text-sm font-medium mb-2 text-white">Your Question:</p>
+                      <p className="text-white/80 italic">"{question}"</p>
                     </CardContent>
                   </Card>
                 )}
@@ -461,9 +461,9 @@ export default function SingleCardReading() {
                   transition={{ type: "spring", stiffness: 300, damping: 20 }}
                   className="text-center"
                 >
-                  <Card className="border-primary/30 bg-card/70 backdrop-blur-md">
+                  <Card className="border-white/30 bg-white/10 backdrop-blur-md">
                     <CardContent className="p-6">
-                      <div className="relative w-64 h-96 mx-auto mb-6 rounded-lg border-2 border-primary/30 overflow-hidden">
+                      <div className="relative w-64 h-96 mx-auto mb-6 rounded-lg border-2 border-gold-400/50 overflow-hidden">
                         {reading.imagePath ? (
                           <Image
                             src={reading.imagePath}
@@ -481,36 +481,36 @@ export default function SingleCardReading() {
                           />
                         ) : null}
                         {/* Fallback placeholder */}
-                        <div className="absolute inset-0 bg-gradient-to-b from-primary/20 to-accent/20 flex items-center justify-center text-center text-primary" style={{ display: reading.imagePath ? 'none' : 'flex' }}>
+                        <div className="absolute inset-0 bg-gradient-to-b from-purple-900/20 to-indigo-900/20 flex items-center justify-center text-center text-gold-400" style={{ display: reading.imagePath ? 'none' : 'flex' }}>
                           <div>
                             <Sparkles className="w-16 h-16 mx-auto mb-4" />
                             <p className="text-lg font-medium">{reading.card}</p>
                           </div>
                         </div>
                       </div>
-                      <h2 className="text-2xl font-bold mb-2 text-accent">{reading.card}</h2>
-                      <p className="text-muted-foreground">{reading.meaning}</p>
+                      <h2 className="text-2xl font-bold mb-2 text-gold-400">{reading.card}</h2>
+                      <p className="text-white/80">{reading.meaning}</p>
                       
                       {/* Reading Details */}
                       <div className="mt-6 space-y-4 text-left">
                         <div>
-                          <h3 className="font-semibold text-accent mb-2">Interpretation</h3>
-                          <p className="text-sm text-muted-foreground">{reading.interpretation}</p>
+                          <h3 className="font-semibold text-gold-400 mb-2">Interpretation</h3>
+                          <p className="text-sm text-white/70">{reading.interpretation}</p>
                         </div>
                         
                         <div>
-                          <h3 className="font-semibold text-accent mb-2">Guidance</h3>
-                          <p className="text-sm text-muted-foreground">{reading.guidance}</p>
+                          <h3 className="font-semibold text-gold-400 mb-2">Guidance</h3>
+                          <p className="text-sm text-white/70">{reading.guidance}</p>
                         </div>
                         
                         <div>
-                          <h3 className="font-semibold text-accent mb-2">Energy</h3>
-                          <p className="text-sm text-muted-foreground">{reading.energy}</p>
+                          <h3 className="font-semibold text-gold-400 mb-2">Energy</h3>
+                          <p className="text-sm text-white/70">{reading.energy}</p>
                         </div>
                         
                         <div>
-                          <h3 className="font-semibold text-accent mb-2">Timeframe</h3>
-                          <p className="text-sm text-muted-foreground">{reading.timeframe}</p>
+                          <h3 className="font-semibold text-gold-400 mb-2">Timeframe</h3>
+                          <p className="text-sm text-white/70">{reading.timeframe}</p>
                         </div>
                       </div>
                     </CardContent>
@@ -520,13 +520,13 @@ export default function SingleCardReading() {
 
               {/* Chat Interface */}
               <div className="space-y-6">
-                <Card className="border-primary/30 bg-card/70 backdrop-blur-md h-[600px] flex flex-col">
+                <Card className="border-white/30 bg-white/10 backdrop-blur-md h-[600px] flex flex-col">
                   <CardHeader>
-                    <CardTitle className="flex items-center gap-2">
-                      <MessageCircle className="w-5 h-5 text-accent" />
+                    <CardTitle className="flex items-center gap-2 text-white">
+                      <MessageCircle className="w-5 h-5 text-gold-400" />
                       AI Oracle Chat
                     </CardTitle>
-                    <CardDescription>
+                    <CardDescription className="text-white/70">
                       Discuss your reading with our mystical AI guide
                     </CardDescription>
                   </CardHeader>
@@ -543,14 +543,14 @@ export default function SingleCardReading() {
                         >
                           <div className={`flex gap-3 max-w-[80%] ${message.role === 'user' ? 'flex-row-reverse' : 'flex-row'}`}>
                             <div className={`w-8 h-8 rounded-full flex items-center justify-center ${
-                              message.role === 'user' ? 'bg-primary' : 'bg-accent'
+                              message.role === 'user' ? 'bg-blue-600' : 'bg-gold-500'
                             }`}>
-                              {message.role === 'user' ? <User className="w-4 h-4" /> : <Bot className="w-4 h-4" />}
+                              {message.role === 'user' ? <User className="w-4 h-4 text-white" /> : <Bot className="w-4 h-4 text-black" />}
                             </div>
                             <div className={`rounded-lg p-3 ${
                               message.role === 'user' 
-                                ? 'bg-primary text-primary-foreground' 
-                                : 'bg-muted text-muted-foreground'
+                                ? 'bg-blue-600 text-white' 
+                                : 'bg-white/90 text-gray-800'
                             }`}>
                               <pre className="whitespace-pre-wrap font-sans text-sm">{message.content}</pre>
                             </div>
@@ -564,14 +564,14 @@ export default function SingleCardReading() {
                           animate={{ opacity: 1 }}
                           className="flex gap-3 justify-start"
                         >
-                          <div className="w-8 h-8 rounded-full bg-accent flex items-center justify-center">
-                            <Bot className="w-4 h-4" />
+                          <div className="w-8 h-8 rounded-full bg-gold-500 flex items-center justify-center">
+                            <Bot className="w-4 h-4 text-black" />
                           </div>
-                          <div className="bg-muted rounded-lg p-3">
+                          <div className="bg-white/90 rounded-lg p-3">
                             <div className="flex gap-1">
-                              <div className="w-2 h-2 bg-current rounded-full animate-pulse"></div>
-                              <div className="w-2 h-2 bg-current rounded-full animate-pulse" style={{ animationDelay: '0.2s' }}></div>
-                              <div className="w-2 h-2 bg-current rounded-full animate-pulse" style={{ animationDelay: '0.4s' }}></div>
+                              <div className="w-2 h-2 bg-gray-600 rounded-full animate-pulse"></div>
+                              <div className="w-2 h-2 bg-gray-600 rounded-full animate-pulse" style={{ animationDelay: '0.2s' }}></div>
+                              <div className="w-2 h-2 bg-gray-600 rounded-full animate-pulse" style={{ animationDelay: '0.4s' }}></div>
                             </div>
                           </div>
                         </motion.div>
@@ -588,7 +588,7 @@ export default function SingleCardReading() {
                           placeholder="Ask about your reading..."
                           value={newMessage}
                           onChange={(e) => setNewMessage(e.target.value)}
-                          className="min-h-[60px] resize-none"
+                          className="min-h-[60px] resize-none bg-white/90 border-white/30 text-gray-800 placeholder:text-gray-500"
                           onKeyDown={(e) => {
                             if (e.key === 'Enter' && !e.shiftKey) {
                               e.preventDefault();
