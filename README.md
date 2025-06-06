@@ -1,6 +1,6 @@
 # TarotSnap
 
-A modern tarot card reading web application with an Agatha Harkness-inspired dark witchcraft theme. Built with Next.js and Tailwind CSS.
+A modern AI-powered tarot card reading web application with an Agatha Harkness-inspired dark witchcraft theme. Features OpenRouter AI integration for authentic mystical readings using Llama 3.1-8B-Instruct.
 
 ## Quick Start
 
@@ -15,41 +15,61 @@ cd TarotSnap
 npm install
 ```
 
-3. Run the development server:
+3. Set up environment variables:
+```bash
+cp .env.example .env.local
+# Add your OPENROUTER_API_KEY to .env.local
+```
+
+4. Run the development server:
 ```bash
 npm run dev
 ```
 
-4. Open [http://localhost:3000](http://localhost:3000) in your browser
+5. Open [http://localhost:3000](http://localhost:3000) in your browser
 
 ## Features
 
-- **Interactive 3D Card Carousel**: Browse through tarot cards with fluid 3D animations and hover effects
-- **Realistic Tarot Card Imagery**: Displays authentic Rider-Waite tarot deck cards with a magical purple overlay
-- **Card Reading Functionality**: View upright and reversed meanings for each card
-- **Witchcraft-Inspired Design**: Dark purple color scheme with magical runes, symbols, and animations
-- **Responsive Layout**: Optimized for all device sizes
+- **AI-Powered Readings**: Authentic tarot interpretations using OpenRouter AI with Llama 3.1-8B-Instruct
+- **Interactive Card Drawing**: Mystical card selection with smooth reveal animations
+- **AI Oracle Chat**: Follow-up questions and deeper reading exploration with AI
+- **Freemium Model**: 3 free readings per day with upgrade path to unlimited
+- **Beautiful UI**: Agatha Harkness-inspired dark theme with gold accents and mystical particles
+- **Responsive Design**: Optimized for desktop, tablet, and mobile devices
+- **Cost Efficient**: 99% cheaper than Claude/GPT-4 while maintaining high quality
 
-## Card Reading Types
+## Reading Experience
 
-- **Single Card**: Quick insights for simple questions
-- **Three Card Spread**: Past, present, and future analysis
-- **Celtic Cross**: Deep dive into complex situations
+- **Question Input**: Ask the universe for guidance on any topic
+- **Card Drawing**: Mystical card selection from the tarot deck
+- **Card Reveal**: Smooth animation reveals your chosen card
+- **AI Interpretation**: Personalized reading specific to your question
+- **Follow-up Chat**: Deeper exploration with the AI Oracle
+- **Reading History**: Coming soon - personalized reading memory
 
 ## Technologies
 
-- **Next.js 14**: React framework for server-rendered applications
-- **TypeScript**: For type-safe code
-- **Tailwind CSS**: For styling with custom witchcraft-themed extensions
-- **CSS Animations**: Custom keyframes for magical effects
-- **React Hooks**: For state management and animations
+- **Next.js 14**: React framework with App Router for modern web development
+- **TypeScript**: For type-safe, scalable code
+- **OpenRouter API**: AI service with multiple model options (currently using Llama 3.1-8B-Instruct)
+- **Tailwind CSS**: Utility-first styling with custom mystical theme
+- **Shadcn/UI**: Modern component library built on Radix UI
+- **Framer Motion**: Smooth animations and transitions
+- **Vercel**: Deployment platform optimized for Next.js
 
 ## Project Structure
 
-- `/app`: Next.js application pages and components
-- `/app/components`: React components including TarotCard and TarotCarousel
-- `/app/data`: Tarot card data and utility functions
-- `/public/images/tarot`: Tarot card images
+- `/app`: Next.js 14 application with App Router
+  - `/page.tsx`: Landing page with question input
+  - `/reading/single/page.tsx`: Single card reading interface
+  - `/api/reading/route.ts`: OpenRouter AI integration endpoint
+  - `/components`: React components (UI, reading-specific)
+  - `/data/cards.ts`: Tarot card definitions and metadata
+- `/lib`: Utility functions and API clients
+  - `/openrouter.ts`: OpenRouter AI client configuration
+  - `/prompt-templates.ts`: AI prompts for authentic readings
+- `/docs`: Comprehensive project documentation
+- `/public`: Static assets including card images
 
 ## Development
 

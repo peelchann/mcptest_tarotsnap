@@ -1,0 +1,417 @@
+# TarotSnap System Patterns
+
+**Purpose:** Define architectural patterns, conventions, and design decisions for TarotSnap  
+**Scope:** Development guidelines and system design principles  
+**Last Updated:** December 2024  
+
+---
+
+## 🏗️ **Architectural Patterns**
+
+### **1. Frontend Architecture Pattern: Component-Based UI**
+```
+Pattern: Feature-Based Component Organization
+Structure:
+├── app/components/
+│   ├── ui/              # Base UI components (Shadcn/UI)
+│   ├── reading/         # Feature-specific components
+│   └── [Feature].tsx    # Single-responsibility components
+
+Convention:
+- One component per file
+- Props interface defined at top
+- Default export with descriptive name
+- Maximum 200 lines per component
+```
+
+### **2. API Pattern: RESTful Endpoints with Error Handling**
+```
+Pattern: Next.js API Routes with Structured Responses
+Structure:
+├── app/api/
+│   └── [feature]/
+│       └── route.ts     # GET, POST, PUT, DELETE handlers
+
+Convention:
+- Separate functions for each HTTP method
+- Consistent error response format
+- Input validation before processing
+- Health check endpoints for monitoring
+```
+
+### **3. State Management Pattern: React State + Session Storage**
+```
+Pattern: Minimal State with Temporary Persistence
+Structure:
+- React useState/useEffect for component state
+- sessionStorage for navigation persistence
+- No global state management (Redux/Zustand)
+
+Convention:
+- Component-level state for UI interactions
+- Session storage only for user navigation data
+- API calls trigger state updates directly
+```
+
+---
+
+## 🔄 **Data Flow Patterns**
+
+### **1. AI Integration Flow Pattern**
+```
+User Input → Validation → API Call → AI Service → Response Processing → UI Update
+
+Implementation:
+1. Frontend validates user input (length, content)
+2. API route handles request with rate limiting
+3. OpenRouter processes via Llama 3.1-8B-Instruct
+4. Response parsed into TarotReading interface
+5. UI renders structured reading with animations
+```
+
+### **2. Error Handling Flow Pattern**
+```
+Error Occurs → Classification → User-Friendly Message → Graceful Fallback
+
+Implementation:
+- API errors mapped to user-friendly messages
+- Rate limit errors show clear remaining time
+- Network errors suggest retry actions
+- Validation errors provide specific guidance
+```
+
+### **3. Loading State Pattern**
+```
+Action Triggered → Loading State → Progress Indication → Completion
+
+Implementation:
+- Mystical loading animations during AI processing
+- Progress indicators for long operations (10+ seconds)
+- Skeleton loaders for component rendering
+- Smooth transitions between states
+```
+
+---
+
+## 🎨 **Design System Patterns**
+
+### **1. Theme Pattern: Agatha Harkness Dark Mystical**
+```
+Color Palette:
+- Primary: Navy (#1e293b) / Gold (#d4af37)
+- Background: Dark navy with gradient overlays
+- Text: White on dark, Gray-800 on light
+- Accent: Purple gradients for interactive elements
+
+Typography:
+- Headings: Bold, mystical feeling
+- Body: Readable, sufficient contrast
+- Interactive: Clear visual hierarchy
+```
+
+### **2. Animation Pattern: Framer Motion Transitions**
+```
+Animation Philosophy:
+- Subtle and mystical feeling
+- Smooth page transitions
+- Card reveal animations
+- Particle effects for ambiance
+
+Implementation:
+- AnimatePresence for route changes
+- Motion components for hover states
+- Stagger animations for list items
+- Respect user motion preferences
+```
+
+### **3. Responsive Pattern: Mobile-First Design**
+```
+Breakpoint Strategy:
+- sm: 640px (mobile landscape)
+- md: 768px (tablet)  
+- lg: 1024px (desktop)
+- xl: 1280px (large desktop)
+
+Component Approach:
+- Mobile-first CSS classes
+- Touch-friendly interactive elements
+- Scalable particle effects
+- Readable typography across devices
+```
+
+---
+
+## 💾 **Data Patterns**
+
+### **1. User Data Pattern: Stateless with Temporary Storage**
+```
+Current State:
+- No persistent user accounts
+- sessionStorage for navigation only
+- IP-based rate limiting
+- No reading history storage
+
+Future Pattern:
+- Supabase for user authentication
+- Database storage for reading history
+- Personalization based on past readings
+```
+
+### **2. AI Response Pattern: Structured TarotReading Interface**
+```typescript
+interface TarotReading {
+  card: string;           // Card name
+  meaning: string;        // Traditional meaning
+  interpretation: string; // User-specific interpretation
+  guidance: string;       // Actionable advice
+  energy: string;         // Current energy reading
+  timeframe: string;      // Timing predictions
+  imagePath?: string;     // Optional card image
+}
+```
+
+### **3. Rate Limiting Pattern: In-Memory with IP Tracking**
+```typescript
+Pattern: Map-based rate limiting per IP address
+Implementation:
+- Map<string, number> for tracking daily reads
+- IP extraction from request headers
+- Reset at midnight (UTC)
+- Graceful error messages when exceeded
+```
+
+---
+
+## 🔧 **Development Patterns**
+
+### **1. File Organization Pattern: Feature-Based Structure**
+```
+Convention:
+├── app/                 # Next.js 14 app directory
+├── lib/                 # Utility functions and clients
+├── components/          # Reusable UI components
+├── data/               # Static data and constants
+├── public/             # Static assets
+└── docs/               # Project documentation
+
+Naming:
+- PascalCase for components: TarotCard.tsx
+- camelCase for utilities: openrouter.ts
+- kebab-case for routes: /reading/single
+```
+
+### **2. Import Pattern: Absolute Imports with Path Mapping**
+```typescript
+// tsconfig.json path mapping
+"@/app/*": ["./app/*"]
+"@/lib/*": ["./lib/*"]
+"@/components/*": ["./app/components/*"]
+
+// Usage in components
+import { Button } from '@/app/components/ui/button';
+import { generateReading } from '@/lib/openrouter';
+```
+
+### **3. Error Boundary Pattern: Graceful Degradation**
+```typescript
+Pattern: Try-catch with user-friendly fallbacks
+Implementation:
+- API errors return structured error objects
+- UI components handle loading and error states
+- Fallback content for failed image loads
+- Retry mechanisms for transient failures
+```
+
+---
+
+## 🚦 **API Design Patterns**
+
+### **1. Request/Response Pattern: Consistent Structure**
+```typescript
+// Request Pattern
+interface ReadingRequest {
+  question: string;
+  followUp?: {
+    originalQuestion: string;
+    cardName: string;
+    cardMeaning: string;
+    previousInterpretation: string;
+  };
+}
+
+// Response Pattern
+interface ApiResponse<T> {
+  success?: boolean;
+  data?: T;
+  error?: string;
+  remainingReadings?: number;
+  remainingFollowUps?: number;
+}
+```
+
+### **2. Rate Limiting Pattern: Freemium Model Implementation**
+```typescript
+Pattern: IP-based rate limiting with graceful degradation
+Rules:
+- 3 readings per day for free users
+- 10 follow-up questions per reading
+- Clear error messages when limits exceeded
+- Counter display for user awareness
+```
+
+### **3. Health Check Pattern: Service Monitoring**
+```typescript
+Pattern: GET endpoint for service health verification
+Implementation:
+- /api/reading GET method
+- Tests actual AI service connectivity
+- Returns timestamp and status
+- Used for deployment health checks
+```
+
+---
+
+## 🔒 **Security Patterns**
+
+### **1. API Security Pattern: Input Validation + Rate Limiting**
+```typescript
+Security Layers:
+1. Input validation (length, content type)
+2. Rate limiting (IP-based tracking)
+3. Environment variable protection
+4. Error message sanitization
+5. No sensitive data in client responses
+```
+
+### **2. Environment Security Pattern: Secrets Management**
+```
+Production:
+- Environment variables in Vercel dashboard
+- No API keys in code or version control
+- Separate environments (dev/staging/prod)
+
+Development:
+- .env.local for local development
+- .env.example for onboarding
+- .gitignore protection for secrets
+```
+
+---
+
+## 📱 **User Experience Patterns**
+
+### **1. Navigation Pattern: Progressive Disclosure**
+```
+Flow: Landing → Question → Card Draw → Reveal → Reading → Chat
+Pattern: Each step reveals more functionality
+Implementation: Clear progress indication and back navigation
+```
+
+### **2. Feedback Pattern: Immediate Response with Loading States**
+```
+Pattern: Immediate acknowledgment + progress indication
+Implementation:
+- Button states (loading, disabled, success)
+- Progress bars for long operations
+- Success animations for completed actions
+- Error states with retry options
+```
+
+### **3. Accessibility Pattern: Inclusive Design**
+```
+Implementation:
+- Semantic HTML structure
+- Keyboard navigation support
+- Screen reader friendly labels
+- High contrast color ratios
+- Focus management for modals/dialogs
+```
+
+---
+
+## 🎯 **Business Logic Patterns**
+
+### **1. Freemium Pattern: Value-First Experience**
+```
+Strategy:
+- Let users experience full value (3 readings)
+- Clear limit communication
+- Smooth upgrade path design
+- No feature degradation in free tier
+```
+
+### **2. AI Prompt Pattern: Context-Aware Conversations**
+```
+Pattern: Dynamic prompt generation based on context
+Implementation:
+- Initial reading prompts for first questions
+- Follow-up prompts reference previous reading
+- Chat context maintains conversation flow
+- Personalization ready for user history
+```
+
+---
+
+## 🔮 **Future Extension Patterns**
+
+### **1. User Account Pattern: Authentication + Personalization**
+```
+Planned Implementation:
+- Supabase Auth integration
+- Database schema for user profiles
+- Reading history storage
+- Personalized AI responses
+```
+
+### **2. Multi-Spread Pattern: Extensible Reading Types**
+```
+Planned Architecture:
+- Reading type selection
+- Dynamic card layouts
+- Spread-specific interpretations
+- Enhanced UI for complex layouts
+```
+
+### **3. Premium Feature Pattern: Feature Gating**
+```
+Planned Implementation:
+- Subscription tier detection
+- Feature-based component rendering
+- Usage tracking and analytics
+- Smooth upgrade prompts
+```
+
+---
+
+## 📊 **Performance Patterns**
+
+### **1. Image Optimization Pattern: Next.js Image Component**
+```
+Implementation:
+- Lazy loading for card images
+- Responsive image sizing
+- WebP format with fallbacks
+- Placeholder blurred images
+```
+
+### **2. Bundle Optimization Pattern: Code Splitting**
+```
+Strategy:
+- Route-based code splitting
+- Dynamic imports for heavy components
+- Tree shaking for unused code
+- Optimized build output
+```
+
+### **3. Caching Pattern: Static + Dynamic Caching**
+```
+Implementation:
+- Static card data cached at build
+- API responses cached appropriately
+- Image assets cached by CDN
+- Service worker for offline functionality (future)
+```
+
+---
+
+**These patterns provide the foundation for consistent, scalable, and maintainable development in TarotSnap.** 

@@ -1,13 +1,15 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { Button } from '@/app/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/app/components/ui/card';
 import { Input } from '@/app/components/ui/input';
 import { Textarea } from '@/app/components/ui/textarea';
 import { MysticalParticles } from './components/ui/MysticalParticles';
+import { AuthModal } from './components/auth/AuthModal';
+import { useAuth } from './providers/AuthProvider';
 import { 
   Sparkles, 
   Moon, 
@@ -17,7 +19,10 @@ import {
   ArrowRight,
   MessageCircle,
   Zap,
-  Crown
+  Crown,
+  User,
+  LogIn,
+  Settings
 } from 'lucide-react';
 
 const containerVariants = {
@@ -70,7 +75,20 @@ const features = [
 export default function HomePage() {
   const [question, setQuestion] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const [authModalOpen, setAuthModalOpen] = useState(false);
+  const [authMode, setAuthMode] = useState<'login' | 'signup'>('login');
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const { user, profile, loading } = useAuth();
+
+  // Check if user needs to authenticate (from protected route redirect)
+  useEffect(() => {
+    const authRequired = searchParams.get('auth') === 'required';
+    if (authRequired && !user && !loading) {
+      setAuthMode('login');
+      setAuthModalOpen(true);
+    }
+  }, [searchParams, user, loading]);
 
   const handleStartReading = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -87,15 +105,74 @@ export default function HomePage() {
     }, 1000);
   };
 
+  const handleAuthSuccess = () => {
+    setAuthModalOpen(false);
+    // If user just signed up/logged in, redirect to dashboard
+    router.push('/dashboard');
+  };
+
+  const openAuthModal = (mode: 'login' | 'signup') => {
+    setAuthMode(mode);
+    setAuthModalOpen(true);
+  };
+
   return (
     <div className="min-h-screen relative overflow-hidden">
       <MysticalParticles />
+      
+      {/* Header */}
+      <div className="relative z-20 container mx-auto px-4 py-4">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <Crown className="w-8 h-8 text-accent" />
+            <span className="text-accent font-semibold text-lg">TarotSnap</span>
+          </div>
+          
+          <div className="flex items-center gap-3">
+            {user ? (
+              <>
+                <span className="text-white/80 text-sm">
+                  Welcome, {profile?.full_name || user.email?.split('@')[0]}
+                </span>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => router.push('/dashboard')}
+                  className="border-white/30 text-white hover:bg-white/10"
+                >
+                  <User className="w-4 h-4 mr-2" />
+                  Dashboard
+                </Button>
+              </>
+            ) : (
+              <>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => openAuthModal('login')}
+                  className="text-white hover:text-gold-300 hover:bg-white/10"
+                >
+                  <LogIn className="w-4 h-4 mr-2" />
+                  Sign In
+                </Button>
+                <Button
+                  size="sm"
+                  onClick={() => openAuthModal('signup')}
+                  className="bg-gradient-to-r from-gold-500 to-amber-600 hover:from-gold-600 hover:to-amber-700 text-black"
+                >
+                  Get Started
+                </Button>
+              </>
+            )}
+          </div>
+        </div>
+      </div>
       
       <motion.div
         variants={containerVariants}
         initial="hidden"
         animate="visible"
-        className="container mx-auto px-4 py-16 relative z-10"
+        className="container mx-auto px-4 py-8 relative z-10"
       >
         {/* Hero Section */}
         <motion.div 
@@ -268,6 +345,14 @@ export default function HomePage() {
           </Card>
         </motion.div>
       </motion.div>
+      
+      {/* Authentication Modal */}
+      <AuthModal
+        isOpen={authModalOpen}
+        onClose={() => setAuthModalOpen(false)}
+        defaultMode={authMode}
+        onSuccess={handleAuthSuccess}
+      />
     </div>
   );
 }

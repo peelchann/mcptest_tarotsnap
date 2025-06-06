@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import "./globals.css";
 import StarsBackground, { StarsFallback } from "./components/StarsBackground";
 import ScrollingSymbols from "./components/ScrollingSymbols";
+import { AuthProvider } from "./providers/AuthProvider";
 
 export const metadata: Metadata = {
   title: "TarotSnap",
@@ -31,9 +32,11 @@ export default function RootLayout({
         <ScrollingSymbols />
         
         {/* Content */}
-        <main className="relative z-10 min-h-screen container mx-auto px-4 py-8">
-          {children}
-        </main>
+        <AuthProvider>
+          <main className="relative z-10 min-h-screen container mx-auto px-4 py-8">
+            {children}
+          </main>
+        </AuthProvider>
       </body>
     </html>
   )
