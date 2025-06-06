@@ -7,7 +7,7 @@ alwaysApply: false
 
 **System Purpose:** Provide structured development workflow through custom Cursor modes  
 **Project:** TarotSnap - AI-powered tarot reading application  
-**Current Focus:** Phase 1 - Claude 3.5 Sonnet Integration  
+**Current Focus:** Phase 1 - OpenRouter AI Integration  
 
 ---
 
@@ -100,9 +100,9 @@ read_file({
 ## 🎯 **CURRENT PROJECT CONTEXT APPLICATION**
 
 ### **TarotSnap Specific Context**
-- **Tech Stack:** Next.js 14, TypeScript, Tailwind CSS, Claude 3.5 Sonnet
+- **Tech Stack:** Next.js 14, TypeScript, Tailwind CSS, OpenRouter AI (Llama 3.1-8B-Instruct)
 - **Current Phase:** Phase 1 - AI Integration 
-- **Active Task:** T001 - Claude API Integration (Level 3 complexity)
+- **Active Task:** T002 - Frontend-Backend Connection (Level 2 complexity)
 - **Priority:** Transform UI prototype into functional AI application
 
 ### **Development Philosophy**
@@ -112,9 +112,9 @@ read_file({
 - **Iterative approach** - complete small working increments
 
 ### **Success Criteria**
-- Claude API returns mystical, authentic tarot readings
-- Frontend connects seamlessly to AI backend
-- Response times under 3 seconds
+- ✅ OpenRouter API returns mystical, authentic tarot readings (COMPLETE)
+- Frontend connects seamlessly to AI backend (IN PROGRESS - T002)
+- Response times under 12 seconds (AI generation)
 - User experience maintains mystical theme
 - Code quality follows TypeScript strict mode
 
@@ -125,9 +125,9 @@ read_file({
 ### **Common Issues & Solutions**
 
 #### **API Integration Errors**
-- **Issue:** Claude API connection failures
+- **Issue:** OpenRouter API connection failures
 - **Solution:** Implement retry logic and graceful error messages
-- **Fallback:** Temporary mock responses during development
+- **Fallback:** Graceful degradation with user-friendly error messages
 
 #### **Frontend-Backend Mismatches**
 - **Issue:** Response format doesn't match frontend expectations
