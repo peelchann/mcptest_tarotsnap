@@ -1,5 +1,4 @@
 import { createBrowserClient, createServerClient } from '@supabase/ssr'
-import { cookies } from 'next/headers'
 
 // Supabase client for browser/client-side operations
 export const createBrowserSupabaseClient = () =>
@@ -9,9 +8,8 @@ export const createBrowserSupabaseClient = () =>
   )
 
 // Supabase client for server-side operations (API routes, middleware)
-export const createServerSupabaseClient = () => {
-  const cookieStore = cookies()
-
+// Note: This should only be called from server components, API routes, or middleware
+export const createServerSupabaseClient = (cookieStore: any) => {
   return createServerClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
