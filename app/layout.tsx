@@ -1,23 +1,12 @@
 import type { Metadata } from "next";
-import localFont from "next/font/local";
 import "./globals.css";
 import StarsBackground, { StarsFallback } from "./components/StarsBackground";
 import ScrollingSymbols from "./components/ScrollingSymbols";
 import { AuthProvider } from "./providers/AuthProvider";
 import { GoogleAnalytics } from '@next/third-parties/google';
 
-const geistSans = localFont({
-  src: "./fonts/GeistVF.woff2",
-  variable: "--font-geist-sans",
-  weight: "100 900",
-});
-const geistMono = localFont({
-  src: "./fonts/GeistMonoVF.woff2",
-  variable: "--font-geist-mono",
-  weight: "100 900",
-});
-
 export const metadata: Metadata = {
+  metadataBase: new URL(process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : 'http://localhost:3000'),
   title: "TarotSnap - AI Tarot Readings & Spiritual Guidance",
   description: "Get personalized AI tarot readings with mystical guidance. Ask the universe your questions and receive insights through ancient tarot wisdom.",
   keywords: "tarot, AI tarot, tarot reading, spiritual guidance, divination, mystical, oracle",
@@ -26,7 +15,6 @@ export const metadata: Metadata = {
     title: "TarotSnap - AI Tarot Readings & Spiritual Guidance",
     description: "Get personalized AI tarot readings with mystical guidance. Ask the universe your questions and receive insights through ancient tarot wisdom.",
     type: "website",
-    url: "https://tarotsnap.com",
     images: [
       {
         url: "/tarot-og-image.jpg",
@@ -42,37 +30,15 @@ export const metadata: Metadata = {
     description: "Get personalized AI tarot readings with mystical guidance. Ask the universe your questions and receive insights through ancient tarot wisdom.",
     images: ["/tarot-og-image.jpg"],
   },
-  viewport: "width=device-width, initial-scale=1",
   robots: "index, follow",
 };
 
-// Web Vitals Component for Performance Monitoring
-function WebVitals() {
-  if (typeof window === 'undefined') return null;
-  
-  // Dynamically import to avoid SSR issues
-  import('next/web-vitals').then(({ useReportWebVitals }) => {
-    if (typeof useReportWebVitals === 'function') {
-      useReportWebVitals((metric) => {
-        // Send to Google Analytics
-        if (window.gtag) {
-          window.gtag('event', metric.name, {
-            value: Math.round(metric.name === 'CLS' ? metric.value * 1000 : metric.value),
-            event_label: metric.id,
-            non_interaction: true,
-          });
-        }
-        
-        // Log for debugging
-        if (process.env.NODE_ENV === 'development') {
-          console.log('Web Vital:', metric);
-        }
-      });
-    }
-  });
-  
-  return null;
-}
+export const viewport = {
+  width: 'device-width',
+  initialScale: 1,
+};
+
+// Simplified Web Vitals - will be handled by analytics.ts instead
 
 export default function RootLayout({
   children,
@@ -102,7 +68,7 @@ export default function RootLayout({
             {children}
           </main>
         </AuthProvider>
-        <WebVitals />
+        
         {/* Google Analytics 4 - Only in production */}
         {process.env.NODE_ENV === 'production' && process.env.NEXT_PUBLIC_GA_ID && (
           <GoogleAnalytics gaId={process.env.NEXT_PUBLIC_GA_ID} />

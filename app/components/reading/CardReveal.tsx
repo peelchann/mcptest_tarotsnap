@@ -23,13 +23,19 @@ export function CardReveal({ reading, onContinue }: CardRevealProps) {
         className="relative mb-8"
       >
         <div className="relative w-64 h-96 mx-auto">
-          <Image
-            src={reading.imagePath}
-            alt={reading.card}
-            fill
-            className="object-cover rounded-xl shadow-2xl"
-            priority
-          />
+          {reading.imagePath ? (
+            <Image
+              src={reading.imagePath}
+              alt={reading.card}
+              fill
+              className="object-cover rounded-xl shadow-2xl"
+              priority
+            />
+          ) : (
+            <div className="w-full h-full bg-gradient-to-br from-purple-800 to-indigo-900 rounded-xl flex items-center justify-center text-gold-400">
+              <span className="text-6xl">🔮</span>
+            </div>
+          )}
           {/* Mystical glow effect */}
           <div className="absolute inset-0 rounded-xl bg-gradient-to-t from-purple-900/20 via-transparent to-gold-400/20 shadow-2xl" />
         </div>

@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, Suspense } from 'react';
 import { motion } from 'framer-motion';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { Button } from '@/app/components/ui/button';
@@ -72,23 +72,38 @@ const features = [
   }
 ];
 
-export default function HomePage() {
-  const [question, setQuestion] = useState('');
-  const [isLoading, setIsLoading] = useState(false);
-  const [authModalOpen, setAuthModalOpen] = useState(false);
-  const [authMode, setAuthMode] = useState<'login' | 'signup'>('login');
-  const router = useRouter();
+// Component that uses useSearchParams - needs to be wrapped in Suspense
+function AuthChecker({ 
+  setAuthMode, 
+  setAuthModalOpen, 
+  user, 
+  loading 
+}: {
+  setAuthMode: (mode: 'login' | 'signup') => void;
+  setAuthModalOpen: (open: boolean) => void;
+  user: any;
+  loading: boolean;
+}) {
   const searchParams = useSearchParams();
-  const { user, profile, loading } = useAuth();
 
-  // Check if user needs to authenticate (from protected route redirect)
   useEffect(() => {
     const authRequired = searchParams.get('auth') === 'required';
     if (authRequired && !user && !loading) {
       setAuthMode('login');
       setAuthModalOpen(true);
     }
-  }, [searchParams, user, loading]);
+  }, [searchParams, user, loading, setAuthMode, setAuthModalOpen]);
+
+  return null;
+}
+
+export default function HomePage() {
+  const [question, setQuestion] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
+  const [authModalOpen, setAuthModalOpen] = useState(false);
+  const [authMode, setAuthMode] = useState<'login' | 'signup'>('login');
+  const router = useRouter();
+  const { user, profile, loading } = useAuth();
 
   const handleStartReading = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -353,6 +368,16 @@ export default function HomePage() {
         defaultMode={authMode}
         onSuccess={handleAuthSuccess}
       />
+      
+      {/* Auth checker with Suspense boundary */}
+      <Suspense fallback={null}>
+        <AuthChecker
+          setAuthMode={setAuthMode}
+          setAuthModalOpen={setAuthModalOpen}
+          user={user}
+          loading={loading}
+        />
+      </Suspense>
     </div>
   );
 }
