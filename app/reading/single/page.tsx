@@ -22,6 +22,7 @@ import {
   Heart,
   AlertTriangle
 } from 'lucide-react';
+import { analytics, categorizeQuestion } from '@/lib/analytics';
 
 interface ChatMessage {
   id: string;
@@ -47,20 +48,34 @@ export default function SingleCardReading() {
   const [remainingFollowUps, setRemainingFollowUps] = useState<number>(10);
 
   useEffect(() => {
-    // Get question from session storage
-    const storedQuestion = sessionStorage.getItem('tarot-question');
-    if (storedQuestion) {
-      setQuestion(storedQuestion);
-      setCurrentStep('draw');
+    // Track page view on component mount
+    analytics.trackPageView('Single Card Reading', {
+      reading_type: 'single_card'
+    });
+    
+    // Restore question from session storage
+    const savedQuestion = sessionStorage.getItem('tarot-question');
+    if (savedQuestion) {
+      setQuestion(savedQuestion);
     }
   }, []);
+
+  useEffect(() => {
+    if (question) {
+      sessionStorage.setItem('tarot-question', question);
+    }
+  }, [question]);
 
   const drawCard = async () => {
     if (!question.trim()) {
       setError('Please enter a question before drawing your card.');
+      analytics.trackError('user_error', 'Empty question submitted', 'low');
       return;
     }
 
+    // Track reading started
+    analytics.trackReadingStarted(question.length);
+    
     setIsDrawing(true);
     setError(null);
     
@@ -81,8 +96,13 @@ export default function SingleCardReading() {
         if (response.status === 429) {
           setRateLimited(true);
           setError(data.error || 'Daily reading limit reached. Please try again tomorrow.');
+          
+          // Track rate limit hit
+          analytics.trackRateLimitHit('readings', data.remainingReadings || 0);
+          analytics.trackPremiumInterest('rate_limit', analytics.calculateEngagementScore());
         } else {
           setError(data.error || 'Failed to generate reading. Please try again.');
+          analytics.trackError('api_failure', data.error || 'Unknown API error', 'high');
         }
         setIsDrawing(false);
         return;
@@ -92,6 +112,10 @@ export default function SingleCardReading() {
       setReading(data.reading);
       setIsDrawing(false);
       setCurrentStep('cardReveal');
+      
+      // Track reading completed
+      const questionCategory = categorizeQuestion(question);
+      analytics.trackReadingCompleted(data.reading.card, questionCategory);
       
       // Update remaining readings counter
       if (data.remainingReadings !== undefined) {
@@ -114,6 +138,7 @@ export default function SingleCardReading() {
     } catch (error) {
       console.error('Error drawing card:', error);
       setError('Unable to connect to reading service. Please check your connection and try again.');
+      analytics.trackError('network', 'Failed to connect to reading service', 'high');
       setIsDrawing(false);
     }
   };
@@ -131,6 +156,9 @@ export default function SingleCardReading() {
     setChatMessages(prev => [...prev, userMessage]);
     setNewMessage('');
     setIsThinking(true);
+
+    // Track chat message
+    analytics.trackChatMessage(chatMessages.length + 1);
 
     try {
       const response = await fetch('/api/reading', {
@@ -152,6 +180,10 @@ export default function SingleCardReading() {
       const data = await response.json();
 
       if (!response.ok) {
+        if (response.status === 429) {
+          analytics.trackRateLimitHit('followup_questions', data.remainingFollowUps || 0);
+        }
+        
         // Handle API errors gracefully
         const errorMessage = data.error || 'Unable to get response. Please try again.';
         const assistantMessage: ChatMessage = {
@@ -161,6 +193,8 @@ export default function SingleCardReading() {
           timestamp: new Date()
         };
         setChatMessages(prev => [...prev, assistantMessage]);
+        
+        analytics.trackError('api_failure', data.error || 'Chat API error', 'medium');
       } else {
         // Use the follow-up response
         const assistantMessage: ChatMessage = {
@@ -186,6 +220,7 @@ export default function SingleCardReading() {
         timestamp: new Date()
       };
       setChatMessages(prev => [...prev, errorMessage]);
+      analytics.trackError('network', 'Chat message failed to send', 'medium');
     } finally {
       setIsThinking(false);
     }
@@ -200,6 +235,39 @@ export default function SingleCardReading() {
     setRateLimited(false);
     setRemainingFollowUps(10); // Reset follow-up counter for new reading
     sessionStorage.removeItem('tarot-question');
+    
+    // Track new reading started
+    analytics.trackPageView('Single Card Reading - New Reading', {
+      reading_type: 'single_card_new'
+    });
+  };
+
+  // Track when user starts chatting
+  const handleChatStart = (cardName: string) => {
+    analytics.trackChatStarted(cardName);
+    setCurrentStep('chat');
+    
+    // Add initial AI message to chat if not already present
+    if (chatMessages.length === 0) {
+      // Generate varied initial message using the templates
+      const variants = [
+        `I sense the energy of ${cardName} continuing to work in your life. What aspect of this reading resonates most strongly with you?`,
+        `The wisdom of ${cardName} has many layers. What part of your question about '${question}' would you like to explore more deeply?`,
+        `I feel there's more the cards want to reveal about your path. What's stirring in your heart as you reflect on this reading?`,
+        `The mystical energies around ${cardName} are still speaking. Is there a particular aspect of '${question}' you'd like to delve into further?`,
+        `Your ${cardName} reading holds deeper mysteries. What would you like to understand better about this guidance?`
+      ];
+      
+      const randomVariant = variants[Math.floor(Math.random() * variants.length)];
+      
+      const initialMessage: ChatMessage = {
+        id: Date.now().toString(),
+        role: 'assistant',
+        content: randomVariant,
+        timestamp: new Date()
+      };
+      setChatMessages([initialMessage]);
+    }
   };
 
   return (
@@ -290,113 +358,107 @@ export default function SingleCardReading() {
                     Focus your intention and ask the universe for guidance
                   </CardDescription>
                 </CardHeader>
-                <CardContent>
-                  <div className="space-y-4">
+                <CardContent className="space-y-6">
+                  <div className="space-y-2">
                     <Textarea
-                      placeholder="What question would you like the cards to answer?"
+                      placeholder="Ask your question to the cards... (e.g., 'What should I focus on in my career?')"
                       value={question}
                       onChange={(e) => setQuestion(e.target.value)}
-                      className="min-h-[100px] bg-white/90 border-white/30 text-gray-800 placeholder:text-gray-500"
+                      className="min-h-[120px] bg-white/90 border-white/30 text-gray-800 placeholder:text-gray-500 resize-none"
                       maxLength={500}
+                      onKeyDown={(e) => {
+                        if (e.key === 'Enter' && !e.shiftKey && question.trim()) {
+                          e.preventDefault();
+                          drawCard();
+                        }
+                      }}
                     />
-                    <div className="text-right text-sm text-white/70">
-                      {question.length}/500 characters
+                    <div className="flex justify-between text-sm text-white/60">
+                      <span>Press Enter to draw your card</span>
+                      <span>{question.length}/500</span>
                     </div>
-                    <Button 
-                      onClick={() => setCurrentStep('draw')}
-                      className="w-full bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 text-white"
-                      size="lg"
-                      disabled={question.trim().length < 5}
-                    >
-                      <Sparkles className="w-5 h-5 mr-2" />
-                      Continue to Card Draw
-                    </Button>
                   </div>
+                  
+                  <Button
+                    onClick={drawCard}
+                    disabled={!question.trim() || isDrawing}
+                    className="w-full bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white py-3 text-lg font-semibold"
+                  >
+                    {isDrawing ? (
+                      <div className="flex items-center gap-2">
+                        <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                        Channeling mystical energies...
+                      </div>
+                    ) : (
+                      'Draw Your Card'
+                    )}
+                  </Button>
                 </CardContent>
               </Card>
             </motion.div>
           )}
 
-          {/* Card Drawing */}
-          {currentStep === 'draw' && (
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -20 }}
-              className="text-center"
-            >
-              {question && (
-                <motion.div 
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  className="mb-8"
-                >
-                  <Card className="max-w-2xl mx-auto border-white/20 bg-white/10 backdrop-blur-md">
-                    <CardContent className="p-6">
-                      <p className="text-lg font-medium mb-2 text-white">Your Question:</p>
-                      <p className="text-white/80 italic">"{question}"</p>
-                    </CardContent>
-                  </Card>
-                </motion.div>
-              )}
-
-              <div className="max-w-md mx-auto">
-                <motion.div
-                  className="relative mb-8"
-                  animate={isDrawing ? { scale: [1, 1.1, 1] } : {}}
-                  transition={{ duration: 0.5, repeat: isDrawing ? Infinity : 0 }}
-                >
-                  <div className="w-48 h-72 mx-auto bg-gradient-to-b from-purple-900/20 to-indigo-900/20 rounded-lg border-2 border-gold-400/50 flex items-center justify-center">
-                    {isDrawing ? (
-                      <div className="text-center">
-                        <div className="w-8 h-8 border-2 border-gold-400 border-t-transparent rounded-full animate-spin mx-auto mb-4" />
-                        <p className="text-gold-400">Consulting the cosmos...</p>
-                      </div>
-                    ) : (
-                      <Sparkles className="w-16 h-16 text-gold-400" />
-                    )}
-                  </div>
-                </motion.div>
-
-                <Button 
-                  onClick={drawCard}
-                  disabled={isDrawing}
-                  className="bg-gradient-to-r from-gold-500 to-amber-600 hover:from-gold-600 hover:to-amber-700 text-black font-semibold px-8 py-3 text-lg"
-                  size="lg"
-                >
-                  {isDrawing ? 'Drawing...' : 'Draw Your Card'}
-                </Button>
-              </div>
-            </motion.div>
-          )}
-
-          {/* Card Reveal Step - NEW */}
+          {/* Card Reveal Phase */}
           {currentStep === 'cardReveal' && reading && (
             <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -20 }}
+              initial={{ opacity: 0, scale: 0.8 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.8 }}
+              className="text-center"
             >
-              <CardReveal 
-                reading={reading} 
-                onContinue={() => setCurrentStep('reading')} 
-              />
-            </motion.div>
-          )}
-
-          {/* Reading Interpretation Step */}
-          {currentStep === 'reading' && reading && (
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -20 }}
-            >
-              <ReadingInterpretation 
-                reading={reading} 
-                question={question} 
-              />
+              <motion.div
+                initial={{ scale: 0, rotate: 180 }}
+                animate={{ scale: 1, rotate: 0 }}
+                transition={{ type: "spring", stiffness: 300, damping: 20, delay: 0.5 }}
+                className="max-w-sm mx-auto mb-8"
+              >
+                <Card className="border-white/30 bg-white/10 backdrop-blur-md">
+                  <CardContent className="p-6">
+                    <div className="relative w-64 h-96 mx-auto mb-6 rounded-lg border-2 border-gold-400/50 overflow-hidden">
+                      {reading.imagePath ? (
+                        <Image
+                          src={reading.imagePath}
+                          alt={reading.card}
+                          fill
+                          className="object-cover object-center"
+                          priority
+                          onError={(e) => {
+                            // Fallback to placeholder if image fails to load
+                            const target = e.target as HTMLImageElement;
+                            target.style.display = 'none';
+                            const fallback = target.nextElementSibling as HTMLElement;
+                            if (fallback) fallback.style.display = 'flex';
+                          }}
+                        />
+                      ) : null}
+                      {/* Fallback placeholder */}
+                      <div className="absolute inset-0 bg-gradient-to-b from-purple-900/20 to-indigo-900/20 flex items-center justify-center text-center text-gold-400" style={{ display: reading.imagePath ? 'none' : 'flex' }}>
+                        <div>
+                          <Sparkles className="w-16 h-16 mx-auto mb-4" />
+                          <p className="text-lg font-medium">{reading.card}</p>
+                        </div>
+                      </div>
+                    </div>
+                    <motion.h2 
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      transition={{ delay: 1.0 }}
+                      className="text-3xl font-bold mb-2 text-gold-400"
+                    >
+                      {reading.card}
+                    </motion.h2>
+                    <motion.p 
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      transition={{ delay: 1.2 }}
+                      className="text-white/80 text-lg"
+                    >
+                      {reading.meaning}
+                    </motion.p>
+                  </CardContent>
+                </Card>
+              </motion.div>
               
-              {/* Continue to Chat Button */}
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
@@ -404,30 +466,7 @@ export default function SingleCardReading() {
                 className="text-center mt-8"
               >
                 <Button
-                  onClick={() => {
-                    setCurrentStep('chat');
-                    // Add initial AI message to chat if not already present
-                    if (chatMessages.length === 0) {
-                      // Generate varied initial message using the templates
-                      const variants = [
-                        `I sense the energy of ${reading.card} continuing to work in your life. What aspect of this reading resonates most strongly with you?`,
-                        `The wisdom of ${reading.card} has many layers. What part of your question about '${question}' would you like to explore more deeply?`,
-                        `I feel there's more the cards want to reveal about your path. What's stirring in your heart as you reflect on this reading?`,
-                        `The mystical energies around ${reading.card} are still speaking. Is there a particular aspect of '${question}' you'd like to delve into further?`,
-                        `Your ${reading.card} reading holds deeper mysteries. What would you like to understand better about this guidance?`
-                      ];
-                      
-                      const randomVariant = variants[Math.floor(Math.random() * variants.length)];
-                      
-                      const initialMessage: ChatMessage = {
-                        id: Date.now().toString(),
-                        role: 'assistant',
-                        content: randomVariant,
-                        timestamp: new Date()
-                      };
-                      setChatMessages([initialMessage]);
-                    }
-                  }}
+                  onClick={() => handleChatStart(reading.card)}
                   className="bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white px-8 py-3 rounded-full font-semibold shadow-lg"
                 >
                   <MessageCircle className="w-5 h-5 mr-2" />

@@ -12,6 +12,7 @@
     "chromatic": "chromatic"
   },
   "dependencies": {
+    "@next/third-parties": "^15.3.3",
     "@radix-ui/react-slot": "^1.2.3",
     "@react-spring/web": "^10.0.1",
     "@supabase/ssr": "^0.6.1",

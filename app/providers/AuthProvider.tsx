@@ -4,6 +4,7 @@ import { createContext, useContext, useEffect, useState } from 'react'
 import { User } from '@supabase/supabase-js'
 import { createBrowserSupabaseClient } from '@/lib/supabase'
 import { UserProfile } from '@/lib/supabase'
+import { analytics } from '@/lib/analytics'
 
 interface AuthContextType {
   user: User | null
@@ -57,6 +58,25 @@ export function AuthProvider({ children }: AuthProviderProps) {
     }
   }
 
+  // Check if user is returning (has existing profile)
+  const isReturningUser = async (userId: string): Promise<boolean> => {
+    try {
+      const { data, error } = await supabase
+        .from('profiles')
+        .select('created_at')
+        .eq('id', userId)
+        .single()
+
+      if (error || !data) return false
+      
+      // If profile was created more than 5 minutes ago, consider them a returning user
+      const profileAge = Date.now() - new Date(data.created_at).getTime()
+      return profileAge > 5 * 60 * 1000 // 5 minutes
+    } catch (error) {
+      return false
+    }
+  }
+
   // Initialize auth state
   useEffect(() => {
     const initializeAuth = async () => {
@@ -70,6 +90,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
         }
       } catch (error) {
         console.error('Error initializing auth:', error)
+        analytics.trackError('unknown', 'Auth initialization failed', 'medium')
       } finally {
         setLoading(false)
       }
@@ -80,10 +101,18 @@ export function AuthProvider({ children }: AuthProviderProps) {
     // Listen for auth changes
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       async (event, session) => {
+        console.log('Auth event:', event)
+        
         if (session?.user) {
           setUser(session.user)
           const userProfile = await fetchProfile(session.user.id)
           setProfile(userProfile)
+          
+          // Track login events (but not initial page loads)
+          if (event === 'SIGNED_IN') {
+            const isReturning = await isReturningUser(session.user.id)
+            analytics.trackLoginCompleted(isReturning)
+          }
         } else {
           setUser(null)
           setProfile(null)
@@ -108,11 +137,18 @@ export function AuthProvider({ children }: AuthProviderProps) {
       })
 
       if (error) {
+        analytics.trackError('api_failure', `Signup failed: ${error.message}`, 'medium')
         return { error: error.message }
+      }
+
+      // Track successful signup
+      if (data.user) {
+        analytics.trackSignupCompleted(document.referrer || 'direct')
       }
 
       return {}
     } catch (error) {
+      analytics.trackError('unknown', 'Unexpected signup error', 'high')
       return { error: 'An unexpected error occurred during sign up' }
     }
   }
@@ -125,11 +161,14 @@ export function AuthProvider({ children }: AuthProviderProps) {
       })
 
       if (error) {
+        analytics.trackError('api_failure', `Signin failed: ${error.message}`, 'medium')
         return { error: error.message }
       }
 
+      // Track successful signin (detailed tracking happens in auth state change)
       return {}
     } catch (error) {
+      analytics.trackError('unknown', 'Unexpected signin error', 'high')
       return { error: 'An unexpected error occurred during sign in' }
     }
   }
@@ -139,8 +178,14 @@ export function AuthProvider({ children }: AuthProviderProps) {
       await supabase.auth.signOut()
       setUser(null)
       setProfile(null)
+      
+      // Track page view for signed out state
+      analytics.trackPageView('Signed Out', {
+        previous_state: 'authenticated'
+      })
     } catch (error) {
       console.error('Error signing out:', error)
+      analytics.trackError('api_failure', 'Signout failed', 'low')
     }
   }
 
@@ -159,6 +204,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
         .eq('id', user.id)
 
       if (error) {
+        analytics.trackError('api_failure', `Profile update failed: ${error.message}`, 'medium')
         return { error: error.message }
       }
 
@@ -166,6 +212,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
       await refreshProfile()
       return {}
     } catch (error) {
+      analytics.trackError('unknown', 'Unexpected profile update error', 'medium')
       return { error: 'An unexpected error occurred updating profile' }
     }
   }
