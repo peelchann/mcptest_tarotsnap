@@ -65,94 +65,36 @@ export async function GET() {
 
 export async function POST(request: NextRequest) {
   try {
-    // Get client IP for rate limiting
-    const clientIp = request.headers.get('x-forwarded-for') || 
-                     request.headers.get('x-real-ip') || 
-                     'unknown';
-
     const body = await request.json();
-
-    // Check rate limit (different limits for readings vs follow-ups)
-    const isFollowUp = !!body.followUp;
-    const rateLimitResult = checkRateLimit(clientIp, isFollowUp);
-    
-    if (!rateLimitResult.allowed) {
-      const limitType = isFollowUp ? 'follow-up questions' : 'tarot readings';
-      const dailyLimit = isFollowUp ? FOLLOWUP_LIMIT : READING_LIMIT;
-      return NextResponse.json(
-        { 
-          error: 'Rate limit exceeded',
-          message: `You have reached the daily limit of ${dailyLimit} ${limitType}. Please try again tomorrow.`,
-          resetTime: rateLimitMap.get(clientIp)?.resetTime,
-          remaining: 0
-        },
-        { status: 429 }
-      );
-    }
     const { question, followUp } = body;
 
-    if (!question || typeof question !== 'string' || question.trim().length === 0) {
-      return NextResponse.json(
-        { error: 'Please provide a valid question for your tarot reading' },
-        { status: 400 }
-      );
-    }
-
-    if (question.length > 500) {
-      return NextResponse.json(
-        { error: 'Question is too long. Please keep it under 500 characters.' },
-        { status: 400 }
-      );
-    }
-
-    // Handle follow-up questions differently (don't count against rate limit)
+    // Simple mock response for testing deployment
     if (followUp) {
-      const { originalQuestion, cardName, cardMeaning, previousInterpretation } = followUp;
-      
-      if (!originalQuestion || !cardName || !cardMeaning || !previousInterpretation) {
-        return NextResponse.json(
-          { error: 'Invalid follow-up context provided' },
-          { status: 400 }
-        );
-      }
-
-      const followUpResponse = await generateFollowUpResponse(
-        originalQuestion,
-        cardName,
-        cardMeaning,
-        previousInterpretation,
-        question.trim()
-      );
-
       return NextResponse.json({
-        success: true,
-        response: followUpResponse,
-        timestamp: new Date().toISOString(),
-        remainingFollowUps: rateLimitResult.remaining,
-        type: 'followUp'
+        response: "Thank you for your follow-up question. The cards suggest following your intuition on this matter."
       });
     }
 
-    // Generate the initial tarot reading
-    const reading = await generateTarotReading(question.trim());
+    // Simple mock reading for testing
+    const mockReading = {
+      card: "The Star",
+      meaning: "Hope, faith, purpose, renewal, spirituality",
+      interpretation: "The Star appears to bring you hope and guidance. This card suggests that better times are ahead and that you should trust in the universe's plan for you.",
+      guidance: "Follow your dreams and trust your intuition. The universe is aligning to support your highest good.",
+      energy: "Peaceful and inspiring energy surrounds you, filled with hope and possibility.",
+      timeframe: "This energy will manifest within the next lunar cycle.",
+      imagePath: "/cards/major/star.jpg"
+    };
 
     return NextResponse.json({
-      success: true,
-      reading,
-      timestamp: new Date().toISOString(),
-      remainingReadings: rateLimitResult.remaining,
-      type: 'initial'
+      reading: mockReading,
+      remainingReadings: 2
     });
 
   } catch (error) {
-    console.error('Error in tarot reading API:', error);
-    
-    // Return user-friendly error message
+    console.error('API Error:', error);
     return NextResponse.json(
-      { 
-        error: 'Unable to generate reading',
-        message: 'The mystical energies are disrupted at the moment. Please try again shortly.'
-      },
+      { error: 'Internal server error' },
       { status: 500 }
     );
   }
