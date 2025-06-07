@@ -4,11 +4,18 @@ import { generateInitialReadingPrompt, generateFollowUpPrompt, generateChatVaria
 
 // Lazy initialization function for OpenAI client
 function getOpenAIClient() {
+  // Get the correct URL for referer header
+  const refererUrl = process.env.VERCEL_URL 
+    ? `https://${process.env.VERCEL_URL}` 
+    : process.env.NODE_ENV === 'production' 
+      ? 'https://tarotsnap.com' 
+      : 'http://localhost:3000';
+
   return new OpenAI({
     baseURL: 'https://openrouter.ai/api/v1',
     apiKey: process.env.OPENROUTER_API_KEY,
     defaultHeaders: {
-      'HTTP-Referer': 'http://localhost:3000', // Optional: for OpenRouter analytics
+      'HTTP-Referer': refererUrl, // Dynamic URL for OpenRouter analytics
       'X-Title': 'TarotSnap', // Optional: for OpenRouter analytics
     },
   });
