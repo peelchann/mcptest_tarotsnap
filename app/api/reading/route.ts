@@ -1,100 +1,137 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { generateTarotReading, checkOpenRouterHealth, generateFollowUpResponse } from '@/lib/openrouter';
+import { generateTarotReading, generateFollowUpResponse } from '@/lib/openrouter';
 
-// Enhanced rate limiting with separate limits for readings and follow-ups
-const rateLimitMap = new Map<string, { readingCount: number; followUpCount: number; resetTime: number }>();
-const READING_LIMIT = 3; // 3 readings per day
-const FOLLOWUP_LIMIT = 10; // 10 follow-up questions per day per reading
-const RATE_LIMIT_WINDOW = 24 * 60 * 60 * 1000; // 24 hours in milliseconds
+// Rate limiting configuration
+const READING_LIMIT = 3; // Daily limit for tarot readings
+const FOLLOWUP_LIMIT = 10; // Daily limit for follow-up questions
 
-function checkRateLimit(clientId: string, isFollowUp: boolean = false): { allowed: boolean; remaining: number } {
+// In-memory rate limiting (in production, use Redis or database)
+const rateLimitMap = new Map<string, { count: number; resetTime: number; followUpCount: number }>();
+
+function checkRateLimit(clientIp: string, isFollowUp: boolean = false): { allowed: boolean; remaining: number } {
   const now = Date.now();
-  const clientData = rateLimitMap.get(clientId);
-
-  if (!clientData || now > clientData.resetTime) {
-    const newData = { 
-      readingCount: isFollowUp ? 0 : 1, 
-      followUpCount: isFollowUp ? 1 : 0, 
-      resetTime: now + RATE_LIMIT_WINDOW 
+  const oneDayMs = 24 * 60 * 60 * 1000;
+  
+  let rateLimitData = rateLimitMap.get(clientIp);
+  
+  // Reset if it's a new day
+  if (!rateLimitData || now > rateLimitData.resetTime) {
+    rateLimitData = {
+      count: 0,
+      followUpCount: 0,
+      resetTime: now + oneDayMs
     };
-    rateLimitMap.set(clientId, newData);
-    return { 
-      allowed: true, 
-      remaining: isFollowUp ? FOLLOWUP_LIMIT - 1 : READING_LIMIT - 1 
-    };
+    rateLimitMap.set(clientIp, rateLimitData);
   }
-
+  
+  const currentCount = isFollowUp ? rateLimitData.followUpCount : rateLimitData.count;
+  const limit = isFollowUp ? FOLLOWUP_LIMIT : READING_LIMIT;
+  
+  if (currentCount >= limit) {
+    return { allowed: false, remaining: 0 };
+  }
+  
+  // Increment the appropriate counter
   if (isFollowUp) {
-    if (clientData.followUpCount >= FOLLOWUP_LIMIT) {
-      return { allowed: false, remaining: 0 };
-    }
-    clientData.followUpCount++;
-    return { allowed: true, remaining: FOLLOWUP_LIMIT - clientData.followUpCount };
+    rateLimitData.followUpCount++;
   } else {
-    if (clientData.readingCount >= READING_LIMIT) {
-      return { allowed: false, remaining: 0 };
-    }
-    clientData.readingCount++;
-    return { allowed: true, remaining: READING_LIMIT - clientData.readingCount };
+    rateLimitData.count++;
   }
-}
-
-export async function GET() {
-  try {
-    const isHealthy = await checkOpenRouterHealth();
-    
-    if (!isHealthy) {
-      return NextResponse.json(
-        { error: 'OpenRouter service is currently unavailable' },
-        { status: 503 }
-      );
-    }
-
-    return NextResponse.json({ 
-      status: 'OpenRouter tarot reading service is operational',
-      timestamp: new Date().toISOString()
-    });
-  } catch (error) {
-    console.error('Health check error:', error);
-    return NextResponse.json(
-      { error: 'Service health check failed' },
-      { status: 500 }
-    );
-  }
+  
+  return { allowed: true, remaining: limit - (isFollowUp ? rateLimitData.followUpCount : rateLimitData.count) };
 }
 
 export async function POST(request: NextRequest) {
   try {
+    // Get client IP for rate limiting
+    const clientIp = request.headers.get('x-forwarded-for') || 
+                     request.headers.get('x-real-ip') || 
+                     'unknown';
+
     const body = await request.json();
+
+    // Check rate limit (different limits for readings vs follow-ups)
+    const isFollowUp = !!body.followUp;
+    const rateLimitResult = checkRateLimit(clientIp, isFollowUp);
+    
+    if (!rateLimitResult.allowed) {
+      const limitType = isFollowUp ? 'follow-up questions' : 'tarot readings';
+      const dailyLimit = isFollowUp ? FOLLOWUP_LIMIT : READING_LIMIT;
+      return NextResponse.json(
+        { 
+          error: 'Rate limit exceeded',
+          message: `You have reached the daily limit of ${dailyLimit} ${limitType}. Please try again tomorrow.`,
+          resetTime: rateLimitMap.get(clientIp)?.resetTime,
+          remaining: 0
+        },
+        { status: 429 }
+      );
+    }
+
     const { question, followUp } = body;
 
-    // Simple mock response for testing deployment
+    if (!question || typeof question !== 'string' || question.trim().length === 0) {
+      return NextResponse.json(
+        { error: 'Please provide a valid question for your tarot reading' },
+        { status: 400 }
+      );
+    }
+
+    if (question.length > 500) {
+      return NextResponse.json(
+        { error: 'Question is too long. Please keep it under 500 characters.' },
+        { status: 400 }
+      );
+    }
+
+    // Handle follow-up questions differently (don't count against rate limit)
     if (followUp) {
+      const { originalQuestion, cardName, cardMeaning, previousInterpretation } = followUp;
+      
+      if (!originalQuestion || !cardName || !cardMeaning || !previousInterpretation) {
+        return NextResponse.json(
+          { error: 'Invalid follow-up context provided' },
+          { status: 400 }
+        );
+      }
+
+      const followUpResponse = await generateFollowUpResponse(
+        originalQuestion,
+        cardName,
+        cardMeaning,
+        previousInterpretation,
+        question.trim()
+      );
+
       return NextResponse.json({
-        response: "Thank you for your follow-up question. The cards suggest following your intuition on this matter."
+        success: true,
+        response: followUpResponse,
+        timestamp: new Date().toISOString(),
+        remainingFollowUps: rateLimitResult.remaining,
+        type: 'followUp'
       });
     }
 
-    // Simple mock reading for testing
-    const mockReading = {
-      card: "The Star",
-      meaning: "Hope, faith, purpose, renewal, spirituality",
-      interpretation: "The Star appears to bring you hope and guidance. This card suggests that better times are ahead and that you should trust in the universe's plan for you.",
-      guidance: "Follow your dreams and trust your intuition. The universe is aligning to support your highest good.",
-      energy: "Peaceful and inspiring energy surrounds you, filled with hope and possibility.",
-      timeframe: "This energy will manifest within the next lunar cycle.",
-      imagePath: "/cards/major/star.jpg"
-    };
+    // Generate the initial tarot reading
+    const reading = await generateTarotReading(question.trim());
 
     return NextResponse.json({
-      reading: mockReading,
-      remainingReadings: 2
+      success: true,
+      reading,
+      timestamp: new Date().toISOString(),
+      remainingReadings: rateLimitResult.remaining,
+      type: 'initial'
     });
 
   } catch (error) {
-    console.error('API Error:', error);
+    console.error('Error in tarot reading API:', error);
+    
+    // Return user-friendly error message
     return NextResponse.json(
-      { error: 'Internal server error' },
+      { 
+        error: 'Unable to generate reading',
+        message: 'The mystical energies are disrupted at the moment. Please try again shortly.'
+      },
       { status: 500 }
     );
   }
