@@ -54,6 +54,18 @@ const itemVariants = {
   }
 };
 
+const floatingCardVariants = {
+  float: {
+    y: [0, -20, 0],
+    rotate: [0, 5, -5, 0],
+    transition: {
+      duration: 6,
+      repeat: Infinity,
+      ease: "easeInOut"
+    }
+  }
+};
+
 const features = [
   {
     icon: Eye,
@@ -62,13 +74,13 @@ const features = [
   },
   {
     icon: MessageCircle,
-    title: "AI Guidance",
-    description: "Chat with our mystical AI oracle for personalized interpretations"
+    title: "Memory-Powered AI",
+    description: "Our AI remembers your journey and provides increasingly personalized guidance"
   },
   {
     icon: Zap,
-    title: "Instant Readings",
-    description: "Get immediate, accurate readings whenever you need guidance"
+    title: "Instant Wisdom",
+    description: "Get immediate, contextual readings that build upon your spiritual evolution"
   }
 ];
 
@@ -95,6 +107,85 @@ function AuthChecker({
   }, [searchParams, user, loading, setAuthMode, setAuthModalOpen]);
 
   return null;
+}
+
+// Floating Tarot Cards Component
+function FloatingTarotCards() {
+  return (
+    <div className="absolute inset-0 overflow-hidden pointer-events-none">
+      {/* Card 1 */}
+      <motion.div
+        variants={floatingCardVariants}
+        animate="float"
+        className="absolute top-20 left-10 w-16 h-24 bg-gradient-to-br from-purple-900 to-indigo-900 rounded-lg shadow-2xl border border-gold-500/30"
+        style={{ transform: 'perspective(1000px) rotateY(15deg)' }}
+      >
+        <div className="w-full h-full bg-gradient-to-br from-gold-500/20 to-purple-500/20 rounded-lg flex items-center justify-center">
+          <Stars className="w-6 h-6 text-gold-400" />
+        </div>
+      </motion.div>
+
+      {/* Card 2 */}
+      <motion.div
+        variants={floatingCardVariants}
+        animate="float"
+        className="absolute top-32 right-16 w-16 h-24 bg-gradient-to-br from-indigo-900 to-purple-900 rounded-lg shadow-2xl border border-gold-500/30"
+        style={{ transform: 'perspective(1000px) rotateY(-15deg)', animationDelay: '2s' }}
+      >
+        <div className="w-full h-full bg-gradient-to-br from-gold-500/20 to-purple-500/20 rounded-lg flex items-center justify-center">
+          <Moon className="w-6 h-6 text-gold-400" />
+        </div>
+      </motion.div>
+
+      {/* Card 3 */}
+      <motion.div
+        variants={floatingCardVariants}
+        animate="float"
+        className="absolute bottom-32 left-20 w-16 h-24 bg-gradient-to-br from-purple-900 to-indigo-900 rounded-lg shadow-2xl border border-gold-500/30"
+        style={{ transform: 'perspective(1000px) rotateY(10deg)', animationDelay: '4s' }}
+      >
+        <div className="w-full h-full bg-gradient-to-br from-gold-500/20 to-purple-500/20 rounded-lg flex items-center justify-center">
+          <Eye className="w-6 h-6 text-gold-400" />
+        </div>
+      </motion.div>
+
+      {/* Card 4 */}
+      <motion.div
+        variants={floatingCardVariants}
+        animate="float"
+        className="absolute bottom-20 right-24 w-16 h-24 bg-gradient-to-br from-indigo-900 to-purple-900 rounded-lg shadow-2xl border border-gold-500/30"
+        style={{ transform: 'perspective(1000px) rotateY(-10deg)', animationDelay: '1s' }}
+      >
+        <div className="w-full h-full bg-gradient-to-br from-gold-500/20 to-purple-500/20 rounded-lg flex items-center justify-center">
+          <Sparkles className="w-6 h-6 text-gold-400" />
+        </div>
+      </motion.div>
+
+      {/* Card 5 */}
+      <motion.div
+        variants={floatingCardVariants}
+        animate="float"
+        className="absolute top-1/2 left-4 w-16 h-24 bg-gradient-to-br from-purple-900 to-indigo-900 rounded-lg shadow-2xl border border-gold-500/30"
+        style={{ transform: 'perspective(1000px) rotateY(20deg)', animationDelay: '3s' }}
+      >
+        <div className="w-full h-full bg-gradient-to-br from-gold-500/20 to-purple-500/20 rounded-lg flex items-center justify-center">
+          <Heart className="w-6 h-6 text-gold-400" />
+        </div>
+      </motion.div>
+
+      {/* Card 6 */}
+      <motion.div
+        variants={floatingCardVariants}
+        animate="float"
+        className="absolute top-1/2 right-4 w-16 h-24 bg-gradient-to-br from-indigo-900 to-purple-900 rounded-lg shadow-2xl border border-gold-500/30"
+        style={{ transform: 'perspective(1000px) rotateY(-20deg)', animationDelay: '5s' }}
+      >
+        <div className="w-full h-full bg-gradient-to-br from-gold-500/20 to-purple-500/20 rounded-lg flex items-center justify-center">
+          <Crown className="w-6 h-6 text-gold-400" />
+        </div>
+      </motion.div>
+    </div>
+  );
 }
 
 export default function HomePage() {
@@ -133,6 +224,7 @@ export default function HomePage() {
 
   return (
     <div className="min-h-screen relative overflow-hidden">
+      <FloatingTarotCards />
       <MysticalParticles />
       
       {/* Header */}
@@ -183,181 +275,200 @@ export default function HomePage() {
         </div>
       </div>
       
+      {/* Centered Hero Section */}
+      <div className="min-h-screen flex items-center justify-center relative z-10">
+        <motion.div
+          variants={containerVariants}
+          initial="hidden"
+          animate="visible"
+          className="container mx-auto px-4 text-center"
+        >
+          {/* Hero Section */}
+          <motion.div 
+            variants={itemVariants}
+            className="max-w-4xl mx-auto"
+          >
+            <motion.div 
+              className="inline-flex items-center gap-3 mb-8 bg-black/30 backdrop-blur-md px-6 py-3 rounded-full border border-gold-500/30"
+              whileHover={{ scale: 1.05 }}
+              transition={{ type: "spring", stiffness: 300 }}
+            >
+              <Crown className="w-8 h-8 text-gold-500 animate-pulse" />
+              <span className="text-gold-500 font-semibold text-xl">TarotSnap</span>
+            </motion.div>
+            
+            <motion.h1 
+              className="text-6xl md:text-8xl font-bold mb-8 bg-gradient-to-br from-gold-400 via-gold-300 to-amber-400 bg-clip-text text-transparent drop-shadow-[0_4px_12px_rgba(200,173,127,0.7)]"
+              variants={itemVariants}
+            >
+              Your Spiritual Advisor
+              <br />
+              <span className="text-4xl md:text-6xl bg-gradient-to-br from-purple-400 via-indigo-400 to-blue-400 bg-clip-text text-transparent">
+                Who Remembers Your Journey
+              </span>
+            </motion.h1>
+            
+            <motion.p 
+              className="text-xl md:text-2xl text-gray-300 max-w-3xl mx-auto mb-12 leading-relaxed"
+              variants={itemVariants}
+            >
+              Experience tarot readings that build upon your past, understand your growth, 
+              and guide your future with AI-powered memory that evolves with you.
+            </motion.p>
+            
+            <motion.div 
+              className="flex flex-col sm:flex-row items-center justify-center gap-6 mb-12"
+              variants={itemVariants}
+            >
+              <Button 
+                size="xl"
+                className="bg-gradient-to-r from-gold-500 via-amber-500 to-orange-500 hover:from-gold-600 hover:via-amber-600 hover:to-orange-600 text-black font-bold px-12 py-4 text-lg rounded-full shadow-2xl hover:shadow-gold-500/25 transition-all duration-300 transform hover:scale-105"
+              >
+                <Sparkles className="w-6 h-6 mr-3" />
+                Begin Your Spiritual Journey
+                <ArrowRight className="w-6 h-6 ml-3" />
+              </Button>
+              
+              <div className="flex items-center gap-2 text-gray-400">
+                <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
+                <span className="text-sm">1,247 souls guided today</span>
+              </div>
+            </motion.div>
+            
+            <motion.div 
+              className="flex items-center justify-center gap-8 text-gray-400"
+              variants={itemVariants}
+            >
+              <div className="flex items-center gap-2 bg-black/20 backdrop-blur-sm px-4 py-2 rounded-full">
+                <Eye className="w-5 h-5 text-gold-500" />
+                <span className="text-sm">Remembers Your Path</span>
+              </div>
+              <div className="flex items-center gap-2 bg-black/20 backdrop-blur-sm px-4 py-2 rounded-full">
+                <Heart className="w-5 h-5 text-purple-400" />
+                <span className="text-sm">Builds Relationships</span>
+              </div>
+              <div className="flex items-center gap-2 bg-black/20 backdrop-blur-sm px-4 py-2 rounded-full">
+                <Stars className="w-5 h-5 text-blue-400" />
+                <span className="text-sm">Evolving Wisdom</span>
+              </div>
+            </motion.div>
+          </motion.div>
+        </motion.div>
+      </div>
+
+      {/* Content Sections */}
       <motion.div
         variants={containerVariants}
         initial="hidden"
         animate="visible"
-        className="container mx-auto px-4 py-8 relative z-10"
+        className="container mx-auto px-4 py-16 relative z-10"
       >
-        {/* Hero Section */}
+
+        {/* Memory Features Showcase */}
         <motion.div 
           variants={itemVariants}
-          className="text-center mb-16"
+          className="text-center mb-20"
         >
-          <div className="inline-flex items-center gap-2 mb-6">
-            <Crown className="w-8 h-8 text-accent" />
-            <span className="text-accent font-semibold text-lg">TarotSnap</span>
-          </div>
-          
-          <h1 className="text-5xl md:text-7xl font-bold mb-6 text-gold-400 drop-shadow-[0_2px_8px_rgba(200,173,127,0.5)]">
-            Unlock the Mysteries
-            <br />
-            <span className="text-4xl md:text-6xl text-gold-400">of Your Future</span>
-          </h1>
-          
-          <p className="text-xl text-muted-foreground max-w-2xl mx-auto mb-8">
-            Experience the ancient art of tarot reading reimagined for the digital age. 
-            Get instant insights, divine guidance, and chat with our mystical AI oracle.
+          <h2 className="text-4xl md:text-5xl font-bold mb-6 bg-gradient-to-r from-gold-400 to-amber-400 bg-clip-text text-transparent">
+            Your Spiritual Journey, Remembered
+          </h2>
+          <p className="text-xl text-gray-400 max-w-3xl mx-auto mb-12">
+            Unlike one-off readings, TarotSnap builds a deep understanding of your unique path, 
+            offering increasingly personalized guidance as your relationship grows.
           </p>
           
-          <div className="flex items-center justify-center gap-4 text-sm text-muted-foreground">
-            <div className="flex items-center gap-1">
-              <Sparkles className="w-4 h-4 text-accent" />
-              <span>Authentic Readings</span>
-            </div>
-            <div className="flex items-center gap-1">
-              <Moon className="w-4 h-4 text-accent" />
-              <span>AI-Powered</span>
-            </div>
-            <div className="flex items-center gap-1">
-              <Stars className="w-4 h-4 text-accent" />
-              <span>Instant Guidance</span>
-            </div>
+          <div className="grid md:grid-cols-3 gap-8">
+            {features.map((feature, index) => (
+              <motion.div 
+                key={index} 
+                className="group"
+                whileHover={{ y: -10 }}
+                transition={{ type: "spring", stiffness: 300 }}
+              >
+                <div className="bg-gradient-to-br from-black/40 to-black/20 backdrop-blur-md border border-gold-500/20 rounded-2xl p-8 h-full hover:border-gold-500/40 transition-all duration-300">
+                  <div className="mx-auto mb-6 p-4 rounded-full bg-gradient-to-br from-gold-500/20 to-amber-500/20 w-fit group-hover:scale-110 transition-transform duration-300">
+                    <feature.icon className="w-8 h-8 text-gold-400" />
+                  </div>
+                  <h3 className="text-xl font-semibold mb-4 text-gold-400">{feature.title}</h3>
+                  <p className="text-gray-400 leading-relaxed">{feature.description}</p>
+                </div>
+              </motion.div>
+            ))}
           </div>
         </motion.div>
 
-        {/* Features Grid */}
+        {/* Quick Start CTA */}
         <motion.div 
           variants={itemVariants}
-          className="grid md:grid-cols-3 gap-6 mb-16"
+          className="max-w-2xl mx-auto text-center"
         >
-          {features.map((feature, index) => (
-            <Card key={index} className="border-primary/20 bg-card/50 backdrop-blur-sm hover:bg-card/80 transition-all duration-300 group">
-              <CardHeader className="text-center">
-                <div className="mx-auto mb-4 p-3 rounded-full bg-primary/10 w-fit group-hover:scale-110 transition-transform duration-300">
-                  <feature.icon className="w-6 h-6 text-primary" />
-                </div>
-                <CardTitle className="text-lg">{feature.title}</CardTitle>
-                <CardDescription>{feature.description}</CardDescription>
-              </CardHeader>
-            </Card>
-          ))}
+          <div className="bg-gradient-to-br from-black/60 to-black/30 backdrop-blur-xl border border-gold-500/30 rounded-3xl p-12 shadow-2xl">
+            <div className="mb-8">
+              <h3 className="text-3xl font-bold mb-4 bg-gradient-to-r from-gold-400 to-amber-400 bg-clip-text text-transparent">
+                Ready to Begin?
+              </h3>
+              <p className="text-gray-400 text-lg">
+                Start your first reading and let TarotSnap begin learning your unique spiritual signature.
+              </p>
+            </div>
+            
+            <form onSubmit={handleStartReading} className="space-y-6">
+              <Textarea
+                placeholder="What guidance do you seek? (Optional - leave blank for a general reading)"
+                value={question}
+                onChange={(e) => setQuestion(e.target.value)}
+                className="min-h-[80px] bg-black/30 border-gold-500/30 focus:border-gold-500/60 text-white placeholder-gray-500 rounded-xl"
+              />
+              
+              <Button 
+                type="submit" 
+                size="xl"
+                className="w-full bg-gradient-to-r from-gold-500 via-amber-500 to-orange-500 hover:from-gold-600 hover:via-amber-600 hover:to-orange-600 text-black font-bold py-4 text-lg rounded-xl shadow-2xl hover:shadow-gold-500/25 transition-all duration-300 transform hover:scale-[1.02]"
+                disabled={isLoading}
+              >
+                {isLoading ? (
+                  <div className="flex items-center gap-3">
+                    <div className="w-5 h-5 border-2 border-current border-t-transparent rounded-full animate-spin" />
+                    Preparing Your Reading...
+                  </div>
+                ) : (
+                  <div className="flex items-center gap-3">
+                    <Sparkles className="w-6 h-6" />
+                    Draw Your First Card
+                    <ArrowRight className="w-6 h-6" />
+                  </div>
+                )}
+              </Button>
+            </form>
+          </div>
         </motion.div>
 
-        {/* Question Form */}
-        <motion.div 
-          variants={itemVariants}
-          className="max-w-2xl mx-auto"
-        >
-          <Card className="border-primary/30 bg-card/70 backdrop-blur-md">
-            <CardHeader className="text-center">
-              <CardTitle className="text-2xl flex items-center justify-center gap-2">
-                <Heart className="w-6 h-6 text-accent" />
-                Ask Your Question
-              </CardTitle>
-              <CardDescription className="text-base">
-                Focus your intention and ask the universe for guidance. 
-                What wisdom do you seek today?
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <form onSubmit={handleStartReading} className="space-y-6">
-                <div>
-                  <label htmlFor="question" className="block text-sm font-medium mb-2">
-                    Your Question (Optional)
-                  </label>
-                  <Textarea
-                    id="question"
-                    placeholder="What guidance do I need for my path ahead? What should I focus on today? How can I overcome my current challenges?"
-                    value={question}
-                    onChange={(e) => setQuestion(e.target.value)}
-                    className="min-h-[100px] bg-background/50 border-primary/20 focus:border-primary/50"
-                  />
-                  <p className="text-xs text-muted-foreground mt-2">
-                    Leave blank for a general reading about your current energy
-                  </p>
-                </div>
-                
-                <Button 
-                  type="submit" 
-                  variant="mystical" 
-                  size="xl"
-                  className="w-full"
-                  disabled={isLoading}
-                >
-                  {isLoading ? (
-                    <div className="flex items-center gap-2">
-                      <div className="w-4 h-4 border-2 border-current border-t-transparent rounded-full animate-spin" />
-                      Preparing Your Reading...
-                    </div>
-                  ) : (
-                    <div className="flex items-center gap-2">
-                      <Sparkles className="w-5 h-5" />
-                      Draw Your Card
-                      <ArrowRight className="w-5 h-5" />
-                    </div>
-                  )}
-                </Button>
-              </form>
-            </CardContent>
-          </Card>
-        </motion.div>
-
-        {/* How It Works */}
+        {/* Social Proof */}
         <motion.div 
           variants={itemVariants}
           className="mt-20 text-center"
         >
-          <h2 className="text-3xl font-bold mb-12">How TarotSnap Works</h2>
-          <div className="grid md:grid-cols-3 gap-8 max-w-4xl mx-auto">
-            <div className="space-y-4">
-              <div className="w-12 h-12 mx-auto bg-primary/20 rounded-full flex items-center justify-center text-primary font-bold text-xl">
-                1
+          <div className="max-w-4xl mx-auto">
+            <p className="text-gray-500 mb-8">Trusted by spiritual seekers worldwide</p>
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-8 items-center">
+              <div className="text-center">
+                <div className="text-3xl font-bold text-gold-400 mb-2">15K+</div>
+                <div className="text-sm text-gray-400">Souls Guided</div>
               </div>
-              <h3 className="text-xl font-semibold">Ask Your Question</h3>
-              <p className="text-muted-foreground">
-                Focus your intention and ask what guidance you seek from the universe
-              </p>
-            </div>
-            <div className="space-y-4">
-              <div className="w-12 h-12 mx-auto bg-primary/20 rounded-full flex items-center justify-center text-primary font-bold text-xl">
-                2
+              <div className="text-center">
+                <div className="text-3xl font-bold text-purple-400 mb-2">89%</div>
+                <div className="text-sm text-gray-400">Return Rate</div>
               </div>
-              <h3 className="text-xl font-semibold">Draw Your Card</h3>
-              <p className="text-muted-foreground">
-                Let intuition guide you as you select a card from our mystical deck
-              </p>
-            </div>
-            <div className="space-y-4">
-              <div className="w-12 h-12 mx-auto bg-primary/20 rounded-full flex items-center justify-center text-primary font-bold text-xl">
-                3
+              <div className="text-center">
+                <div className="text-3xl font-bold text-blue-400 mb-2">4.9★</div>
+                <div className="text-sm text-gray-400">User Rating</div>
               </div>
-              <h3 className="text-xl font-semibold">Receive Insights</h3>
-              <p className="text-muted-foreground">
-                Get your reading and chat with our AI oracle for deeper understanding
-              </p>
+              <div className="text-center">
+                <div className="text-3xl font-bold text-green-400 mb-2">24/7</div>
+                <div className="text-sm text-gray-400">Available</div>
+              </div>
             </div>
           </div>
-        </motion.div>
-
-        {/* Testimonial/Quote */}
-        <motion.div 
-          variants={itemVariants}
-          className="mt-20 text-center"
-        >
-          <Card className="max-w-3xl mx-auto border-accent/20 bg-gradient-to-r from-primary/5 to-accent/5">
-            <CardContent className="p-8">
-              <blockquote className="text-lg italic text-foreground/90 mb-4">
-                "The future belongs to those who believe in the beauty of their dreams. 
-                Let the ancient wisdom of tarot illuminate your path forward."
-              </blockquote>
-              <div className="flex items-center justify-center gap-1 text-accent">
-                <Stars className="w-4 h-4" />
-                <Stars className="w-4 h-4" />
-                <Stars className="w-4 h-4" />
-              </div>
-            </CardContent>
-          </Card>
         </motion.div>
       </motion.div>
       
