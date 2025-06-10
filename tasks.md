@@ -128,6 +128,42 @@ Transform TarotSnap from a one-off reading tool into a **personal spiritual advi
 - [ ] Community building initiatives
 - [ ] Referral program
 
+### **Task ID: T007.1** - Tarot/Spiritual Market User Acquisition 🎯 **NEW STRATEGIC**
+**Status:** ❌ PLANNED  
+**Complexity:** Level 3 (Targeted Marketing)  
+**Timeline:** 2-4 weeks  
+**Dependencies:** T005.0 (SEO), T005 (Domain)
+
+**Target Audience Research:**
+- Primary: Tarot enthusiasts (25-45, 70% female)
+- Secondary: Spiritual seekers, AI technology enthusiasts
+- Platforms: TikTok, Instagram, Reddit, YouTube, Pinterest
+
+**Content Marketing Strategy:**
+- [ ] Create TikTok account with tarot reading demos using TarotSnap
+- [ ] Instagram content: Daily card pulls, AI vs traditional readings
+- [ ] Reddit engagement: r/tarot, r/spirituality, r/tarotpractice, r/witchcraft
+- [ ] YouTube channel: "AI Tarot Explained" series
+- [ ] Pinterest boards: Tarot spreads, spiritual guidance, mystical aesthetics
+
+**SEO Content Strategy:**
+- [ ] Blog section: "How AI Enhances Tarot Readings"
+- [ ] Keyword targets: "free tarot reading", "AI tarot", "online tarot cards"
+- [ ] Local SEO: "tarot reading near me" + "online"
+- [ ] Comparison content: "AI tarot vs human readers"
+
+**Community Engagement:**
+- [ ] Partner with tarot influencers for demos
+- [ ] Create shareable reading results format
+- [ ] User-generated content campaigns (#MyTarotSnapReading)
+- [ ] Free reading promotions for reviews/shares
+
+**Conversion Funnel:**
+- [ ] Landing pages for different traffic sources
+- [ ] Email capture with "Daily Tarot Insight" newsletter
+- [ ] Retargeting campaigns for incomplete readings
+- [ ] Premium conversion: "Deeper AI Insights" positioning
+
 ---
 
 ## 🧠 **MEMORY & RELATIONSHIP SYSTEM (Phase 6 - February 2025)**
