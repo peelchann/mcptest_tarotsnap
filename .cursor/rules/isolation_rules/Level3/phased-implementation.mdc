@@ -3,3 +3,237 @@ description:
 globs:
 alwaysApply: false
 ---
+# Level 3: Phased Implementation Rules - TarotSnap
+
+**Complexity Level:** Level 3 (API Integration, Multiple Files, New Systems)  
+**Current Application:** Claude 3.5 Sonnet API Integration (Task T001)  
+**Approach:** Iterative development with systematic validation  
+
+---
+
+## 🎯 **LEVEL 3 CHARACTERISTICS**
+
+### **Definition**
+Level 3 tasks involve:
+- API integration with external services
+- Multiple file creation and modification
+- New system architecture components
+- Cross-component integration testing
+- Performance and error handling requirements
+
+### **Current Task Fit: T001 - Claude API Integration**
+- ✅ External API integration (Anthropic Claude)
+- ✅ Multiple files (API route, client, prompts, env)
+- ✅ New backend system architecture
+- ✅ Frontend-backend integration
+- ✅ Performance requirements (sub-3s response)
+
+---
+
+## 🔄 **PHASED IMPLEMENTATION WORKFLOW**
+
+### **Phase 1: Foundation Setup** ⏱️ 30-45 min
+**Goal:** Establish basic infrastructure for API integration
+
+#### **Tasks:**
+1. **Environment Preparation**
+   - Install Anthropic SDK: `npm install @anthropic-ai/sdk`
+   - Create `.env.local` with ANTHROPIC_API_KEY placeholder
+   - Verify Next.js API route structure
+
+2. **Core File Structure**
+   - Create `lib/claude.ts` (client configuration)
+   - Create `app/api/reading/route.ts` (API endpoint)
+   - Set up basic TypeScript interfaces
+
+3. **Validation Checkpoint**
+   - API route responds to basic requests
+   - Environment variables load correctly
+   - No TypeScript compilation errors
+
+### **Phase 2: API Integration** ⏱️ 45-60 min
+**Goal:** Implement working Claude API communication
+
+#### **Tasks:**
+1. **Claude Client Configuration**
+   - Configure Anthropic client in `lib/claude.ts`
+   - Implement error handling and retry logic
+   - Add request/response logging for debugging
+
+2. **Basic API Endpoint**
+   - Implement POST handler in API route
+   - Parse incoming tarot questions
+   - Send requests to Claude API
+   - Return structured responses
+
+3. **Validation Checkpoint**
+   - API successfully communicates with Claude
+   - Basic prompts return AI responses
+   - Error handling works for API failures
+
+### **Phase 3: Prompt Engineering** ⏱️ 60-90 min
+**Goal:** Optimize Claude prompts for mystical tarot readings
+
+#### **Tasks:**
+1. **Prompt Template System**
+   - Create `lib/tarot-prompts.ts` with structured prompts
+   - Design prompts leveraging Claude's creative strengths
+   - Include context for tarot cards and positions
+
+2. **Response Format Design**
+   - Structure Claude responses for frontend compatibility
+   - Include card interpretation, insights, and mystical narrative
+   - Ensure consistent tone and authenticity
+
+3. **Validation Checkpoint**
+   - Prompts generate high-quality mystical content
+   - Response format matches frontend needs
+   - Tone is authentic and engaging
+
+### **Phase 4: Integration & Testing** ⏱️ 45-60 min
+**Goal:** Connect frontend to backend and validate user experience
+
+#### **Tasks:**
+1. **Frontend Integration**
+   - Update `app/reading/single/page.tsx` to call API
+   - Replace mock data with real API responses
+   - Implement loading states and error handling
+
+2. **End-to-End Testing**
+   - Test complete user journey: question → AI reading
+   - Verify response times under 3 seconds
+   - Validate mobile and desktop experience
+
+3. **Final Validation**
+   - All verification checklist items complete
+   - Performance benchmarks met
+   - User experience maintains mystical theme
+
+---
+
+## ✅ **LEVEL 3 VERIFICATION CHECKLIST**
+
+### **Technical Implementation**
+- [ ] **Environment Setup:** Anthropic SDK installed and configured
+- [ ] **API Configuration:** Claude client properly initialized
+- [ ] **Endpoint Function:** API route accepts POST requests and returns JSON
+- [ ] **Error Handling:** Graceful handling of API failures and timeouts
+- [ ] **TypeScript Types:** Proper interfaces for requests and responses
+- [ ] **Performance:** Response times consistently under 3 seconds
+
+### **Functional Requirements**
+- [ ] **Question Processing:** API accepts and processes tarot questions
+- [ ] **AI Integration:** Claude generates mystical, authentic tarot readings
+- [ ] **Response Structure:** Returns properly formatted data for frontend
+- [ ] **Frontend Connection:** UI successfully displays AI-generated readings
+- [ ] **Loading States:** User sees appropriate feedback during AI processing
+- [ ] **Error Messages:** Clear, user-friendly error communication
+
+### **Quality Standards**
+- [ ] **Code Quality:** Follows project TypeScript and ESLint standards
+- [ ] **Documentation:** Key functions and interfaces documented
+- [ ] **Testing:** Manual testing covers happy path and error cases
+- [ ] **Security:** API keys properly secured in environment variables
+- [ ] **Performance:** Optimized for production deployment
+- [ ] **User Experience:** Maintains mystical theme and smooth interactions
+
+---
+
+## 🔧 **IMPLEMENTATION GUIDANCE**
+
+### **File Creation Order**
+1. **Start with `lib/claude.ts`** - Establish API client foundation
+2. **Create `lib/tarot-prompts.ts`** - Design prompt templates
+3. **Build `app/api/reading/route.ts`** - Implement API endpoint
+4. **Update frontend components** - Connect UI to backend
+
+### **Key Technical Considerations**
+
+#### **For Claude API Integration**
+- **Leverage Claude's Strengths:** Focus on creative, flowing language
+- **Prompt Engineering:** Structure prompts for mystical authenticity
+- **Error Resilience:** Implement retry logic for API timeouts
+- **Response Parsing:** Ensure structured data for frontend consumption
+
+#### **For Frontend Integration**
+- **Maintain UI Theme:** Preserve mystical design during loading/error states
+- **Performance Feedback:** Clear loading indicators for AI processing
+- **Error Gracefully:** User-friendly messages for API failures
+- **Mobile Optimization:** Ensure responsive experience across devices
+
+### **Testing Strategy**
+1. **Unit Level:** Test Claude client configuration and prompt formatting
+2. **API Level:** Verify endpoint functionality with sample requests
+3. **Integration Level:** Test frontend-to-backend data flow
+4. **User Level:** Complete question-to-reading user journey
+5. **Performance Level:** Validate response time requirements
+
+---
+
+## 🚨 **COMMON LEVEL 3 PITFALLS & SOLUTIONS**
+
+### **API Integration Issues**
+- **Problem:** Claude API responses are inconsistent
+- **Solution:** Implement structured prompts with clear formatting instructions
+- **Prevention:** Test prompts extensively with various question types
+
+### **Performance Problems**
+- **Problem:** API responses exceed 3-second target
+- **Solution:** Optimize prompt length and implement response streaming
+- **Prevention:** Monitor response times during development
+
+### **Frontend-Backend Mismatch**
+- **Problem:** API response format doesn't match frontend expectations
+- **Solution:** Define TypeScript interfaces early and validate with actual data
+- **Prevention:** Create mock responses that match real API structure
+
+### **Error Handling Gaps**
+- **Problem:** Users see cryptic error messages during API failures
+- **Solution:** Implement user-friendly error messages and fallback states
+- **Prevention:** Test error scenarios explicitly during development
+
+---
+
+## 🔄 **PROGRESS TRACKING FOR LEVEL 3**
+
+### **Phase Completion Criteria**
+Each phase must meet validation checkpoints before proceeding to next phase.
+
+### **Documentation Requirements**
+- Update `progress.md` after each phase completion
+- Document any architecture decisions in comments
+- Note performance benchmarks and optimization opportunities
+
+### **Context Preservation**
+- Maintain `activeContext.md` with current implementation status
+- Document any blockers or design decisions for future reference
+- Prepare context for potential mode transitions (CREATIVE for design issues)
+
+---
+
+## 🎯 **SUCCESS DEFINITION FOR T001**
+
+### **Minimum Viable Implementation**
+- User can input tarot question via existing frontend form
+- API processes question and generates AI reading via Claude
+- Response displays in mystical UI with appropriate loading states
+- Basic error handling prevents application crashes
+
+### **Optimal Implementation**
+- Response times consistently under 2 seconds
+- AI readings are mystical, authentic, and engaging
+- Error handling provides helpful user guidance
+- Performance optimized for production deployment
+- Code quality meets all project standards
+
+### **Mode Transition Readiness**
+**Ready for QA Mode when:**
+- All verification checklist items completed
+- End-to-end user journey functional
+- Performance benchmarks met
+- Memory Bank files updated with progress
+
+**Fallback to CREATIVE Mode if:**
+- Major prompt engineering decisions needed
+- Response format requires fundamental redesign
+- Architecture decisions block implementation progress

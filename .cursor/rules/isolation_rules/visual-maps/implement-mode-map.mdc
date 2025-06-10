@@ -3,3 +3,214 @@ description:
 globs:
 alwaysApply: false
 ---
+# IMPLEMENT Mode Visual Map - TarotSnap
+
+**Mode Purpose:** Structured coding workflow for implementing design decisions into working code  
+**Current Focus:** Frontend-Backend Connection (Task T002)  
+**Complexity Level:** Level 2 (UI integration with existing API)  
+
+---
+
+## 🗺️ **IMPLEMENT MODE WORKFLOW**
+
+```mermaid
+graph TD
+    Start["🚀 IMPLEMENT MODE<br>START"] --> ReadDocs["📚 Read Memory Bank<br>tasks.md, activeContext.md"]
+    
+    ReadDocs --> IdentifyTask{"🎯 Identify Current Task<br>from tasks.md"}
+    IdentifyTask --> LoadMap["🗺️ Load This Map<br>implement-mode-map.mdc"]
+    
+    LoadMap --> DetermineLevel{"🧩 Determine<br>Complexity Level"}
+    
+    DetermineLevel -->|"Level 1"| Level1["📝 Level 1: Simple<br>Single file, minimal logic"]
+    DetermineLevel -->|"Level 2"| Level2["🔧 Level 2: Medium<br>Multiple files, integration"]
+    DetermineLevel -->|"Level 3"| Level3["⚙️ Level 3: Complex<br>API integration, new systems"]
+    DetermineLevel -->|"Level 4"| Level4["🏗️ Level 4: Architecture<br>Database, auth, major features"]
+    
+    Level1 --> LoadL1["📋 Load Level 1 Rules<br>Quick implementation"]
+    Level2 --> LoadL2["📋 Load Level 2 Rules<br>Structured approach"]
+    Level3 --> LoadL3["📋 Load Level 3 Rules<br>Phased implementation"]
+    Level4 --> LoadL4["📋 Load Level 4 Rules<br>Full architecture planning"]
+    
+    LoadL1 --> Execute1["⚡ Execute<br>Direct implementation"]
+    LoadL2 --> Execute2["⚙️ Execute<br>Step-by-step approach"]
+    LoadL3 --> Execute3["🔄 Execute<br>Iterative development"]
+    LoadL4 --> Execute4["📐 Execute<br>Planned architecture"]
+    
+    Execute1 --> Test1["🧪 Test & Verify"]
+    Execute2 --> Test2["🧪 Test & Verify"]
+    Execute3 --> Test3["🧪 Test & Verify"] 
+    Execute4 --> Test4["🧪 Test & Verify"]
+    
+    Test1 --> Update1["📝 Update Memory Bank"]
+    Test2 --> Update2["📝 Update Memory Bank"]
+    Test3 --> Update3["📝 Update Memory Bank"]
+    Test4 --> Update4["📝 Update Memory Bank"]
+    
+    Update1 --> Verify["✅ Verification Checklist"]
+    Update2 --> Verify
+    Update3 --> Verify
+    Update4 --> Verify
+    
+    Verify --> Complete{"All Requirements<br>Satisfied?"}
+    Complete -->|"Yes"| Done["🏁 Task Complete<br>Ready for QA Mode"]
+    Complete -->|"No"| Resume["🔄 Resume Implementation<br>Address Missing Items"]
+    
+    Resume --> Execute2
+    
+    style Start fill:#4da6ff,stroke:#0066cc,color:white
+    style DetermineLevel fill:#ffa64d,stroke:#cc7a30,color:white
+    style Level2 fill:#4dbb5f,stroke:#36873f,color:white
+    style Execute2 fill:#d94dbb,stroke:#a3378a,color:white
+    style Complete fill:#4dbbbb,stroke:#368787,color:white
+    style Done fill:#5fd94d,stroke:#3da336,color:white
+```
+
+---
+
+## 🎯 **CURRENT TASK CONTEXT**
+
+### **✅ Previous Achievement: T001 - OpenRouter API Integration COMPLETE**
+**Major Success:** Complete OpenRouter backend with Llama 3.1-8B-Instruct
+**Cost Breakthrough:** 99% cost reduction ($0.0008 vs $0.08 per reading)
+**Infrastructure:** Production-ready API with rate limiting and health monitoring
+
+### **🔄 Active Task: T002 - Frontend-Backend Connection**
+**Complexity:** Level 2 (UI integration with existing working API)  
+**Files to Update:**
+- `app/reading/single/page.tsx` (main frontend integration)
+- `app/components/` (reading display components if needed)
+
+### **Implementation Strategy**
+1. **API Connection** - Connect form to `/api/reading` POST endpoint
+2. **Loading States** - Mystical loading for ~10 second AI generation
+3. **Response Display** - Show structured tarot reading results
+4. **Error Handling** - Graceful handling of rate limits and failures
+
+---
+
+## 📋 **LEVEL 2 VERIFICATION CHECKLIST**
+
+### **API Integration Requirements** 
+- [ ] Frontend form connected to `/api/reading` POST endpoint
+- [ ] Request payload properly formatted (question string)
+- [ ] Response handling for TarotReading interface
+- [ ] Loading state during 10-second AI generation
+- [ ] Error handling for all API response codes (400, 429, 500, 503)
+- [ ] Rate limit feedback (remaining readings display)
+
+### **User Experience Requirements**
+- [ ] Mystical loading animation/message during AI processing
+- [ ] Structured display of AI-generated reading
+- [ ] Card name and meaning prominently displayed
+- [ ] Interpretation, guidance, energy, and timeframe sections clear
+- [ ] Error messages use mystical language ("energies disrupted")
+- [ ] Mobile responsiveness maintained
+
+### **Quality Requirements**
+- [ ] Code follows project TypeScript and ESLint standards
+- [ ] No TypeScript errors or warnings
+- [ ] Preserves existing mystical UI theme and aesthetics
+- [ ] Loading states provide clear feedback to users
+- [ ] Complete user journey tested (question → reading)
+- [ ] Memory Bank updated with progress
+
+---
+
+## 🔄 **MODE TRANSITION TRIGGERS**
+
+### **Success Transition to QA Mode**
+**Trigger:** All Level 2 verification checklist items complete
+**Command:** Type "QA" to switch to validation mode
+**Focus:** Test complete user journey and edge cases
+
+### **Fallback to CREATIVE Mode**
+**Trigger:** UX design decisions needed during implementation
+**Example:** Loading state design, error message presentation
+**Command:** Type "CREATIVE" to switch to design mode
+
+### **Continue in IMPLEMENT Mode**
+**Trigger:** Partial progress but more implementation needed
+**Action:** Resume coding with updated context from Memory Bank
+
+---
+
+## 💡 **IMPLEMENTATION GUIDANCE**
+
+### **For Frontend-Backend Integration (Current Task)**
+
+#### **API Integration Pattern**
+```typescript
+// app/reading/single/page.tsx
+const handleReadingRequest = async (question: string) => {
+  try {
+    setLoading(true);
+    const response = await fetch('/api/reading', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ question })
+    });
+    
+    if (!response.ok) {
+      // Handle error codes (400, 429, 500, 503)
+    }
+    
+    const data = await response.json();
+    setReading(data.reading);
+  } catch (error) {
+    // Handle network errors
+  } finally {
+    setLoading(false);
+  }
+};
+```
+
+#### **Key Integration Points**
+- **Working API:** `/api/reading` POST endpoint is ready and tested
+- **Response Format:** TarotReading interface with card, meaning, interpretation, guidance, energy, timeframe
+- **Loading Time:** ~10 seconds for AI generation (need clear feedback)
+- **Rate Limiting:** Show remaining readings (API returns remainingReadings)
+
+#### **Error Handling Strategy**
+- **400 Validation:** "Please provide a valid question for the mystical energies"
+- **429 Rate Limit:** "You have reached your daily limit of 3 readings. The energies need time to restore."
+- **500/503 Service:** "The mystical energies are disrupted at the moment. Please try again shortly."
+
+### **Testing Strategy**
+1. **Happy Path:** Submit question → receive AI reading → display results
+2. **Loading State:** Verify mystical loading during 10-second generation
+3. **Error Cases:** Test rate limiting, validation, and service errors
+4. **Mobile Experience:** Ensure responsive behavior during loading
+
+---
+
+## 📁 **RELEVANT FILES FOR CONTEXT**
+
+### **Working Backend Files (Reference Only)**
+- ✅ `lib/openrouter.ts` - Complete OpenRouter implementation
+- ✅ `app/api/reading/route.ts` - Working API endpoints with rate limiting
+
+### **Frontend Files to Update**
+- 📝 `app/reading/single/page.tsx` - Main integration target
+- 📝 `app/components/` - May need loading state components
+
+### **Memory Bank Files**
+- `tasks.md` - Task T002 details and requirements
+- `activeContext.md` - Current development focus and context
+- `progress.md` - Track implementation progress
+- `projectbrief.md` - Overall project vision and achievements
+
+---
+
+## 🚀 **SUCCESS CELEBRATION CONTEXT**
+
+### **Previous Major Achievement: OpenRouter Integration** ✅
+- **Cost Optimization:** 99% reduction in AI costs
+- **Quality Success:** High-quality mystical readings maintained
+- **Production Infrastructure:** Complete backend with monitoring
+- **Business Model Validation:** Freemium economics now viable
+
+### **Current Goal: Complete User Experience**
+Transform the working backend into a complete user-facing tarot reading application by connecting the beautiful mystical UI to the cost-optimized AI backend.
+
+**Next Achievement:** Users can ask questions and receive authentic AI tarot readings through the mystical interface!

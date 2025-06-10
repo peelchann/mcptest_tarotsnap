@@ -59,7 +59,29 @@ Transform TarotSnap from a one-off reading tool into a **personal spiritual advi
 - [ ] Test public accessibility from non-Vercel accounts
 - [ ] Document access troubleshooting
 
-### **Task ID: T005** - Domain & SEO Setup
+### **Task ID: T005.0** - Critical SEO Implementation 🚀 **NEW HIGH PRIORITY**
+**Status:** ❌ PLANNED  
+**Complexity:** Level 2 (SEO Implementation)  
+**Timeline:** 2-3 days  
+**Dependencies:** Can start immediately, parallel with T004.1
+
+**Critical SEO Gaps to Fix:**
+- [ ] Create dynamic `app/robots.ts` using Next.js 14 App Router API
+- [ ] Implement dynamic `app/sitemap.ts` for automatic URL discovery
+- [ ] Add structured data (JSON-LD) for tarot/spiritual business schema
+- [ ] Create and optimize OG image (`/tarot-og-image.jpg`)
+- [ ] Implement per-page dynamic metadata for reading routes
+- [ ] Add Core Web Vitals optimization
+- [ ] Set up Google Search Console
+- [ ] Implement favicon and apple-touch-icon
+
+**Technical Implementation:**
+- Use Next.js 14 `MetadataRoute.Robots` and `MetadataRoute.Sitemap` APIs
+- Add Schema.org structured data for LocalBusiness/Service
+- Optimize images with `next/image` component
+- Implement dynamic meta generation for `/reading/*` routes
+
+### **Task ID: T005** - Domain & Advanced SEO Setup
 **Status:** ❌ PLANNED  
 **Complexity:** Level 2 (Domain configuration)  
 **Timeline:** 1 week  

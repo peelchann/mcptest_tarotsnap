@@ -3,3 +3,227 @@ description:
 globs:
 alwaysApply: false
 ---
+# TarotSnap Memory Bank - Main Dispatcher
+
+**System:** Memory Bank for TarotSnap AI Tarot Reading Application  
+**Purpose:** Coordinate structured development workflow through custom modes  
+**Current Focus:** Phase 1 - Claude 3.5 Sonnet API Integration  
+
+---
+
+## 🎯 **COMMAND DISPATCHER**
+
+### **Immediate Mode Response**
+When user types any mode command, respond immediately with acknowledgment, then execute full workflow:
+
+**Mode Commands:**
+- **"VAN"** → Project initialization and context setup
+- **"PLAN"** → Task planning and sprint organization  
+- **"CREATIVE"** → Design decisions and architectural choices
+- **"IMPLEMENT"** → Code implementation workflow *(Current Priority)*
+- **"QA"** → Testing and validation
+
+**Response Pattern:**
+1. **Immediate:** "OK [MODE]"
+2. **Load Memory Bank:** Read all core memory files
+3. **Load Mode Map:** Load appropriate visual workflow map
+4. **Execute Process:** Follow mode-specific structured workflow
+5. **Update Memory Bank:** Document progress and context
+
+---
+
+## 📚 **CORE MEMORY BANK LOADING SEQUENCE**
+
+### **Step 1: Always Load Core Memory Files First**
+```typescript
+// Required reading order for context continuity
+read_file({ target_file: "tasks.md", should_read_entire_file: true })
+read_file({ target_file: "activeContext.md", should_read_entire_file: true })
+read_file({ target_file: "progress.md", should_read_entire_file: true })
+read_file({ target_file: "projectbrief.md", should_read_entire_file: true })
+```
+
+### **Step 2: Load Core Command Execution Rules**
+```typescript
+read_file({ 
+  target_file: ".cursor/rules/isolation_rules/Core/command-execution.mdc", 
+  should_read_entire_file: true 
+})
+```
+
+### **Step 3: Load Mode-Specific Visual Map**
+```typescript
+// For IMPLEMENT mode (current priority):
+read_file({ 
+  target_file: ".cursor/rules/isolation_rules/visual-maps/implement-mode-map.mdc", 
+  should_read_entire_file: true 
+})
+```
+
+### **Step 4: Load Complexity-Specific Rules**
+```typescript
+// For Level 3 tasks (current T001):
+read_file({ 
+  target_file: ".cursor/rules/isolation_rules/Level3/phased-implementation.mdc", 
+  should_read_entire_file: true 
+})
+```
+
+---
+
+## 🔄 **MODE EXECUTION WORKFLOWS**
+
+### **IMPLEMENT Mode (Current Priority)**
+**Purpose:** Structured coding workflow for Claude API integration  
+**Current Task:** T001 - Claude 3.5 Sonnet API Integration (Level 3)  
+
+**Execution Sequence:**
+1. Read Memory Bank files for current context
+2. Load implement-mode-map.mdc for workflow guidance
+3. Determine complexity level from tasks.md (Level 3)
+4. Load Level 3 phased implementation rules
+5. Execute Phase 1: Foundation Setup (SDK installation, file structure)
+6. Execute Phase 2: API Integration (Claude client, API endpoint)
+7. Execute Phase 3: Prompt Engineering (tarot-specific prompts)
+8. Execute Phase 4: Integration & Testing (frontend connection)
+9. Validate against Level 3 verification checklist
+10. Update Memory Bank with progress and transition readiness
+
+### **QA Mode (Next Transition)**
+**Purpose:** Testing and validation of implemented features  
+**Trigger:** IMPLEMENT mode verification checklist complete  
+
+**Execution Focus:**
+- End-to-end user journey testing (question → AI reading)
+- Performance validation (sub-3 second response times)
+- Mobile and desktop experience verification
+- Error handling and edge case testing
+
+### **CREATIVE Mode (Fallback)**
+**Purpose:** Design decision resolution during implementation  
+**Trigger:** Major architectural or UX decisions needed  
+
+**Common Use Cases:**
+- Prompt engineering strategy requires fundamental redesign
+- API response format needs structural changes
+- Error handling UX design decisions
+
+---
+
+## 🎯 **CURRENT PROJECT CONTEXT**
+
+### **TarotSnap Status Overview**
+- **Frontend:** ✅ Complete - Mystical UI, responsive design, component library
+- **Backend:** ❌ Missing - No AI integration (CURRENT BLOCKER)
+- **Database:** ❌ Future - User accounts and payment system (Phase 3)
+- **Analytics:** ❌ Planned - Usage tracking and rate limiting (Phase 1 end)
+
+### **Immediate Priority: Task T001**
+**Goal:** Transform UI prototype into functional AI application  
+**Complexity:** Level 3 (API integration, multiple files, new systems)  
+**Success Criteria:**
+- Claude API returns mystical, authentic tarot readings
+- Frontend connects seamlessly to AI backend  
+- Response times under 3 seconds
+- User experience maintains mystical theme
+
+### **Tech Stack & Architecture**
+- **Frontend:** Next.js 14, TypeScript, Tailwind CSS, Shadcn/UI
+- **AI Service:** Claude 3.5 Sonnet (chosen for creative writing strengths)
+- **Deployment:** Vercel-ready
+- **Future:** Supabase for user accounts, Stripe for payments
+
+---
+
+## 🚨 **SYSTEM SAFEGUARDS & ERROR HANDLING**
+
+### **Memory Bank File Recovery**
+If any Memory Bank file is missing or corrupted:
+1. Stop current mode execution
+2. Recreate missing file from current project state
+3. Document recovery in progress.md
+4. Resume mode execution with recovered context
+
+### **Mode Transition Validation**
+Before any mode transition:
+- [ ] Current task status updated in tasks.md
+- [ ] Progress documented in progress.md  
+- [ ] Active context reflects current state
+- [ ] Any blockers or decisions documented
+
+### **Implementation Blockers**
+If major blockers occur during IMPLEMENT mode:
+- **Design Decision Needed:** Switch to CREATIVE mode
+- **Planning Issue:** Switch to PLAN mode  
+- **Context Lost:** Switch to VAN mode for reset
+- **Testing Needed:** Switch to QA mode for validation
+
+---
+
+## 📊 **PROGRESS TRACKING & METRICS**
+
+### **Current Sprint Status**
+- **Phase 1 Tasks:** 3 total (T001, T002, T003)
+- **Completed:** 0 tasks
+- **In Progress:** T001 (Claude API integration) - Day 1
+- **Blocked:** T002, T003 waiting on T001 completion
+
+### **Success Metrics**
+- **Technical:** Functional AI backend with sub-3s response times
+- **Business:** Transform prototype into launchable product
+- **User:** Mystical, authentic tarot reading experience
+- **Development:** Maintain code quality and testing standards
+
+### **Timeline Tracking**
+- **Today:** Start T001 - Foundation setup and API integration
+- **This Week:** Complete Phase 1 (all 3 tasks)
+- **Next Week:** Phase 2 launch optimization and user acquisition
+- **Month End:** Revenue foundation with user accounts and payments
+
+---
+
+## 🎯 **IMMEDIATE EXECUTION READINESS**
+
+### **For IMPLEMENT Mode Session (Most Likely Next Action):**
+**Context:** Ready to begin Claude 3.5 Sonnet API integration  
+**Files to Create:** 
+- `lib/claude.ts` (Claude client configuration)
+- `app/api/reading/route.ts` (API endpoint)  
+- `lib/tarot-prompts.ts` (prompt templates)
+- `.env.local` (environment variables)
+
+**Implementation Strategy:**
+1. Install Anthropic SDK first
+2. Set up environment and API client
+3. Create basic API endpoint structure
+4. Design and test mystical tarot prompts
+5. Connect frontend to working backend
+
+### **Key Context for AI Assistant:**
+- **Current Mode:** IMPLEMENT (Level 3 phased approach)
+- **Active Task:** T001 - Claude API Integration
+- **Priority:** Functional over perfect - working AI readings > animations
+- **Standards:** TypeScript strict mode, project coding rules
+- **Goal:** Transform UI prototype into functional tarot reading app
+
+---
+
+## 💡 **OPTIMIZATION NOTES**
+
+### **Memory Bank Efficiency**
+- Load only files relevant to current mode and task
+- Update Memory Bank incrementally after significant progress
+- Preserve context for seamless session transitions
+- Document decisions and blockers for future reference
+
+### **Development Velocity**
+- Focus on single task completion before mode transitions
+- Use phased approach for Level 3+ complexity tasks
+- Validate early and often with working increments  
+- Maintain quality standards while prioritizing functionality
+
+### **Context Continuity**
+- Always check Memory Bank state before starting
+- Update activeContext.md before long operations
+- Document key technical decisions in progress.md
+- Prepare context for potential team handoffs
