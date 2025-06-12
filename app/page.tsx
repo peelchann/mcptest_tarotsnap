@@ -1,12 +1,10 @@
 'use client';
 
-import React, { useEffect, useRef, useState, Suspense, lazy } from "react"
-import { motion, useAnimation, useMotionValue, useTransform } from "framer-motion"
+import React, { useEffect, useRef, useState } from "react"
+import { motion, useAnimation } from "framer-motion"
 import { cn } from "@/lib/utils"
 import { Sparkles, Eye, Stars, Moon, Zap } from "lucide-react"
 import Link from "next/link"
-
-const Spline = lazy(() => import('@splinetool/react-spline'))
 
 interface MousePosition {
   x: number
