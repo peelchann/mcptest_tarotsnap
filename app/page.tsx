@@ -1,494 +1,576 @@
 'use client';
 
-import { useState, useEffect, Suspense } from 'react';
-import { motion } from 'framer-motion';
-import { useRouter, useSearchParams } from 'next/navigation';
-import { Button } from '@/app/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/app/components/ui/card';
-import { Input } from '@/app/components/ui/input';
-import { Textarea } from '@/app/components/ui/textarea';
-import { MysticalParticles } from './components/ui/MysticalParticles';
-import { AuthModal } from './components/auth/AuthModal';
-import { useAuth } from './providers/AuthProvider';
-import { 
-  Sparkles, 
-  Moon, 
-  Stars, 
-  Eye, 
-  Heart, 
-  ArrowRight,
-  MessageCircle,
-  Zap,
-  Crown,
-  User,
-  LogIn,
-  Settings
-} from 'lucide-react';
+import React, { useEffect, useRef, useState, Suspense, lazy } from "react"
+import { motion, useAnimation, useMotionValue, useTransform } from "framer-motion"
+import { cn } from "@/lib/utils"
+import { Sparkles, Eye, Stars, Moon, Zap } from "lucide-react"
+import Link from "next/link"
 
-const containerVariants = {
-  hidden: { opacity: 0 },
-  visible: {
-    opacity: 1,
-    transition: {
-      staggerChildren: 0.2,
-      duration: 0.6
-    }
-  }
-};
+const Spline = lazy(() => import('@splinetool/react-spline'))
 
-const itemVariants = {
-  hidden: { 
-    opacity: 0, 
-    y: 30,
-    scale: 0.9
-  },
-  visible: {
-    opacity: 1,
+interface MousePosition {
+  x: number
+  y: number
+}
+
+function MousePosition(): MousePosition {
+  const [mousePosition, setMousePosition] = useState<MousePosition>({
+    x: 0,
     y: 0,
-    scale: 1,
-    transition: {
-      type: "spring",
-      stiffness: 300,
-      damping: 24
-    }
-  }
-};
-
-const floatingCardVariants = {
-  float: {
-    y: [0, -20, 0],
-    rotate: [0, 5, -5, 0],
-    transition: {
-      duration: 6,
-      repeat: Infinity,
-      ease: "easeInOut"
-    }
-  }
-};
-
-const features = [
-  {
-    icon: Eye,
-    title: "Divine Insights",
-    description: "Gain profound insights into your life's path through ancient tarot wisdom"
-  },
-  {
-    icon: MessageCircle,
-    title: "Memory-Powered AI",
-    description: "Our AI remembers your journey and provides increasingly personalized guidance"
-  },
-  {
-    icon: Zap,
-    title: "Instant Wisdom",
-    description: "Get immediate, contextual readings that build upon your spiritual evolution"
-  }
-];
-
-// Component that uses useSearchParams - needs to be wrapped in Suspense
-function AuthChecker({ 
-  setAuthMode, 
-  setAuthModalOpen, 
-  user, 
-  loading 
-}: {
-  setAuthMode: (mode: 'login' | 'signup') => void;
-  setAuthModalOpen: (open: boolean) => void;
-  user: any;
-  loading: boolean;
-}) {
-  const searchParams = useSearchParams();
+  })
 
   useEffect(() => {
-    const authRequired = searchParams.get('auth') === 'required';
-    if (authRequired && !user && !loading) {
-      setAuthMode('login');
-      setAuthModalOpen(true);
+    const handleMouseMove = (event: MouseEvent) => {
+      setMousePosition({ x: event.clientX, y: event.clientY })
     }
-  }, [searchParams, user, loading, setAuthMode, setAuthModalOpen]);
 
-  return null;
+    window.addEventListener("mousemove", handleMouseMove)
+
+    return () => {
+      window.removeEventListener("mousemove", handleMouseMove)
+    }
+  }, [])
+
+  return mousePosition
 }
 
-// Floating Tarot Cards Component
-function FloatingTarotCards() {
+interface ParticlesProps {
+  className?: string
+  quantity?: number
+  staticity?: number
+  ease?: number
+  size?: number
+  refresh?: boolean
+  color?: string
+  vx?: number
+  vy?: number
+}
+
+function hexToRgb(hex: string): number[] {
+  hex = hex.replace("#", "")
+
+  if (hex.length === 3) {
+    hex = hex
+      .split("")
+      .map((char) => char + char)
+      .join("")
+  }
+
+  const hexInt = parseInt(hex, 16)
+  const red = (hexInt >> 16) & 255
+  const green = (hexInt >> 8) & 255
+  const blue = hexInt & 255
+  return [red, green, blue]
+}
+
+const Particles: React.FC<ParticlesProps> = ({
+  className = "",
+  quantity = 80,
+  staticity = 50,
+  ease = 50,
+  size = 0.4,
+  refresh = false,
+  color = "#FFD700",
+  vx = 0,
+  vy = 0,
+}) => {
+  const canvasRef = useRef<HTMLCanvasElement>(null)
+  const canvasContainerRef = useRef<HTMLDivElement>(null)
+  const context = useRef<CanvasRenderingContext2D | null>(null)
+  const circles = useRef<Circle[]>([])
+  const mousePosition = MousePosition()
+  const mouse = useRef<{ x: number; y: number }>({ x: 0, y: 0 })
+  const canvasSize = useRef<{ w: number; h: number }>({ w: 0, h: 0 })
+  const dpr = typeof window !== "undefined" ? window.devicePixelRatio : 1
+
+  useEffect(() => {
+    if (canvasRef.current) {
+      context.current = canvasRef.current.getContext("2d")
+    }
+    initCanvas()
+    animate()
+    window.addEventListener("resize", initCanvas)
+
+    return () => {
+      window.removeEventListener("resize", initCanvas)
+    }
+  }, [color])
+
+  useEffect(() => {
+    onMouseMove()
+  }, [mousePosition.x, mousePosition.y])
+
+  useEffect(() => {
+    initCanvas()
+  }, [refresh])
+
+  const initCanvas = () => {
+    resizeCanvas()
+    drawParticles()
+  }
+
+  const onMouseMove = () => {
+    if (canvasRef.current) {
+      const rect = canvasRef.current.getBoundingClientRect()
+      const { w, h } = canvasSize.current
+      const x = mousePosition.x - rect.left - w / 2
+      const y = mousePosition.y - rect.top - h / 2
+      const inside = x < w / 2 && x > -w / 2 && y < h / 2 && y > -h / 2
+      if (inside) {
+        mouse.current.x = x
+        mouse.current.y = y
+      }
+    }
+  }
+
+  type Circle = {
+    x: number
+    y: number
+    translateX: number
+    translateY: number
+    size: number
+    alpha: number
+    targetAlpha: number
+    dx: number
+    dy: number
+    magnetism: number
+  }
+
+  const resizeCanvas = () => {
+    if (canvasContainerRef.current && canvasRef.current && context.current) {
+      circles.current.length = 0
+      canvasSize.current.w = canvasContainerRef.current.offsetWidth
+      canvasSize.current.h = canvasContainerRef.current.offsetHeight
+      canvasRef.current.width = canvasSize.current.w * dpr
+      canvasRef.current.height = canvasSize.current.h * dpr
+      canvasRef.current.style.width = `${canvasSize.current.w}px`
+      canvasRef.current.style.height = `${canvasSize.current.h}px`
+      context.current.scale(dpr, dpr)
+    }
+  }
+
+  const circleParams = (): Circle => {
+    const x = Math.floor(Math.random() * canvasSize.current.w)
+    const y = Math.floor(Math.random() * canvasSize.current.h)
+    const translateX = 0
+    const translateY = 0
+    const pSize = Math.floor(Math.random() * 2) + size
+    const alpha = 0
+    const targetAlpha = parseFloat((Math.random() * 0.4 + 0.1).toFixed(1))
+    const dx = (Math.random() - 0.5) * 0.05
+    const dy = (Math.random() - 0.5) * 0.05
+    const magnetism = 0.1 + Math.random() * 2
+    return {
+      x,
+      y,
+      translateX,
+      translateY,
+      size: pSize,
+      alpha,
+      targetAlpha,
+      dx,
+      dy,
+      magnetism,
+    }
+  }
+
+  const rgb = hexToRgb(color)
+
+  const drawCircle = (circle: Circle, update = false) => {
+    if (context.current) {
+      const { x, y, translateX, translateY, size, alpha } = circle
+      context.current.translate(translateX, translateY)
+      context.current.beginPath()
+      context.current.arc(x, y, size, 0, 2 * Math.PI)
+      context.current.fillStyle = `rgba(${rgb.join(", ")}, ${alpha})`
+      context.current.fill()
+      context.current.setTransform(dpr, 0, 0, dpr, 0, 0)
+
+      if (!update) {
+        circles.current.push(circle)
+      }
+    }
+  }
+
+  const clearContext = () => {
+    if (context.current) {
+      context.current.clearRect(
+        0,
+        0,
+        canvasSize.current.w,
+        canvasSize.current.h,
+      )
+    }
+  }
+
+  const drawParticles = () => {
+    clearContext()
+    const particleCount = quantity
+    for (let i = 0; i < particleCount; i++) {
+      const circle = circleParams()
+      drawCircle(circle)
+    }
+  }
+
+  const remapValue = (
+    value: number,
+    start1: number,
+    end1: number,
+    start2: number,
+    end2: number,
+  ): number => {
+    const remapped =
+      ((value - start1) * (end2 - start2)) / (end1 - start1) + start2
+    return remapped > 0 ? remapped : 0
+  }
+
+  const animate = () => {
+    clearContext()
+    circles.current.forEach((circle: Circle, i: number) => {
+      const edge = [
+        circle.x + circle.translateX - circle.size,
+        canvasSize.current.w - circle.x - circle.translateX - circle.size,
+        circle.y + circle.translateY - circle.size,
+        canvasSize.current.h - circle.y - circle.translateY - circle.size,
+      ]
+      const closestEdge = edge.reduce((a, b) => Math.min(a, b))
+      const remapClosestEdge = parseFloat(
+        remapValue(closestEdge, 0, 20, 0, 1).toFixed(2),
+      )
+      if (remapClosestEdge > 1) {
+        circle.alpha += 0.02
+        if (circle.alpha > circle.targetAlpha) {
+          circle.alpha = circle.targetAlpha
+        }
+      } else {
+        circle.alpha = circle.targetAlpha * remapClosestEdge
+      }
+      circle.x += circle.dx + vx
+      circle.y += circle.dy + vy
+      circle.translateX +=
+        (mouse.current.x / (staticity / circle.magnetism) - circle.translateX) /
+        ease
+      circle.translateY +=
+        (mouse.current.y / (staticity / circle.magnetism) - circle.translateY) /
+        ease
+
+      drawCircle(circle, true)
+
+      if (
+        circle.x < -circle.size ||
+        circle.x > canvasSize.current.w + circle.size ||
+        circle.y < -circle.size ||
+        circle.y > canvasSize.current.h + circle.size
+      ) {
+        circles.current.splice(i, 1)
+        const newCircle = circleParams()
+        drawCircle(newCircle)
+      }
+    })
+    window.requestAnimationFrame(animate)
+  }
+
   return (
-    <div className="absolute inset-0 overflow-hidden pointer-events-none">
-      {/* Card 1 */}
-      <motion.div
-        variants={floatingCardVariants}
-        animate="float"
-        className="absolute top-20 left-10 w-16 h-24 bg-gradient-to-br from-purple-900 to-indigo-900 rounded-lg shadow-2xl border border-gold-500/30"
-        style={{ transform: 'perspective(1000px) rotateY(15deg)' }}
-      >
-        <div className="w-full h-full bg-gradient-to-br from-gold-500/20 to-purple-500/20 rounded-lg flex items-center justify-center">
-          <Stars className="w-6 h-6 text-gold-400" />
-        </div>
-      </motion.div>
-
-      {/* Card 2 */}
-      <motion.div
-        variants={floatingCardVariants}
-        animate="float"
-        className="absolute top-32 right-16 w-16 h-24 bg-gradient-to-br from-indigo-900 to-purple-900 rounded-lg shadow-2xl border border-gold-500/30"
-        style={{ transform: 'perspective(1000px) rotateY(-15deg)', animationDelay: '2s' }}
-      >
-        <div className="w-full h-full bg-gradient-to-br from-gold-500/20 to-purple-500/20 rounded-lg flex items-center justify-center">
-          <Moon className="w-6 h-6 text-gold-400" />
-        </div>
-      </motion.div>
-
-      {/* Card 3 */}
-      <motion.div
-        variants={floatingCardVariants}
-        animate="float"
-        className="absolute bottom-32 left-20 w-16 h-24 bg-gradient-to-br from-purple-900 to-indigo-900 rounded-lg shadow-2xl border border-gold-500/30"
-        style={{ transform: 'perspective(1000px) rotateY(10deg)', animationDelay: '4s' }}
-      >
-        <div className="w-full h-full bg-gradient-to-br from-gold-500/20 to-purple-500/20 rounded-lg flex items-center justify-center">
-          <Eye className="w-6 h-6 text-gold-400" />
-        </div>
-      </motion.div>
-
-      {/* Card 4 */}
-      <motion.div
-        variants={floatingCardVariants}
-        animate="float"
-        className="absolute bottom-20 right-24 w-16 h-24 bg-gradient-to-br from-indigo-900 to-purple-900 rounded-lg shadow-2xl border border-gold-500/30"
-        style={{ transform: 'perspective(1000px) rotateY(-10deg)', animationDelay: '1s' }}
-      >
-        <div className="w-full h-full bg-gradient-to-br from-gold-500/20 to-purple-500/20 rounded-lg flex items-center justify-center">
-          <Sparkles className="w-6 h-6 text-gold-400" />
-        </div>
-      </motion.div>
-
-      {/* Card 5 */}
-      <motion.div
-        variants={floatingCardVariants}
-        animate="float"
-        className="absolute top-1/2 left-4 w-16 h-24 bg-gradient-to-br from-purple-900 to-indigo-900 rounded-lg shadow-2xl border border-gold-500/30"
-        style={{ transform: 'perspective(1000px) rotateY(20deg)', animationDelay: '3s' }}
-      >
-        <div className="w-full h-full bg-gradient-to-br from-gold-500/20 to-purple-500/20 rounded-lg flex items-center justify-center">
-          <Heart className="w-6 h-6 text-gold-400" />
-        </div>
-      </motion.div>
-
-      {/* Card 6 */}
-      <motion.div
-        variants={floatingCardVariants}
-        animate="float"
-        className="absolute top-1/2 right-4 w-16 h-24 bg-gradient-to-br from-indigo-900 to-purple-900 rounded-lg shadow-2xl border border-gold-500/30"
-        style={{ transform: 'perspective(1000px) rotateY(-20deg)', animationDelay: '5s' }}
-      >
-        <div className="w-full h-full bg-gradient-to-br from-gold-500/20 to-purple-500/20 rounded-lg flex items-center justify-center">
-          <Crown className="w-6 h-6 text-gold-400" />
-        </div>
-      </motion.div>
+    <div
+      className={cn("pointer-events-none", className)}
+      ref={canvasContainerRef}
+      aria-hidden="true"
+    >
+      <canvas ref={canvasRef} className="size-full" />
     </div>
-  );
+  )
 }
 
-export default function HomePage() {
-  const [question, setQuestion] = useState('');
-  const [isLoading, setIsLoading] = useState(false);
-  const [authModalOpen, setAuthModalOpen] = useState(false);
-  const [authMode, setAuthMode] = useState<'login' | 'signup'>('login');
-  const router = useRouter();
-  const { user, profile, loading } = useAuth();
+interface TextShimmerProps {
+  children: string
+  className?: string
+  duration?: number
+  spread?: number
+}
 
-  const handleStartReading = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setIsLoading(true);
-    
-    // Store the question in session storage
-    if (question.trim()) {
-      sessionStorage.setItem('tarot-question', question.trim());
-    }
-    
-    // Navigate to single card reading
-    setTimeout(() => {
-      router.push('/reading/single');
-    }, 1000);
-  };
-
-  const handleAuthSuccess = () => {
-    setAuthModalOpen(false);
-    // If user just signed up/logged in, redirect to dashboard
-    router.push('/dashboard');
-  };
-
-  const openAuthModal = (mode: 'login' | 'signup') => {
-    setAuthMode(mode);
-    setAuthModalOpen(true);
-  };
+function TextShimmer({
+  children,
+  className,
+  duration = 3,
+  spread = 2,
+}: TextShimmerProps) {
+  const dynamicSpread = children.length * spread
 
   return (
-    <div className="min-h-screen relative overflow-hidden">
-      <FloatingTarotCards />
-      <MysticalParticles />
-      
-      {/* Header */}
-      <div className="relative z-20 container mx-auto px-4 py-4">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <Crown className="w-8 h-8 text-accent" />
-            <span className="text-accent font-semibold text-lg">TarotSnap</span>
-          </div>
-          
-          <div className="flex items-center gap-3">
-            {user ? (
-              <>
-                <span className="text-white/80 text-sm">
-                  Welcome, {profile?.full_name || user.email?.split('@')[0]}
-                </span>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() => router.push('/dashboard')}
-                  className="border-white/30 text-white hover:bg-white/10"
-                >
-                  <User className="w-4 h-4 mr-2" />
-                  Dashboard
-                </Button>
-              </>
-            ) : (
-              <>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={() => openAuthModal('login')}
-                  className="text-white hover:text-gold-300 hover:bg-white/10"
-                >
-                  <LogIn className="w-4 h-4 mr-2" />
-                  Sign In
-                </Button>
-                <Button
-                  size="sm"
-                  onClick={() => openAuthModal('signup')}
-                  className="bg-gradient-to-r from-gold-500 to-amber-600 hover:from-gold-600 hover:to-amber-700 text-black"
-                >
-                  Get Started
-                </Button>
-              </>
-            )}
-          </div>
-        </div>
-      </div>
-      
-      {/* Centered Hero Section */}
-      <div className="min-h-screen flex items-center justify-center relative z-10">
-        <motion.div
-          variants={containerVariants}
-          initial="hidden"
-          animate="visible"
-          className="container mx-auto px-4 text-center"
-        >
-          {/* Hero Section */}
-          <motion.div 
-            variants={itemVariants}
-            className="max-w-4xl mx-auto"
-          >
-            <motion.div 
-              className="inline-flex items-center gap-3 mb-8 bg-black/30 backdrop-blur-md px-6 py-3 rounded-full border border-gold-500/30"
-              whileHover={{ scale: 1.05 }}
-              transition={{ type: "spring", stiffness: 300 }}
-            >
-              <Crown className="w-8 h-8 text-gold-500 animate-pulse" />
-              <span className="text-gold-500 font-semibold text-xl">TarotSnap</span>
-            </motion.div>
-            
-            <motion.h1 
-              className="text-6xl md:text-8xl font-bold mb-8 bg-gradient-to-br from-gold-400 via-gold-300 to-amber-400 bg-clip-text text-transparent drop-shadow-[0_4px_12px_rgba(200,173,127,0.7)]"
-              variants={itemVariants}
-            >
-              Your Spiritual Advisor
-              <br />
-              <span className="text-4xl md:text-6xl bg-gradient-to-br from-purple-400 via-indigo-400 to-blue-400 bg-clip-text text-transparent">
-                Who Remembers Your Journey
-              </span>
-            </motion.h1>
-            
-            <motion.p 
-              className="text-xl md:text-2xl text-gray-300 max-w-3xl mx-auto mb-12 leading-relaxed"
-              variants={itemVariants}
-            >
-              Experience tarot readings that build upon your past, understand your growth, 
-              and guide your future with AI-powered memory that evolves with you.
-            </motion.p>
-            
-            <motion.div 
-              className="flex flex-col sm:flex-row items-center justify-center gap-6 mb-12"
-              variants={itemVariants}
-            >
-              <Button 
-                size="xl"
-                className="bg-gradient-to-r from-gold-500 via-amber-500 to-orange-500 hover:from-gold-600 hover:via-amber-600 hover:to-orange-600 text-black font-bold px-12 py-4 text-lg rounded-full shadow-2xl hover:shadow-gold-500/25 transition-all duration-300 transform hover:scale-105"
-              >
-                <Sparkles className="w-6 h-6 mr-3" />
-                Begin Your Spiritual Journey
-                <ArrowRight className="w-6 h-6 ml-3" />
-              </Button>
-              
-              <div className="flex items-center gap-2 text-gray-400">
-                <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
-                <span className="text-sm">1,247 souls guided today</span>
-              </div>
-            </motion.div>
-            
-            <motion.div 
-              className="flex items-center justify-center gap-8 text-gray-400"
-              variants={itemVariants}
-            >
-              <div className="flex items-center gap-2 bg-black/20 backdrop-blur-sm px-4 py-2 rounded-full">
-                <Eye className="w-5 h-5 text-gold-500" />
-                <span className="text-sm">Remembers Your Path</span>
-              </div>
-              <div className="flex items-center gap-2 bg-black/20 backdrop-blur-sm px-4 py-2 rounded-full">
-                <Heart className="w-5 h-5 text-purple-400" />
-                <span className="text-sm">Builds Relationships</span>
-              </div>
-              <div className="flex items-center gap-2 bg-black/20 backdrop-blur-sm px-4 py-2 rounded-full">
-                <Stars className="w-5 h-5 text-blue-400" />
-                <span className="text-sm">Evolving Wisdom</span>
-              </div>
-            </motion.div>
-          </motion.div>
-        </motion.div>
+    <motion.div
+      className={cn(
+        'relative inline-block bg-[length:250%_100%,auto] bg-clip-text',
+        'text-transparent [--base-color:#8b7355] [--base-gradient-color:#FFD700]',
+        '[--bg:linear-gradient(90deg,#0000_calc(50%-var(--spread)),var(--base-gradient-color),#0000_calc(50%+var(--spread)))] [background-repeat:no-repeat,padding-box]',
+        'dark:[--base-color:#8b7355] dark:[--base-gradient-color:#FFD700] dark:[--bg:linear-gradient(90deg,#0000_calc(50%-var(--spread)),var(--base-gradient-color),#0000_calc(50%+var(--spread)))]',
+        className
+      )}
+      initial={{ backgroundPosition: '100% center' }}
+      animate={{ backgroundPosition: '0% center' }}
+      transition={{
+        repeat: Infinity,
+        duration,
+        ease: 'linear',
+      }}
+      style={
+        {
+          '--spread': `${dynamicSpread}px`,
+          backgroundImage: `var(--bg), linear-gradient(var(--base-color), var(--base-color))`,
+        } as React.CSSProperties
+      }
+    >
+      {children}
+    </motion.div>
+  )
+}
+
+function TarotRevealedHomepage() {
+  const [isLoaded, setIsLoaded] = useState(false)
+  const controls = useAnimation()
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setIsLoaded(true)
+      controls.start({
+        opacity: 1,
+        y: 0,
+        transition: { duration: 1.2, ease: "easeOut" }
+      })
+    }, 300)
+
+    return () => clearTimeout(timer)
+  }, [controls])
+
+  const cardVariants = {
+    hidden: { 
+      opacity: 0, 
+      rotateY: 180, 
+      scale: 0.8,
+      y: 50 
+    },
+    visible: (i: number) => ({
+      opacity: 1,
+      rotateY: 0,
+      scale: 1,
+      y: 0,
+      transition: {
+        delay: 0.8 + i * 0.3,
+        duration: 0.8,
+        ease: "easeOut"
+      }
+    }),
+    hover: {
+      scale: 1.05,
+      rotateY: 5,
+      y: -10,
+      transition: { duration: 0.3 }
+    }
+  }
+
+  const floatingCards = [
+    { icon: Stars, name: "Insight", glow: "shadow-amber-500/50" },
+    { icon: Eye, name: "Vision", glow: "shadow-yellow-400/50" },
+    { icon: Moon, name: "Wisdom", glow: "shadow-orange-400/50" }
+  ]
+
+  return (
+    <div className="relative min-h-screen bg-gradient-to-br from-slate-950 via-blue-950 to-indigo-950 overflow-hidden">
+      {/* Cosmic Background Particles */}
+      <Particles
+        className="absolute inset-0"
+        quantity={120}
+        ease={60}
+        color="#FFD700"
+        refresh
+      />
+
+      {/* Naval Aurora Background Effect */}
+      <div className="absolute inset-0 overflow-hidden">
+        <div className="absolute inset-0 bg-gradient-to-r from-blue-950/40 via-slate-900/40 to-indigo-950/40 animate-pulse" />
+        <div className="absolute top-0 left-1/3 w-96 h-96 bg-amber-500/20 rounded-full blur-3xl animate-pulse" />
+        <div className="absolute bottom-0 right-1/3 w-96 h-96 bg-yellow-500/20 rounded-full blur-3xl animate-pulse delay-1000" />
       </div>
 
-      {/* Content Sections */}
-      <motion.div
-        variants={containerVariants}
-        initial="hidden"
-        animate="visible"
-        className="container mx-auto px-4 py-16 relative z-10"
-      >
-
-        {/* Memory Features Showcase */}
-        <motion.div 
-          variants={itemVariants}
-          className="text-center mb-20"
-        >
-          <h2 className="text-4xl md:text-5xl font-bold mb-6 bg-gradient-to-r from-gold-400 to-amber-400 bg-clip-text text-transparent">
-            Your Spiritual Journey, Remembered
-          </h2>
-          <p className="text-xl text-gray-400 max-w-3xl mx-auto mb-12">
-            Unlike one-off readings, TarotSnap builds a deep understanding of your unique path, 
-            offering increasingly personalized guidance as your relationship grows.
-          </p>
-          
-          <div className="grid md:grid-cols-3 gap-8">
-            {features.map((feature, index) => (
-              <motion.div 
-                key={index} 
-                className="group"
-                whileHover={{ y: -10 }}
-                transition={{ type: "spring", stiffness: 300 }}
+      {/* Main Content Container */}
+      <div className="relative z-10 min-h-screen flex flex-col">
+        {/* Header Section */}
+        <div className="flex-1 flex items-center justify-center px-8 py-24">
+          <div className="max-w-7xl w-full">
+            <motion.div
+              initial={{ opacity: 0, y: 30 }}
+              animate={controls}
+              className="text-center space-y-12"
+            >
+              {/* Mystical Icon */}
+              <motion.div
+                initial={{ opacity: 0, scale: 0 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ delay: 0.3, duration: 0.8 }}
+                className="flex justify-center"
               >
-                <div className="bg-gradient-to-br from-black/40 to-black/20 backdrop-blur-md border border-gold-500/20 rounded-2xl p-8 h-full hover:border-gold-500/40 transition-all duration-300">
-                  <div className="mx-auto mb-6 p-4 rounded-full bg-gradient-to-br from-gold-500/20 to-amber-500/20 w-fit group-hover:scale-110 transition-transform duration-300">
-                    <feature.icon className="w-8 h-8 text-gold-400" />
-                  </div>
-                  <h3 className="text-xl font-semibold mb-4 text-gold-400">{feature.title}</h3>
-                  <p className="text-gray-400 leading-relaxed">{feature.description}</p>
+                <div className="relative">
+                  <motion.div
+                    animate={{ rotate: 360 }}
+                    transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
+                    className="w-16 h-16 text-amber-400"
+                  >
+                    <Zap className="w-full h-full" />
+                  </motion.div>
+                  <div className="absolute inset-0 bg-amber-400/20 rounded-full blur-xl animate-pulse" />
                 </div>
               </motion.div>
-            ))}
-          </div>
-        </motion.div>
 
-        {/* Quick Start CTA */}
-        <motion.div 
-          variants={itemVariants}
-          className="max-w-2xl mx-auto text-center"
-        >
-          <div className="bg-gradient-to-br from-black/60 to-black/30 backdrop-blur-xl border border-gold-500/30 rounded-3xl p-12 shadow-2xl">
-            <div className="mb-8">
-              <h3 className="text-3xl font-bold mb-4 bg-gradient-to-r from-gold-400 to-amber-400 bg-clip-text text-transparent">
-                Ready to Begin?
-              </h3>
-              <p className="text-gray-400 text-lg">
-                Start your first reading and let TarotSnap begin learning your unique spiritual signature.
-              </p>
-            </div>
-            
-            <form onSubmit={handleStartReading} className="space-y-6">
-              <Textarea
-                placeholder="What guidance do you seek? (Optional - leave blank for a general reading)"
-                value={question}
-                onChange={(e) => setQuestion(e.target.value)}
-                className="min-h-[80px] bg-black/30 border-gold-500/30 focus:border-gold-500/60 text-white placeholder-gray-500 rounded-xl"
-              />
-              
-              <Button 
-                type="submit" 
-                size="xl"
-                className="w-full bg-gradient-to-r from-gold-500 via-amber-500 to-orange-500 hover:from-gold-600 hover:via-amber-600 hover:to-orange-600 text-black font-bold py-4 text-lg rounded-xl shadow-2xl hover:shadow-gold-500/25 transition-all duration-300 transform hover:scale-[1.02]"
-                disabled={isLoading}
+              {/* Main Heading */}
+              <div className="space-y-6">
+                <motion.h1 
+                  className="text-7xl lg:text-9xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-amber-400 via-yellow-300 to-orange-400 tracking-wide"
+                  initial={{ opacity: 0, scale: 0.9 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  transition={{ delay: 0.5, duration: 1 }}
+                >
+                  TarotSnap
+                </motion.h1>
+                
+                <TextShimmer 
+                  className="text-3xl lg:text-5xl font-semibold text-slate-300"
+                  duration={4}
+                >
+                  Your AI Mystic Awaits
+                </TextShimmer>
+              </div>
+
+              {/* Three Mystical Cards */}
+              <motion.div 
+                className="flex justify-center items-center gap-8 lg:gap-12 py-12"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ delay: 1, duration: 1 }}
               >
-                {isLoading ? (
-                  <div className="flex items-center gap-3">
-                    <div className="w-5 h-5 border-2 border-current border-t-transparent rounded-full animate-spin" />
-                    Preparing Your Reading...
-                  </div>
-                ) : (
-                  <div className="flex items-center gap-3">
-                    <Sparkles className="w-6 h-6" />
-                    Draw Your First Card
-                    <ArrowRight className="w-6 h-6" />
-                  </div>
-                )}
-              </Button>
-            </form>
-          </div>
-        </motion.div>
+                {floatingCards.map((card, i) => (
+                  <motion.div
+                    key={card.name}
+                    custom={i}
+                    variants={cardVariants}
+                    initial="hidden"
+                    animate="visible"
+                    whileHover="hover"
+                    className="group relative cursor-pointer"
+                  >
+                    {/* Card Container */}
+                    <div className={cn(
+                      "relative w-32 h-48 lg:w-40 lg:h-60",
+                      "bg-gradient-to-br from-slate-900 via-blue-900 to-indigo-900",
+                      "rounded-xl border-2 border-amber-400/50 shadow-2xl",
+                      card.glow,
+                      "overflow-hidden"
+                    )}>
+                      {/* Inner Border */}
+                      <div className="absolute inset-3 border border-amber-400/30 rounded-lg" />
+                      
+                      {/* Card Icon */}
+                      <div className="absolute top-6 left-1/2 transform -translate-x-1/2">
+                        <card.icon className="w-8 h-8 lg:w-10 lg:h-10 text-amber-300" />
+                      </div>
+                      
+                      {/* Card Name */}
+                      <div className="absolute bottom-6 left-1/2 transform -translate-x-1/2 text-center">
+                        <div className="text-amber-300 font-semibold text-sm lg:text-base tracking-wide">
+                          {card.name}
+                        </div>
+                      </div>
+                      
+                      {/* Mystical Glow Effect */}
+                      <div className="absolute inset-0 bg-gradient-to-t from-amber-500/5 via-transparent to-yellow-500/5 group-hover:from-amber-500/10 group-hover:to-yellow-500/10 transition-all duration-300" />
+                      
+                      {/* Shimmer Effect */}
+                      <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500">
+                        <div className="absolute inset-0 bg-gradient-to-r from-transparent via-amber-400/20 to-transparent animate-shimmer" />
+                      </div>
+                    </div>
 
-        {/* Social Proof */}
-        <motion.div 
-          variants={itemVariants}
-          className="mt-20 text-center"
-        >
-          <div className="max-w-4xl mx-auto">
-            <p className="text-gray-500 mb-8">Trusted by spiritual seekers worldwide</p>
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-8 items-center">
-              <div className="text-center">
-                <div className="text-3xl font-bold text-gold-400 mb-2">15K+</div>
-                <div className="text-sm text-gray-400">Souls Guided</div>
-              </div>
-              <div className="text-center">
-                <div className="text-3xl font-bold text-purple-400 mb-2">89%</div>
-                <div className="text-sm text-gray-400">Return Rate</div>
-              </div>
-              <div className="text-center">
-                <div className="text-3xl font-bold text-blue-400 mb-2">4.9★</div>
-                <div className="text-sm text-gray-400">User Rating</div>
-              </div>
-              <div className="text-center">
-                <div className="text-3xl font-bold text-green-400 mb-2">24/7</div>
-                <div className="text-sm text-gray-400">Available</div>
-              </div>
-            </div>
+                    {/* Floating Aura */}
+                    <div className="absolute inset-0 pointer-events-none">
+                      <div className={cn(
+                        "absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2",
+                        "w-48 h-48 lg:w-56 lg:w-56 bg-amber-500/10 rounded-full blur-2xl",
+                        "group-hover:bg-amber-500/20 transition-all duration-500"
+                      )} />
+                    </div>
+                  </motion.div>
+                ))}
+              </motion.div>
+
+              {/* Minimal Value Proposition */}
+              <motion.div 
+                className="space-y-6 max-w-3xl mx-auto"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ delay: 1.8, duration: 1 }}
+              >
+                <p className="text-xl lg:text-2xl text-slate-300 leading-relaxed font-light">
+                  Ancient wisdom meets artificial intelligence. 
+                  <span className="text-amber-300 font-medium"> Instant insights, timeless guidance.</span>
+                </p>
+              </motion.div>
+
+              {/* Single Prominent CTA */}
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 2.2, duration: 0.6 }}
+              >
+                <Link href="/reading/single">
+                  <motion.button
+                    className="group relative px-12 py-6 bg-gradient-to-r from-amber-600 via-yellow-500 to-orange-500 rounded-full text-slate-900 font-bold text-xl shadow-2xl shadow-amber-500/25"
+                    whileHover={{ 
+                      scale: 1.05,
+                      boxShadow: "0 25px 50px -12px rgba(245, 158, 11, 0.4)"
+                    }}
+                    whileTap={{ scale: 0.98 }}
+                  >
+                    <span className="relative z-10 flex items-center space-x-3">
+                      <Sparkles className="w-6 h-6" />
+                      <span>Begin Your Reading</span>
+                    </span>
+                    
+                    {/* Shimmer Effect */}
+                    <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 rounded-full">
+                      <div className="w-full h-full bg-gradient-to-r from-transparent via-white/20 to-transparent animate-shimmer rounded-full" />
+                    </div>
+                    
+                    {/* Glow Effect */}
+                    <div className="absolute inset-0 bg-amber-400/20 rounded-full blur-xl group-hover:bg-amber-400/30 transition-all duration-300" />
+                  </motion.button>
+                </Link>
+              </motion.div>
+            </motion.div>
           </div>
-        </motion.div>
-      </motion.div>
-      
-      {/* Authentication Modal */}
-      <AuthModal
-        isOpen={authModalOpen}
-        onClose={() => setAuthModalOpen(false)}
-        defaultMode={authMode}
-        onSuccess={handleAuthSuccess}
-      />
-      
-      {/* Auth checker with Suspense boundary */}
-      <Suspense fallback={null}>
-        <AuthChecker
-          setAuthMode={setAuthMode}
-          setAuthModalOpen={setAuthModalOpen}
-          user={user}
-          loading={loading}
-        />
-      </Suspense>
+        </div>
+
+        {/* Bottom Mystical Elements */}
+        <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 text-center text-amber-400/70">
+          <motion.div
+            animate={{ opacity: [0.5, 1, 0.5] }}
+            transition={{ duration: 3, repeat: Infinity }}
+            className="text-sm font-light tracking-wider"
+          >
+            ✨ The universe speaks through the cards ✨
+          </motion.div>
+        </div>
+      </div>
+
+      {/* Custom CSS for animations */}
+      <style jsx>{`
+        @keyframes shimmer {
+          0% { transform: translateX(-100%); }
+          100% { transform: translateX(100%); }
+        }
+        .animate-shimmer {
+          animation: shimmer 2s infinite;
+        }
+      `}</style>
     </div>
-  );
+  )
 }
+
+export default TarotRevealedHomepage
