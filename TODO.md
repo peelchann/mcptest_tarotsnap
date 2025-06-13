@@ -44,6 +44,44 @@
 - [ ] Core Web Vitals optimization
 - [ ] Test social media preview cards
 
+### **🎨 PRIORITY 3: UI/UX Visual Redesign** 🎨 **NEW CRITICAL PRIORITY**
+**Status:** ❌ **URGENT - HIGH IMPACT OPPORTUNITY**  
+**Timeline:** 1-2 weeks  
+**Issue:** Current design is "too pale and wordy" - lacks visual impact despite excellent functionality
+
+**🔍 Strategic Analysis:**
+- **Backend Status:** 100% functional and production-ready (verified through testing)
+- **UI Challenge:** Visual design doesn't communicate premium mystical experience users receive
+- **Opportunity:** Visual transformation can dramatically improve conversion without touching backend
+- **Risk Level:** LOW - Only visual layer changes, preserving all working systems
+
+**⚡ Immediate Actions (This Week):**
+- [ ] **Create ui-revamp branch** - Preserve all working backend functionality
+- [ ] **Use v0.dev for AI component generation** - Generate navy+gold mystical components
+- [ ] **Prompt:** "Dark navy gradient tarot homepage with gold accents, three glowing tarot cards, mystical symbols, single prominent CTA button, minimal text"
+- [ ] **Integrate new components** while preserving API routes and data logic
+- [ ] **Critical smoke test** - Verify readings still work end-to-end
+
+**🎨 Design Improvements to Apply:**
+- [ ] **Color System:** Navy-to-dark-navy gradient + metallic gold accents
+- [ ] **Typography:** Mystical serif headlines (Cinzel) + clean sans-serif body
+- [ ] **Copy Reduction:** Cut text by 50%, benefit-focused statements
+- [ ] **Visual Hierarchy:** Single clear headline (3rem), minimal competing elements
+- [ ] **Whitespace:** Double section padding, generous margins around content
+- [ ] **Micro-animations:** Card hover effects, subtle CTA shimmer, Framer Motion
+
+**📊 Success Metrics to Track:**
+- [ ] **Bounce Rate:** Target >15% decrease
+- [ ] **Reading Completion:** Target >20% increase
+- [ ] **Session Duration:** Target >25% increase
+- [ ] **First Impression Feedback:** Positive user testing responses
+
+**🛠️ Tools & Resources:**
+- **v0.dev:** AI UI generation (recommended for React/Tailwind integration)
+- **Hero UI:** Component library backup option
+- **Cinzel Font:** Mystical serif typography
+- **Framer Motion:** Animation library for micro-interactions
+
 ---
 
 ## ✅ **MAJOR BREAKTHROUGH - ALL FOUNDATION COMPLETE**
@@ -152,6 +190,50 @@
 - Memory API endpoints for session storage
 
 **Goal:** Begin transformation to "Remembering Reader"
+
+### 🟡 P5.2: Memory Analysis Engine (Phase 2)
+**Status:** ❌ PLANNED
+**Timeline:** March 2025
+**Dependencies:** Phase 1 Memory System deployed and stable user data
+
+**Objective:**
+Build the Memory Analysis Engine to detect user patterns, map spiritual journeys, and enable relationship-building features for TarotSnap's "Remembering Reader" vision.
+
+**Implementation Plan:**
+1. **Requirements & Design**
+   - [ ] Define key user journey metrics (e.g., card frequency, theme recurrence, growth signals)
+   - [ ] Design analysis algorithms for pattern detection (recurring cards, emotional trends, question types)
+   - [ ] Specify privacy and opt-out controls
+
+2. **Backend Development**
+   - [ ] Implement analysis service (Node/TypeScript, scheduled jobs or on-demand)
+   - [ ] Integrate with existing memory tables (reading_sessions, card_relationships, progress_tracking)
+   - [ ] Store analysis results in new or extended tables
+
+3. **AI Pattern Recognition**
+   - [ ] Integrate OpenRouter-powered theme and pattern extraction
+   - [ ] Develop prompt templates for journey mapping and relationship insights
+   - [ ] Validate AI output with real user data
+
+4. **API & Frontend Integration**
+   - [ ] Expose analysis results via secure API endpoints
+   - [ ] Design UI components for user journey visualization (timeline, card frequency, growth badges)
+   - [ ] Add personalized greeting and progress check-in features
+
+5. **Testing & Privacy**
+   - [ ] End-to-end tests for analysis accuracy and data security
+   - [ ] User controls for memory analysis participation (opt-out, data export)
+
+**Deliverables:**
+- Automated user journey analysis engine
+- Pattern and relationship insights available in user dashboard
+- Personalized, memory-aware reading experience
+- Full privacy controls and documentation
+
+**Success Criteria:**
+- 80%+ accuracy in pattern detection (validated by user feedback)
+- 50%+ of active users engage with journey insights
+- No privacy or data security incidents
 
 ### **🟡 P6: Advanced AI Features**
 **Status:** ❌ **FUTURE**  
