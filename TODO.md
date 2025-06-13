@@ -191,6 +191,50 @@
 
 **Goal:** Begin transformation to "Remembering Reader"
 
+### 🟡 P5.2: Memory Analysis Engine (Phase 2)
+**Status:** ❌ PLANNED
+**Timeline:** March 2025
+**Dependencies:** Phase 1 Memory System deployed and stable user data
+
+**Objective:**
+Build the Memory Analysis Engine to detect user patterns, map spiritual journeys, and enable relationship-building features for TarotSnap's "Remembering Reader" vision.
+
+**Implementation Plan:**
+1. **Requirements & Design**
+   - [ ] Define key user journey metrics (e.g., card frequency, theme recurrence, growth signals)
+   - [ ] Design analysis algorithms for pattern detection (recurring cards, emotional trends, question types)
+   - [ ] Specify privacy and opt-out controls
+
+2. **Backend Development**
+   - [ ] Implement analysis service (Node/TypeScript, scheduled jobs or on-demand)
+   - [ ] Integrate with existing memory tables (reading_sessions, card_relationships, progress_tracking)
+   - [ ] Store analysis results in new or extended tables
+
+3. **AI Pattern Recognition**
+   - [ ] Integrate OpenRouter-powered theme and pattern extraction
+   - [ ] Develop prompt templates for journey mapping and relationship insights
+   - [ ] Validate AI output with real user data
+
+4. **API & Frontend Integration**
+   - [ ] Expose analysis results via secure API endpoints
+   - [ ] Design UI components for user journey visualization (timeline, card frequency, growth badges)
+   - [ ] Add personalized greeting and progress check-in features
+
+5. **Testing & Privacy**
+   - [ ] End-to-end tests for analysis accuracy and data security
+   - [ ] User controls for memory analysis participation (opt-out, data export)
+
+**Deliverables:**
+- Automated user journey analysis engine
+- Pattern and relationship insights available in user dashboard
+- Personalized, memory-aware reading experience
+- Full privacy controls and documentation
+
+**Success Criteria:**
+- 80%+ accuracy in pattern detection (validated by user feedback)
+- 50%+ of active users engage with journey insights
+- No privacy or data security incidents
+
 ### **🟡 P6: Advanced AI Features**
 **Status:** ❌ **FUTURE**  
 **Timeline:** March 2025
