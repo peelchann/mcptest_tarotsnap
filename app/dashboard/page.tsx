@@ -1,69 +1,154 @@
 'use client';
 
-import { useAuth } from '@/app/providers/AuthProvider';
-import { useRouter } from 'next/navigation';
-import { useEffect, useState } from 'react';
+import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/app/components/ui/card';
+import { useRouter } from 'next/navigation';
 import { Button } from '@/app/components/ui/button';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/app/components/ui/card';
 import { MysticalParticles } from '@/app/components/ui/MysticalParticles';
+import { ChatHistory } from '@/app/components/chat/ChatHistory';
+import { ChatPrivacyControls } from '@/app/components/privacy/ChatPrivacyControls';
+import { createBrowserSupabaseClient } from '@/lib/supabase';
+import { chatStorage } from '@/lib/services/chatStorage';
 import { 
+  ArrowLeft, 
   User, 
-  Settings, 
-  History, 
-  Star, 
-  LogOut, 
+  MessageCircle, 
   Sparkles, 
-  Crown,
-  Calendar,
-  ArrowLeft
+  Settings,
+  History,
+  Shield
 } from 'lucide-react';
 
-export default function DashboardPage() {
-  const { user, profile, loading, signOut } = useAuth();
+export default function Dashboard() {
   const router = useRouter();
-  const [mounted, setMounted] = useState(false);
+  const [user, setUser] = useState<any>(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const [messageCount, setMessageCount] = useState(0);
+  const supabase = createBrowserSupabaseClient();
 
   useEffect(() => {
-    setMounted(true);
-  }, []);
+         const initAuth = async () => {
+       try {
+         const { data: { user } } = await supabase.auth.getUser();
+         setUser(user);
+         
+         if (!user) {
+           router.push('/');
+         } else {
+           await loadMessageCount(); // Load message count for authenticated user
+         }
+       } catch (error) {
+         console.error('Error getting user:', error);
+         router.push('/');
+       } finally {
+         setIsLoading(false);
+       }
+     };
 
-  useEffect(() => {
-    if (!loading && !user && mounted) {
-      router.push('/');
-    }
-  }, [user, loading, router, mounted]);
+    initAuth();
 
-  const handleSignOut = async () => {
-    await signOut();
-    router.push('/');
+    // Listen for auth changes
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(
+      async (event, session) => {
+        if (event === 'SIGNED_OUT' || !session?.user) {
+          router.push('/');
+        } else {
+          setUser(session.user);
+          loadMessageCount(); // Load message count when user is authenticated
+        }
+      }
+    );
+
+    return () => subscription.unsubscribe();
+  }, [supabase.auth, router]);
+
+  const handleSessionSelect = (sessionId: string) => {
+    // TODO: Navigate to a detailed chat view or restore the session in reading page
+    console.log('Selected session:', sessionId);
+    // For now, redirect to reading page
+    router.push('/reading/single');
   };
 
-  if (loading || !mounted) {
+  const handleSignOut = async () => {
+    try {
+      await supabase.auth.signOut();
+      router.push('/');
+    } catch (error) {
+      console.error('Error signing out:', error);
+    }
+  };
+
+  const handleExportChat = async () => {
+    try {
+      const { data, error } = await chatStorage.exportChatHistory();
+      if (error) throw error;
+      
+      // Create and download file
+      const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `tarotsnap-chat-history-${new Date().toISOString().split('T')[0]}.json`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+    } catch (error) {
+      console.error('Export failed:', error);
+    }
+  };
+
+  const handleDeleteAllChat = async () => {
+    try {
+      const { error } = await chatStorage.deleteAllChatMessages();
+      if (error) throw error;
+      setMessageCount(0);
+    } catch (error) {
+      console.error('Delete failed:', error);
+    }
+  };
+
+  const loadMessageCount = async () => {
+    try {
+      const { data: sessions } = await chatStorage.getChatSessions({ limit: 100 });
+      if (sessions) {
+        let totalMessages = 0;
+        for (const session of sessions) {
+          const { data: messages } = await chatStorage.getChatHistory({ sessionId: session.id });
+          if (messages) {
+            totalMessages += messages.length;
+          }
+        }
+        setMessageCount(totalMessages);
+      }
+    } catch (error) {
+      console.error('Error loading message count:', error);
+    }
+  };
+
+  if (isLoading) {
     return (
-      <div className="min-h-screen relative overflow-hidden">
+      <div className="min-h-screen relative overflow-hidden flex items-center justify-center">
         <div className="opacity-30">
           <MysticalParticles />
         </div>
-        <div className="container mx-auto px-4 py-8 relative z-10">
-          <div className="flex items-center justify-center min-h-[60vh]">
-            <div className="text-center">
-              <div className="w-12 h-12 border-2 border-gold-400 border-t-transparent rounded-full animate-spin mx-auto mb-4" />
-              <p className="text-white/80">Loading your mystical realm...</p>
-            </div>
-          </div>
+        <div className="text-center text-white">
+          <Sparkles className="w-8 h-8 animate-spin mx-auto mb-4" />
+          <p>Loading your spiritual journey...</p>
         </div>
       </div>
     );
   }
 
   if (!user) {
-    return null;
+    return null; // Will redirect
   }
 
   return (
     <div className="min-h-screen relative overflow-hidden">
-      <div className="opacity-30">
+      {/* Reduce particle opacity for better readability */}
+      <div className="opacity-20">
         <MysticalParticles />
       </div>
       
@@ -76,20 +161,19 @@ export default function DashboardPage() {
             className="flex items-center gap-2 text-white hover:text-gold-300 hover:bg-white/10"
           >
             <ArrowLeft className="w-4 h-4" />
-            Back to Readings
+            Back to Home
           </Button>
           
           <div className="flex items-center gap-2">
-            <Sparkles className="w-6 h-6 text-gold-400" />
-            <h1 className="text-2xl font-bold text-white">Mystical Dashboard</h1>
+            <User className="w-6 h-6 text-gold-400" />
+            <h1 className="text-2xl font-bold text-white">Your Spiritual Dashboard</h1>
           </div>
           
           <Button 
             variant="outline" 
             onClick={handleSignOut}
-            className="flex items-center gap-2 text-white hover:text-red-300 hover:bg-white/10 border-white/30"
+            className="text-white hover:text-gold-300 hover:bg-white/10 border-white/30"
           >
-            <LogOut className="w-4 h-4" />
             Sign Out
           </Button>
         </div>
@@ -102,166 +186,143 @@ export default function DashboardPage() {
         >
           <Card className="border-white/30 bg-white/10 backdrop-blur-md">
             <CardHeader>
-              <div className="flex items-center gap-4">
-                <div className="w-16 h-16 rounded-full bg-gradient-to-br from-purple-600 to-indigo-600 flex items-center justify-center">
-                  <User className="w-8 h-8 text-white" />
-                </div>
-                <div>
-                  <CardTitle className="text-xl text-white">
-                    Welcome back, {profile?.full_name || user.email?.split('@')[0]}
-                  </CardTitle>
-                  <CardDescription className="text-white/70">
-                    Your spiritual journey continues...
-                  </CardDescription>
-                </div>
-                <div className="ml-auto flex items-center gap-2">
-                  {profile?.subscription_tier === 'premium' ? (
-                    <div className="flex items-center gap-1 px-3 py-1 rounded-full bg-gold-500/20 border border-gold-400/50">
-                      <Crown className="w-4 h-4 text-gold-400" />
-                      <span className="text-gold-400 text-sm font-medium">Premium</span>
-                    </div>
-                  ) : (
-                    <div className="flex items-center gap-1 px-3 py-1 rounded-full bg-gray-500/20 border border-gray-400/50">
-                      <Star className="w-4 h-4 text-gray-400" />
-                      <span className="text-gray-400 text-sm font-medium">Free</span>
-                    </div>
-                  )}
-                </div>
-              </div>
-            </CardHeader>
-          </Card>
-        </motion.div>
-
-        {/* Stats Grid */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.1 }}
-          className="grid md:grid-cols-3 gap-6 mb-8"
-        >
-          <Card className="border-white/30 bg-white/10 backdrop-blur-md">
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium text-white/80">
-                Daily Readings Used
-              </CardTitle>
-              <Calendar className="h-4 w-4 text-gold-400" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold text-white">
-                {profile?.daily_readings_used || 0}
-                <span className="text-lg text-white/60">
-                  /{profile?.subscription_tier === 'premium' ? '∞' : '3'}
-                </span>
-              </div>
-              <p className="text-xs text-white/60">
-                {profile?.subscription_tier === 'premium' 
-                  ? 'Unlimited readings' 
-                  : `${3 - (profile?.daily_readings_used || 0)} remaining today`
-                }
-              </p>
-            </CardContent>
-          </Card>
-
-          <Card className="border-white/30 bg-white/10 backdrop-blur-md">
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium text-white/80">
-                Total Readings
-              </CardTitle>
-              <History className="h-4 w-4 text-purple-400" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold text-white">0</div>
-              <p className="text-xs text-white/60">
-                Lifetime readings recorded
-              </p>
-            </CardContent>
-          </Card>
-
-          <Card className="border-white/30 bg-white/10 backdrop-blur-md">
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium text-white/80">
-                Account Status
-              </CardTitle>
-              <Settings className="h-4 w-4 text-indigo-400" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold text-white">Active</div>
-              <p className="text-xs text-white/60">
-                Member since {new Date(profile?.created_at || '').toLocaleDateString()}
-              </p>
-            </CardContent>
-          </Card>
-        </motion.div>
-
-        {/* Action Cards */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.2 }}
-          className="grid md:grid-cols-2 gap-6"
-        >
-          <Card className="border-white/30 bg-white/10 backdrop-blur-md hover:bg-white/15 transition-all duration-200 cursor-pointer"
-                onClick={() => router.push('/reading/single')}>
-            <CardHeader>
               <CardTitle className="flex items-center gap-2 text-white">
                 <Sparkles className="w-5 h-5 text-gold-400" />
-                Get a New Reading
+                Welcome back, {user.email?.split('@')[0] || 'Seeker'}
               </CardTitle>
-              <CardDescription className="text-white/70">
-                Connect with the mystical energies and receive guidance for your journey
+              <CardDescription className="text-white/80">
+                Your personal space for spiritual insights and conversations with the AI Oracle
               </CardDescription>
             </CardHeader>
             <CardContent>
-              <Button className="w-full bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700">
-                Draw Your Cards
-              </Button>
-            </CardContent>
-          </Card>
-
-          <Card className="border-white/30 bg-white/10 backdrop-blur-md hover:bg-white/15 transition-all duration-200 cursor-pointer">
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2 text-white">
-                <History className="w-5 h-5 text-purple-400" />
-                Reading History
-              </CardTitle>
-              <CardDescription className="text-white/70">
-                Review your past readings and track your spiritual growth over time
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <Button variant="outline" className="w-full border-white/30 text-white hover:bg-white/10">
-                View History (Coming Soon)
-              </Button>
+              <div className="flex gap-4">
+                <Button 
+                  onClick={() => router.push('/reading/single')}
+                  className="bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white"
+                >
+                  <MessageCircle className="w-4 h-4 mr-2" />
+                  New Reading
+                </Button>
+                <Button 
+                  variant="outline"
+                  onClick={() => router.push('/about')}
+                  className="text-white hover:text-gold-300 hover:bg-white/10 border-white/30"
+                >
+                  <Sparkles className="w-4 h-4 mr-2" />
+                  Learn More
+                </Button>
+              </div>
             </CardContent>
           </Card>
         </motion.div>
 
-        {/* Upgrade Banner for Free Users */}
-        {profile?.subscription_tier === 'free' && (
+        <div className="grid lg:grid-cols-3 gap-8">
+          {/* Chat History */}
           <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.3 }}
-            className="mt-8"
+            initial={{ opacity: 0, x: -20 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ delay: 0.2 }}
+            className="lg:col-span-2"
           >
-            <Card className="border-gold-400/50 bg-gradient-to-r from-gold-900/20 to-amber-900/20 backdrop-blur-md">
+            <Card className="border-white/30 bg-white/10 backdrop-blur-md">
               <CardHeader>
-                <CardTitle className="flex items-center gap-2 text-gold-400">
-                  <Crown className="w-5 h-5" />
-                  Unlock Your Full Mystical Potential
+                <CardTitle className="flex items-center gap-2 text-white">
+                  <History className="w-5 h-5 text-gold-400" />
+                  Your Spiritual Journey
                 </CardTitle>
                 <CardDescription className="text-white/80">
-                  Upgrade to Premium for unlimited readings, detailed history tracking, and personalized AI insights
+                  Revisit your conversations with the AI Oracle and track your spiritual growth
                 </CardDescription>
               </CardHeader>
               <CardContent>
-                <Button className="bg-gradient-to-r from-gold-500 to-amber-600 hover:from-gold-600 hover:to-amber-700 text-black font-semibold">
-                  Upgrade to Premium (Coming Soon)
+                <ChatHistory 
+                  onSessionSelect={handleSessionSelect}
+                  className="max-h-[600px] overflow-y-auto"
+                />
+              </CardContent>
+            </Card>
+          </motion.div>
+
+          {/* Privacy & Settings */}
+          <motion.div
+            initial={{ opacity: 0, x: 20 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ delay: 0.4 }}
+            className="space-y-6"
+          >
+            {/* Account Info */}
+            <Card className="border-white/30 bg-white/10 backdrop-blur-md">
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2 text-white text-lg">
+                  <User className="w-5 h-5 text-gold-400" />
+                  Account
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-3">
+                <div>
+                  <p className="text-sm text-white/70">Email</p>
+                  <p className="text-white">{user.email}</p>
+                </div>
+                <div>
+                  <p className="text-sm text-white/70">Member since</p>
+                  <p className="text-white">
+                    {new Date(user.created_at).toLocaleDateString()}
+                  </p>
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Privacy Controls */}
+            <Card className="border-white/30 bg-white/10 backdrop-blur-md">
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2 text-white text-lg">
+                  <Shield className="w-5 h-5 text-gold-400" />
+                  Privacy & Data
+                </CardTitle>
+                <CardDescription className="text-white/70">
+                  Manage your conversation data and privacy settings
+                </CardDescription>
+              </CardHeader>
+                             <CardContent>
+                 <ChatPrivacyControls 
+                   onExport={handleExportChat}
+                   onDeleteAll={handleDeleteAllChat}
+                   messageCount={messageCount}
+                 />
+               </CardContent>
+            </Card>
+
+            {/* Quick Actions */}
+            <Card className="border-white/30 bg-white/10 backdrop-blur-md">
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2 text-white text-lg">
+                  <Settings className="w-5 h-5 text-gold-400" />
+                  Quick Actions
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-3">
+                <Button 
+                  variant="ghost"
+                  size="sm"
+                  className="w-full justify-start text-white/80 hover:text-white hover:bg-white/10"
+                  onClick={() => router.push('/reading/single')}
+                >
+                  <MessageCircle className="w-4 h-4 mr-2" />
+                  Start New Reading
+                </Button>
+                <Button 
+                  variant="ghost"
+                  size="sm"
+                  className="w-full justify-start text-white/80 hover:text-white hover:bg-white/10"
+                  onClick={() => router.push('/about')}
+                >
+                  <Sparkles className="w-4 h-4 mr-2" />
+                  How It Works
                 </Button>
               </CardContent>
             </Card>
           </motion.div>
-        )}
+        </div>
       </div>
     </div>
   );

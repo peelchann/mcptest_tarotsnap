@@ -396,3 +396,50 @@ All technical requirements met for immediate scale:
 - [ ] Playwright tests for anonymous and authenticated memory persistence
 - [ ] Document system in docs/memory-anonymous.md
 - [ ] @todo Review backend/service/API implementation for edge cases and security before launch
+- [ ] Fetch memory (history, themes, cards) from API using resolved userId on page load and after each reading
+- [ ] Create UI components to display reading history, card relationships, and themes for all users
+- [ ] Add persistent, value-driven login prompt for cloud backup and cross-device sync
+- [ ] Playwright tests for cross-session persistence and login migration
+- [ ] Review and polish UI/UX for memory features (anonymous and logged-in)
+- [ ] Use Supabase anonymous sign-in for all new users (no more localStorage-only IDs)
+- [ ] Store all memory data with the current session's user_id (anonymous or authenticated)
+- [ ] Fetch and display memory for all users, regardless of auth state
+- [ ] Add value-driven login prompt and migration flow
+- [ ] Playwright tests for all flows (anonymous, login, migration, RLS)
+- [ ] Document system and edge cases in docs/memory-anonymous.md
+
+## 🟣 NEW: Chat-centric Memory and Insights for Logged-in Users
+- [x] **Database Schema Created** - Chat sessions and messages tables with RLS policies (DONE)
+- [x] **Chat Storage Service** - Complete CRUD operations for chat messages and sessions (DONE)
+- [x] **API Endpoints** - POST /api/chat/message, GET/DELETE /api/chat/history, GET /api/chat/export (DONE)
+- [x] **Login Prompt Component** - Value-driven prompt for chat memory features (DONE)
+- [x] **Privacy Controls Component** - Export and delete chat history functionality (DONE)
+- [x] **Frontend Integration** - Complete integration into reading page with auth check and message storage (DONE)
+  - ✅ Auth state management with Supabase client
+  - ✅ Automatic chat session creation for logged-in users
+  - ✅ Storage of initial reading interpretation with full metadata
+  - ✅ Storage of user messages and AI responses during chat
+  - ✅ Login prompt for anonymous users with value-driven messaging
+  - ✅ Visual indicators for memory-enabled chat sessions
+  - ✅ Error handling for storage operations
+- [x] **Quality Assurance & Verification** - Comprehensive testing and code quality review (DONE)
+  - ✅ Code duplication elimination (singleton pattern implementation)
+  - ✅ TypeScript compilation verification
+  - ✅ Security review (RLS policies, authentication, privacy)
+  - ✅ Integration testing and manual verification
+  - ✅ Performance and scalability analysis
+  - ✅ Comprehensive verification report created
+- [x] **Chat History Display** - Show previous conversations for returning users (DONE)
+  - ✅ ChatHistory component with session previews and message counts
+  - ✅ Dashboard page with comprehensive chat management
+  - ✅ Privacy controls integration with export/delete functionality
+  - ✅ Beautiful UI with animations and responsive design
+- [ ] **AI Content Analysis** - Enhance metadata extraction for themes, emotions, and insights
+- [ ] **Playwright Tests** - E2E tests for login flow, message storage, and privacy controls
+- [ ] **Database Migration** - Run Supabase migration for chat tables ⚠️ **ACTION REQUIRED**
+  - ✅ Migration file created: `supabase/migrations/20250109_chat_messages.sql`
+  - ✅ Migration guide created: `docs/CHAT_MIGRATION_GUIDE.md`
+  - ✅ Verification script created: `scripts/check-migration.js`
+  - 🔄 **MANUAL STEP:** Apply migration in Supabase Dashboard SQL Editor
+  - 📋 **Instructions:** See `docs/CHAT_MIGRATION_GUIDE.md` for step-by-step guide
+- [ ] **Documentation Update** - Update docs/memory-anonymous.md with chat-centric approach

@@ -9,7 +9,10 @@ import { Textarea } from '@/app/components/ui/textarea';
 import { MysticalParticles } from '@/app/components/ui/MysticalParticles';
 import { CardReveal } from '@/app/components/reading/CardReveal';
 import { ReadingInterpretation } from '@/app/components/reading/ReadingInterpretation';
+import { LoginPrompt } from '@/app/components/auth/LoginPrompt';
 import { TarotReading } from '@/lib/openrouter';
+import { createBrowserSupabaseClient } from '@/lib/supabase';
+import { chatStorage } from '@/lib/services/chatStorage';
 import Image from 'next/image';
 import { 
   Sparkles, 
@@ -31,7 +34,7 @@ interface ChatMessage {
   timestamp: Date;
 }
 
-type ReadingStep = 'question' | 'draw' | 'cardReveal' | 'reading' | 'chat';
+type ReadingStep = 'question' | 'draw' | 'cardReveal' | 'reading' | 'chat' | 'loginPrompt';
 
 export default function SingleCardReading() {
   const router = useRouter();
@@ -46,6 +49,11 @@ export default function SingleCardReading() {
   const [rateLimited, setRateLimited] = useState(false);
   const [remainingReadings, setRemainingReadings] = useState<number>(3);
   const [remainingFollowUps, setRemainingFollowUps] = useState<number>(10);
+  const [user, setUser] = useState<any>(null);
+  const [isLoadingAuth, setIsLoadingAuth] = useState(true);
+  const [currentSessionId, setCurrentSessionId] = useState<string | null>(null);
+
+  const supabase = createBrowserSupabaseClient();
 
   useEffect(() => {
     // Track page view on component mount
@@ -58,7 +66,31 @@ export default function SingleCardReading() {
     if (savedQuestion) {
       setQuestion(savedQuestion);
     }
-  }, []);
+
+    // Initialize auth state
+    const initAuth = async () => {
+      try {
+        const { data: { user } } = await supabase.auth.getUser();
+        setUser(user);
+        setIsLoadingAuth(false);
+      } catch (error) {
+        console.error('Error getting user:', error);
+        setIsLoadingAuth(false);
+      }
+    };
+
+    initAuth();
+
+    // Listen for auth changes
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(
+      async (event, session) => {
+        setUser(session?.user ?? null);
+        setIsLoadingAuth(false);
+      }
+    );
+
+    return () => subscription.unsubscribe();
+  }, [supabase.auth]);
 
   useEffect(() => {
     if (question) {
@@ -131,6 +163,38 @@ export default function SingleCardReading() {
       };
       
       setChatMessages([initialMessage]);
+
+      // Create chat session and store initial interpretation for logged-in users
+      if (user) {
+        try {
+          const { data: session, error: sessionError } = await chatStorage.createChatSession({
+            title: `Reading: ${data.reading.card}`,
+          });
+          
+          if (session && !sessionError) {
+            setCurrentSessionId(session.id);
+            
+            // Store the initial interpretation
+            await chatStorage.storeChatMessage({
+              role: 'ai',
+              content: data.reading.interpretation,
+              sessionId: session.id,
+              metadata: {
+                card_name: data.reading.card,
+                original_question: question,
+                message_context: 'initial_reading',
+                reading_type: 'single_card',
+                card_meaning: data.reading.meaning,
+                guidance: data.reading.guidance,
+                energy: data.reading.energy,
+                timeframe: data.reading.timeframe
+              }
+            });
+          }
+        } catch (error) {
+          console.error('Error creating chat session or storing initial reading:', error);
+        }
+      }
       
       // Transition to chat after showing reading
       setTimeout(() => setCurrentStep('chat'), 5000);
@@ -156,6 +220,36 @@ export default function SingleCardReading() {
     setChatMessages(prev => [...prev, userMessage]);
     setNewMessage('');
     setIsThinking(true);
+
+    // Store user message for logged-in users
+    if (user) {
+      try {
+                 // Create session if it doesn't exist
+         if (!currentSessionId) {
+           const { data: session, error: sessionError } = await chatStorage.createChatSession({
+             title: `Reading: ${reading.card}`,
+           });
+           
+           if (session && !sessionError) {
+             setCurrentSessionId(session.id);
+           }
+         }
+
+         // Store the message
+         await chatStorage.storeChatMessage({
+           role: 'user',
+           content: userMessage.content,
+           sessionId: currentSessionId || undefined,
+           metadata: {
+             card_name: reading.card,
+             original_question: question,
+             message_context: 'follow_up_question'
+           }
+         });
+      } catch (error) {
+        console.error('Error storing user message:', error);
+      }
+    }
 
     // Track chat message
     analytics.trackChatMessage(chatMessages.length + 1);
@@ -204,6 +298,25 @@ export default function SingleCardReading() {
           timestamp: new Date()
         };
         setChatMessages(prev => [...prev, assistantMessage]);
+        
+        // Store AI response for logged-in users
+        if (user) {
+          try {
+            await chatStorage.storeChatMessage({
+              role: 'ai',
+              content: data.response,
+              sessionId: currentSessionId || undefined,
+              metadata: {
+                card_name: reading.card,
+                original_question: question,
+                message_context: 'ai_response',
+                response_type: 'follow_up'
+              }
+            });
+          } catch (error) {
+            console.error('Error storing AI response:', error);
+          }
+        }
         
         // Update remaining follow-ups counter
         if (data.remainingFollowUps !== undefined) {
@@ -559,14 +672,38 @@ export default function SingleCardReading() {
 
               {/* Chat Interface */}
               <div className="space-y-6">
+                {/* Login Prompt for Anonymous Users */}
+                {!user && !isLoadingAuth && (
+                  <LoginPrompt 
+                    cardName={reading.card}
+                    context="chat"
+                    onContinueWithoutLogin={() => {
+                      // User chooses to continue without login - no action needed
+                      // Chat will work but won't be saved
+                    }}
+                    onLoginSuccess={() => {
+                      // User successfully logged in - auth state will update automatically
+                      // Chat messages will now be saved
+                    }}
+                  />
+                )}
+                
                 <Card className="border-white/30 bg-white/10 backdrop-blur-md h-[600px] flex flex-col">
                   <CardHeader>
                     <CardTitle className="flex items-center gap-2 text-white">
                       <MessageCircle className="w-5 h-5 text-gold-400" />
                       AI Oracle Chat
+                      {user && (
+                        <span className="text-xs bg-gold-500/20 text-gold-300 px-2 py-1 rounded-full ml-2">
+                          Memory Enabled
+                        </span>
+                      )}
                     </CardTitle>
                     <CardDescription className="text-white/70">
-                      Discuss your reading with our mystical AI guide
+                      {user 
+                        ? "Your conversations are saved and remembered across sessions"
+                        : "Discuss your reading with our mystical AI guide"
+                      }
                     </CardDescription>
                   </CardHeader>
                   

@@ -174,7 +174,7 @@ async function handleGetMemoryContext(userId: string, limit: number = 5) {
 
 async function handleUpdatePreferences(userId: string, preferences: any) {
   try {
-    const result = await readingStorage.updateUserPreferences(userId, preferences)
+    const result = await readingStorage.updateUserPreferences(preferences, userId)
 
     if (result.success) {
       return NextResponse.json({ success: true })
