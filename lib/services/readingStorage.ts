@@ -271,7 +271,7 @@ export class ReadingStorageService {
   /**
    * Update user preferences
    */
-  async updateUserPreferences(userId?: string, preferences: Partial<UserPreferences>): Promise<{ success: boolean; error?: string }> {
+  async updateUserPreferences(preferences: Partial<UserPreferences>, userId?: string): Promise<{ success: boolean; error?: string }> {
     try {
       const resolvedId = ReadingStorageService.resolveUserId(userId)
       const { error } = await this.supabase
