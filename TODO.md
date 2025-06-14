@@ -396,3 +396,21 @@ All technical requirements met for immediate scale:
 - [ ] Playwright tests for anonymous and authenticated memory persistence
 - [ ] Document system in docs/memory-anonymous.md
 - [ ] @todo Review backend/service/API implementation for edge cases and security before launch
+- [ ] Fetch memory (history, themes, cards) from API using resolved userId on page load and after each reading
+- [ ] Create UI components to display reading history, card relationships, and themes for all users
+- [ ] Add persistent, value-driven login prompt for cloud backup and cross-device sync
+- [ ] Playwright tests for cross-session persistence and login migration
+- [ ] Review and polish UI/UX for memory features (anonymous and logged-in)
+- [ ] Use Supabase anonymous sign-in for all new users (no more localStorage-only IDs)
+- [ ] Store all memory data with the current session's user_id (anonymous or authenticated)
+- [ ] Fetch and display memory for all users, regardless of auth state
+- [ ] Add value-driven login prompt and migration flow
+- [ ] Playwright tests for all flows (anonymous, login, migration, RLS)
+- [ ] Document system and edge cases in docs/memory-anonymous.md
+
+## 🟣 NEW: Chat-centric Memory and Insights for Logged-in Users
+- [ ] Require or strongly prompt login before chat begins or after first reading
+- [ ] Store all chat messages and metadata with user_id in Supabase
+- [ ] Fetch and display chat history for returning users
+- [ ] Analyze chat content for insights and personalization
+- [ ] Add privacy controls for chat history (view/export/delete)

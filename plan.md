@@ -82,4 +82,57 @@ Enable TarotSnap to remember readings, card relationships, and themes for users 
 ## Status
 - [ ] Not started
 - [ ] In progress
-- [ ] Complete 
+- [ ] Complete
+
+## Frontend & UI: Cross-Session Anonymous Memory
+
+- [ ] Fetch memory (history, themes, cards) from the API using resolved userId (anonymous or authenticated) on page load and after each reading.
+- [ ] Create UI components to display reading history, card relationships, and themes for all users.
+- [ ] Add a persistent, value-driven login prompt for cloud backup and cross-device sync.
+- [ ] Ensure all memory features are accessible and visually appealing for both anonymous and logged-in users.
+- [ ] Add Playwright tests for cross-session persistence and login migration.
+
+**Rationale:** Cross-session memory is a key differentiator and value driver for TarotSnap. Users expect to see their journey evolve, even before login. This closes the gap between backend capability and user experience.
+
+## Supabase-Powered Cross-Session Memory System (Anonymous & Authenticated)
+
+### Overview
+- Use Supabase's anonymous sign-in (`supabase.auth.signInAnonymously()`) for all new users, creating a real user row in `auth.users`.
+- Store all memory data (readings, card relationships, themes) with the current session's `user_id` (anonymous or authenticated).
+- RLS policies ensure users only access their own data.
+- Seamless migration: when a user signs up, migrate anonymous data to their new account.
+
+### Backend/Database
+- [ ] Ensure all memory tables use `user_id` referencing `auth.users`.
+- [ ] RLS: Only allow access to rows where `user_id = auth.uid()`.
+- [ ] API endpoints: Accept current session's `user_id` for all memory operations.
+
+### Frontend/UX
+- [ ] On app load, check for Supabase session; if none, trigger anonymous sign-in.
+- [ ] Fetch memory (history, themes, cards) using current session's `user_id` on page load and after each reading.
+- [ ] Display memory features for all users.
+- [ ] Add persistent, value-driven login prompt for cloud backup and cross-device sync.
+- [ ] After login/signup, migrate anonymous data to authenticated user.
+
+### Testing & Validation
+- [ ] Playwright E2E tests for anonymous and authenticated memory, migration, and RLS.
+- [ ] Edge case: Anonymous memory is device/browser-specific; clearing cookies will lose data (explain in UI).
+
+### Rationale
+- Supabase anonymous auth provides secure, scalable, and frictionless memory for all users.
+- No hacks—just robust, future-proof architecture ready for MVP and beyond.
+
+## Chat-Centric Memory & Insights for Logged-In Users
+
+### Rationale
+- Authenticated users provide a stable user_id, enabling persistent, cross-device memory and analytics.
+- Chat is the richest source of user understanding—capturing intent, emotional state, and journey over time.
+- Focusing on logged-in users allows for true personalization, longitudinal analysis, and premium relationship features.
+
+### Plan
+- [ ] Require or strongly prompt login before chat begins or after first reading.
+- [ ] Store all chat messages (user and AI) and metadata (reading ID, topics, emotional state) with user_id in Supabase.
+- [ ] Fetch and display chat history for returning users to enable seamless session continuity.
+- [ ] Analyze chat content for recurring themes, emotional trends, and user goals using AI.
+- [ ] Use chat insights to drive personalized follow-ups, greetings, and recommendations.
+- [ ] Implement privacy controls: allow users to view, export, or delete their chat history. 
