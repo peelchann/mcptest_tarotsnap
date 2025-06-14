@@ -9,7 +9,9 @@ import { Textarea } from '@/app/components/ui/textarea';
 import { MysticalParticles } from '@/app/components/ui/MysticalParticles';
 import { CardReveal } from '@/app/components/reading/CardReveal';
 import { ReadingInterpretation } from '@/app/components/reading/ReadingInterpretation';
+import { LoginPrompt } from '@/app/components/auth/LoginPrompt';
 import { TarotReading } from '@/lib/openrouter';
+import { createBrowserSupabaseClient } from '@/lib/supabase';
 import Image from 'next/image';
 import { 
   Sparkles, 
@@ -31,7 +33,7 @@ interface ChatMessage {
   timestamp: Date;
 }
 
-type ReadingStep = 'question' | 'draw' | 'cardReveal' | 'reading' | 'chat';
+type ReadingStep = 'question' | 'draw' | 'cardReveal' | 'reading' | 'chat' | 'loginPrompt';
 
 export default function SingleCardReading() {
   const router = useRouter();
@@ -46,6 +48,11 @@ export default function SingleCardReading() {
   const [rateLimited, setRateLimited] = useState(false);
   const [remainingReadings, setRemainingReadings] = useState<number>(3);
   const [remainingFollowUps, setRemainingFollowUps] = useState<number>(10);
+  const [user, setUser] = useState<any>(null);
+  const [isLoadingAuth, setIsLoadingAuth] = useState(true);
+  const [currentSessionId, setCurrentSessionId] = useState<string | null>(null);
+
+  const supabase = createBrowserSupabaseClient();
 
   useEffect(() => {
     // Track page view on component mount

@@ -409,8 +409,14 @@ All technical requirements met for immediate scale:
 - [ ] Document system and edge cases in docs/memory-anonymous.md
 
 ## 🟣 NEW: Chat-centric Memory and Insights for Logged-in Users
-- [ ] Require or strongly prompt login before chat begins or after first reading
-- [ ] Store all chat messages and metadata with user_id in Supabase
-- [ ] Fetch and display chat history for returning users
-- [ ] Analyze chat content for insights and personalization
-- [ ] Add privacy controls for chat history (view/export/delete)
+- [x] **Database Schema Created** - Chat sessions and messages tables with RLS policies (DONE)
+- [x] **Chat Storage Service** - Complete CRUD operations for chat messages and sessions (DONE)
+- [x] **API Endpoints** - POST /api/chat/message, GET/DELETE /api/chat/history, GET /api/chat/export (DONE)
+- [x] **Login Prompt Component** - Value-driven prompt for chat memory features (DONE)
+- [x] **Privacy Controls Component** - Export and delete chat history functionality (DONE)
+- [ ] **Frontend Integration** - Complete integration into reading page with auth check and message storage
+- [ ] **Chat History Display** - Show previous conversations for returning users
+- [ ] **AI Content Analysis** - Enhance metadata extraction for themes, emotions, and insights
+- [ ] **Playwright Tests** - E2E tests for login flow, message storage, and privacy controls
+- [ ] **Database Migration** - Run Supabase migration for chat tables
+- [ ] **Documentation Update** - Update docs/memory-anonymous.md with chat-centric approach
