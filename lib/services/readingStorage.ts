@@ -1,14 +1,28 @@
+// ANONYMOUS USER MEMORY SUPPORT (ui-revamp branch)
+// All methods now accept either a real userId (authenticated) or an anonymousId (from getAnonymousUserId)
+// This enables memory features for users who are not logged in
+
 import { createBrowserSupabaseClient } from '../supabase'
 import type { ReadingSession, UserTheme, CardRelationship, UserPreferences } from '../supabase'
+import { getAnonymousUserId } from '../analytics'
 
 export class ReadingStorageService {
   private supabase = createBrowserSupabaseClient()
 
   /**
+   * Helper to get the correct userId (authenticated or anonymous)
+   */
+  static resolveUserId(authUserId?: string): string {
+    if (authUserId) return authUserId
+    if (typeof window !== 'undefined') return getAnonymousUserId()
+    return 'unknown'
+  }
+
+  /**
    * Store a complete reading session with enhanced context
    */
   async storeReadingSession(data: {
-    userId: string
+    userId?: string // now optional
     questionContext: string
     emotionalState?: {
       mood?: string
@@ -27,10 +41,11 @@ export class ReadingStorageService {
     keyThemes?: string[]
   }): Promise<{ success: boolean; sessionId?: string; error?: string }> {
     try {
+      const userId = ReadingStorageService.resolveUserId(data.userId)
       const { data: session, error } = await this.supabase
         .from('reading_sessions')
         .insert({
-          user_id: data.userId,
+          user_id: userId,
           question_context: data.questionContext,
           emotional_state: data.emotionalState || {},
           cards_drawn: data.cardsDrawn,
@@ -48,11 +63,11 @@ export class ReadingStorageService {
       }
 
       // Process cards for relationship tracking
-      await this.updateCardRelationships(data.userId, data.cardsDrawn)
+      await this.updateCardRelationships(userId, data.cardsDrawn)
 
       // Process themes
       if (data.keyThemes && data.keyThemes.length > 0) {
-        await this.updateUserThemes(data.userId, data.keyThemes)
+        await this.updateUserThemes(userId, data.keyThemes)
       }
 
       return { success: true, sessionId: session.id }
@@ -181,12 +196,13 @@ export class ReadingStorageService {
   /**
    * Get user's reading history with rich context
    */
-  async getUserReadingHistory(userId: string, limit: number = 20): Promise<ReadingSession[]> {
+  async getUserReadingHistory(userId?: string, limit: number = 20): Promise<ReadingSession[]> {
     try {
+      const resolvedId = ReadingStorageService.resolveUserId(userId)
       const { data, error } = await this.supabase
         .from('reading_sessions')
         .select('*')
-        .eq('user_id', userId)
+        .eq('user_id', resolvedId)
         .order('timestamp', { ascending: false })
         .limit(limit)
 
@@ -205,12 +221,13 @@ export class ReadingStorageService {
   /**
    * Get user's dominant themes
    */
-  async getUserThemes(userId: string, limit: number = 10): Promise<UserTheme[]> {
+  async getUserThemes(userId?: string, limit: number = 10): Promise<UserTheme[]> {
     try {
+      const resolvedId = ReadingStorageService.resolveUserId(userId)
       const { data, error } = await this.supabase
         .from('user_themes')
         .select('*')
-        .eq('user_id', userId)
+        .eq('user_id', resolvedId)
         .order('frequency', { ascending: false })
         .limit(limit)
 
@@ -229,12 +246,13 @@ export class ReadingStorageService {
   /**
    * Get user's card relationships
    */
-  async getUserCardRelationships(userId: string, limit: number = 15): Promise<CardRelationship[]> {
+  async getUserCardRelationships(userId?: string, limit: number = 15): Promise<CardRelationship[]> {
     try {
+      const resolvedId = ReadingStorageService.resolveUserId(userId)
       const { data, error } = await this.supabase
         .from('card_relationships')
         .select('*')
-        .eq('user_id', userId)
+        .eq('user_id', resolvedId)
         .order('frequency_drawn', { ascending: false })
         .limit(limit)
 
@@ -253,12 +271,13 @@ export class ReadingStorageService {
   /**
    * Update user preferences
    */
-  async updateUserPreferences(userId: string, preferences: Partial<UserPreferences>): Promise<{ success: boolean; error?: string }> {
+  async updateUserPreferences(userId?: string, preferences: Partial<UserPreferences>): Promise<{ success: boolean; error?: string }> {
     try {
+      const resolvedId = ReadingStorageService.resolveUserId(userId)
       const { error } = await this.supabase
         .from('user_preferences')
         .upsert({
-          user_id: userId,
+          user_id: resolvedId,
           ...preferences,
           updated_at: new Date().toISOString()
         })
@@ -277,12 +296,13 @@ export class ReadingStorageService {
   /**
    * Get user preferences
    */
-  async getUserPreferences(userId: string): Promise<UserPreferences | null> {
+  async getUserPreferences(userId?: string): Promise<UserPreferences | null> {
     try {
+      const resolvedId = ReadingStorageService.resolveUserId(userId)
       const { data, error } = await this.supabase
         .from('user_preferences')
         .select('*')
-        .eq('user_id', userId)
+        .eq('user_id', resolvedId)
         .single()
 
       if (error && error.code !== 'PGRST116') { // Not found error is OK
@@ -300,7 +320,7 @@ export class ReadingStorageService {
   /**
    * Get reading session summary for memory-aware prompts
    */
-  async getReadingMemoryContext(userId: string, limit: number = 5): Promise<{
+  async getReadingMemoryContext(userId?: string, limit: number = 5): Promise<{
     recentSessions: ReadingSession[]
     dominantThemes: UserTheme[]
     frequentCards: CardRelationship[]

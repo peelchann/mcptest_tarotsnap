@@ -388,3 +388,11 @@ All technical requirements met for immediate scale:
 - 🎯 **Goal:** Premium features planning based on user behavior
 
 **The foundation is complete. Time to grow.** 🌟
+
+## 🟣 NEW: Anonymous User Memory (ui-revamp branch)
+- [x] Refactor readingStorage and memory bank to support anonymousId from getAnonymousUserId (DONE - backend/service layer)
+- [x] Update API (app/api/reading/memory/route.ts) to use anonymousId for unauthenticated users (DONE)
+- [ ] Update UI to show memory for anonymous users and prompt for login to back up data
+- [ ] Playwright tests for anonymous and authenticated memory persistence
+- [ ] Document system in docs/memory-anonymous.md
+- [ ] @todo Review backend/service/API implementation for edge cases and security before launch

@@ -2,38 +2,40 @@ import { NextRequest, NextResponse } from 'next/server'
 import { createServerSupabaseClient } from '@/lib/supabase-server'
 import { readingStorage } from '@/lib/services/readingStorage'
 import { themeExtraction } from '@/lib/services/themeExtraction'
+import { getAnonymousUserId } from '@/lib/analytics'
+
+function getEffectiveUserId(user: any) {
+  if (user && user.id) return user.id
+  if (typeof window !== 'undefined') return getAnonymousUserId()
+  // For server-side, fallback to a header or cookie if needed
+  return null
+}
 
 export async function POST(request: NextRequest) {
   try {
     const supabase = createServerSupabaseClient()
-    
-    // Get the authenticated user
     const { data: { user }, error: authError } = await supabase.auth.getUser()
-    
-    if (authError || !user) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
-    }
-
     const body = await request.json()
     const { action, data } = body
 
+    // Use anonymousId if not authenticated
+    const effectiveUserId = user && user.id ? user.id : (typeof window !== 'undefined' ? getAnonymousUserId() : null)
+    if (!effectiveUserId) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+    }
+
     switch (action) {
       case 'store_session':
-        return await handleStoreSession(user.id, data)
-      
+        return await handleStoreSession(effectiveUserId, data)
       case 'store_feedback':
         return await handleStoreFeedback(data.sessionId, data.feedback)
-      
       case 'get_memory_context':
-        return await handleGetMemoryContext(user.id, data?.limit)
-      
+        return await handleGetMemoryContext(effectiveUserId, data?.limit)
       case 'update_preferences':
-        return await handleUpdatePreferences(user.id, data.preferences)
-      
+        return await handleUpdatePreferences(effectiveUserId, data.preferences)
       default:
         return NextResponse.json({ error: 'Invalid action' }, { status: 400 })
     }
-
   } catch (error) {
     console.error('Memory API error:', error)
     return NextResponse.json(
@@ -193,42 +195,33 @@ async function handleUpdatePreferences(userId: string, preferences: any) {
 export async function GET(request: NextRequest) {
   try {
     const supabase = createServerSupabaseClient()
-    
-    // Get the authenticated user
     const { data: { user }, error: authError } = await supabase.auth.getUser()
-    
-    if (authError || !user) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
-    }
-
     const { searchParams } = new URL(request.url)
     const type = searchParams.get('type')
     const limit = parseInt(searchParams.get('limit') || '10')
-
+    // Use anonymousId if not authenticated
+    const effectiveUserId = user && user.id ? user.id : (typeof window !== 'undefined' ? getAnonymousUserId() : null)
+    if (!effectiveUserId) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+    }
     switch (type) {
       case 'history':
-        const history = await readingStorage.getUserReadingHistory(user.id, limit)
+        const history = await readingStorage.getUserReadingHistory(effectiveUserId, limit)
         return NextResponse.json({ success: true, data: history })
-      
       case 'themes':
-        const themes = await readingStorage.getUserThemes(user.id, limit)
+        const themes = await readingStorage.getUserThemes(effectiveUserId, limit)
         return NextResponse.json({ success: true, data: themes })
-      
       case 'cards':
-        const cards = await readingStorage.getUserCardRelationships(user.id, limit)
+        const cards = await readingStorage.getUserCardRelationships(effectiveUserId, limit)
         return NextResponse.json({ success: true, data: cards })
-      
       case 'preferences':
-        const preferences = await readingStorage.getUserPreferences(user.id)
+        const preferences = await readingStorage.getUserPreferences(effectiveUserId)
         return NextResponse.json({ success: true, data: preferences })
-      
       case 'context':
-        return await handleGetMemoryContext(user.id, limit)
-      
+        return await handleGetMemoryContext(effectiveUserId, limit)
       default:
         return NextResponse.json({ error: 'Invalid type parameter' }, { status: 400 })
     }
-
   } catch (error) {
     console.error('Memory GET API error:', error)
     return NextResponse.json(
