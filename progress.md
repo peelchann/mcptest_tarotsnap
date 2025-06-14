@@ -349,3 +349,22 @@
 **Long-term Vision:** Industry-leading remembering spiritual advisor 🔮  
 
 **The foundation is complete. Time to grow.** 🚀 
+
+# Progress Log - Anonymous User Memory (ui-revamp branch)
+
+## January 2025
+
+### 🚀 Initiative Started: Anonymous User Memory
+- Objective: Enable memory bank features (reading history, card relationships, themes) for users who are not logged in, using a privacy-friendly anonymous ID.
+- Motivation: Improve user experience and retention for all users, not just those with accounts.
+
+#### Key Steps
+- [x] Plan.md created with detailed implementation steps
+- [ ] Refactor backend/services to support anonymousId for memory
+- [ ] Update UI to show memory for anonymous users
+- [ ] Playwright tests for anonymous and authenticated memory
+- [ ] Documentation and migration support
+
+#### Current Status
+- Planning complete, implementation ready to begin in ui-revamp branch.
+- Next: Begin backend/service refactor and UI updates. 
