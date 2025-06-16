@@ -28,7 +28,11 @@ type InsertChatMessage = Omit<ChatMessage, 'id' | 'created_at'>
 type InsertChatSession = Omit<ChatSession, 'id' | 'created_at' | 'updated_at'>
 
 export class ChatStorageService {
-  private supabase = createBrowserSupabaseClient()
+  private supabase
+
+  constructor(supabaseClient = createBrowserSupabaseClient()) {
+    this.supabase = supabaseClient
+  }
 
   /**
    * Create a new chat session
@@ -121,13 +125,9 @@ export class ChatStorageService {
       query = query.eq('reading_id', options.readingId)
     }
 
-    if (options?.limit) {
-      query = query.limit(options.limit)
-    }
-
-    if (options?.offset) {
-      query = query.range(options.offset, (options.offset + (options.limit || 50)) - 1)
-    }
+    const limit = options?.limit ?? 50
+    const offset = options?.offset ?? 0
+    query = query.range(offset, offset + limit - 1)
 
     const { data: messages, error } = await query
 
@@ -153,13 +153,9 @@ export class ChatStorageService {
       .eq('user_id', user.id)
       .order('updated_at', { ascending: false })
 
-    if (options?.limit) {
-      query = query.limit(options.limit)
-    }
-
-    if (options?.offset) {
-      query = query.range(options.offset, (options.offset + (options.limit || 50)) - 1)
-    }
+    const limit = options?.limit ?? 50
+    const offset = options?.offset ?? 0
+    query = query.range(offset, offset + limit - 1)
 
     const { data: sessions, error } = await query
 
