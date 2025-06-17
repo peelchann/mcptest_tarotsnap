@@ -7,11 +7,232 @@
 
 ---
 
-## 🎯 **IMMEDIATE ACTION ITEMS (Next 48 Hours)**
+## 🚨 **CRITICAL DEPLOYMENT ISSUES - BLOCK USER ACQUISITION**
+
+### **🔥 PRIORITY 0: Critical Platform Issues** 
+**Status:** 🔧 **IN PROGRESS - 33% COMPLETE**  
+**Timeline:** 24-48 hours  
+**Impact:** Blocks user acquisition and damages user experience
+
+**Three Critical Issues Identified:**
+
+1. **🔧 Email Registration Failure** - ⚡ **IN PROGRESS** → SendGrid SMTP setup required
+2. **🚨 Chat UI Scrollbar Missing** - ⏸️ **READY** → Chat becomes unusable when longer  
+3. **🚨 AI Oracle Identity Missing** - ⏸️ **READY** → Generic AI responses instead of mystical persona
+
+**🎯 CURRENT FOCUS:** Issue #1 - Email Registration (SMTP Configuration)  
+**📊 OVERALL PROGRESS:** Foundation complete, fixing final UX issues before user acquisition launch
+
+---
+
+### **🔥 ISSUE 1: Email Registration System Failure**
+**Status:** ❌ **CRITICAL - BLOCKS USER SIGNUP**  
+**Priority:** **HIGHEST**  
+**Timeline:** 4-6 hours  
+
+#### **🔍 Root Cause Analysis Required:**
+**Research Completed with Context7 - Supabase Auth Documentation:**
+- **SMTP Configuration:** May be missing `GOTRUE_SMTP_*` environment variables
+- **Email Templates:** Default templates may not be configured in Supabase Dashboard
+- **Site URL:** `GOTRUE_SITE_URL` must match production domain
+- **Email Verification:** May be disabled in Supabase Auth settings
+
+#### **📋 Investigation Steps:**
+- [x] **Check Environment Configuration** → .env.local verified with correct Supabase URL/key
+- [x] **Analyze Auth Code Implementation** → SignupForm and AuthProvider code reviewed  
+- [x] **Review Middleware Configuration** → Auth handling confirmed working
+- [ ] **Check Supabase Dashboard** → Authentication → Settings → Email Templates ⚠️ **NEED USER ACCESS**
+- [ ] **Verify SMTP Configuration** → Check if custom SMTP provider configured ⚠️ **NEED USER ACCESS**
+- [ ] **Review Environment Variables:** 
+  ```
+  GOTRUE_SITE_URL=https://tarot-snap.vercel.app
+  GOTRUE_SMTP_HOST=smtp.provider.com
+  GOTRUE_SMTP_PORT=587
+  GOTRUE_SMTP_USER=email@example.com  
+  GOTRUE_SMTP_PASS=password
+  GOTRUE_SMTP_ADMIN_EMAIL=support@tarotsnap.com
+  ```
+- [ ] **Test Email Delivery** → Auth → Users → Invite User (manual test)
+- [ ] **Check Supabase Logs** → Dashboard → Logs → Auth logs for errors
+
+#### **🛠️ Implementation Plan:**
+**Phase 1: Diagnosis (1-2 hours)** 
+- [x] ✅ **Code Analysis Complete** → Environment config + auth implementation verified
+- [x] ✅ **Root Cause Identified** → Email confirmation enabled but SMTP not configured
+- [x] ✅ **COMPLETED** → Login to Supabase Dashboard  
+- [x] ✅ **COMPLETED** → Navigate to Authentication → Settings → Email Templates
+- [x] ✅ **CONFIRMED** → Email confirmation enabled but no SMTP configured
+- [x] ✅ **USER DECISION** → Keep email confirmation enabled (professional approach)
+- [ ] 🔧 **IN PROGRESS** → **PROPER FIX:** Configure SMTP for email delivery
+  - [x] ✅ **Check if Supabase has built-in email service** → Built-in exists but not production-ready
+  - [ ] 🔧 **IN PROGRESS** → Set up SendGrid SMTP (100 emails/day free)
+    - [ ] **Step 1:** Go to [sendgrid.com](https://sendgrid.com) → Create free account
+    - [ ] **Step 2:** Verify email and complete onboarding 
+    - [ ] **Step 3:** Dashboard → Settings → API Keys → Create API Key "TarotSnap"
+    - [ ] **Step 4:** Copy API key (starts with `SG.`) - **KEEP SECURE**
+    - [ ] **Step 5:** In Supabase Dashboard → Click "Set up custom SMTP server"
+    - [ ] **Step 6:** Configure SMTP settings:
+      ```
+      Sender email: noreply@tarotsnap.com
+      Sender name: TarotSnap - Mystical Oracle  
+      Host: smtp.sendgrid.net
+      Port: 587
+      Username: apikey
+      Password: [Your SendGrid API Key]
+      ```
+    - [ ] **Step 7:** Save SMTP configuration in Supabase
+    - [ ] **Step 8:** Test registration with real email on localhost:3000
+    - [ ] **Step 9:** Verify confirmation email received and works
+  - [ ] **FINAL:** Deploy to production and verify email delivery working
+- [ ] Test with manual user invite to isolate issue
+
+**Phase 2: SMTP Setup (2-3 hours if needed)**
+- [ ] **If using Supabase default:** Check email delivery status in dashboard
+- [ ] **If custom SMTP needed:** Configure reliable provider (SendGrid/Mailgun)
+- [ ] **Environment Variables:** Add SMTP config to Vercel environment
+- [ ] **Email Templates:** Customize for TarotSnap mystical branding
+
+**Phase 3: Testing & Verification (1 hour)**
+- [ ] **Manual Registration Test** → Create test account with real email
+- [ ] **Email Delivery Test** → Verify confirmation email received
+- [ ] **Click-through Test** → Complete email verification flow
+- [ ] **User Experience Test** → Full registration → login → reading flow
+
+#### **🎯 Success Criteria:**
+- [ ] New users receive confirmation emails within 30 seconds
+- [ ] Email verification links work correctly
+- [ ] Registration completion rate >95%
+- [ ] No email delivery errors in Supabase logs
+
+---
+
+### **🔥 ISSUE 2: Chat UI Scrollbar Missing**
+**Status:** ❌ **HIGH - BREAKS USER EXPERIENCE**  
+**Priority:** **HIGH**  
+**Timeline:** 2-3 hours  
+
+#### **🔍 Root Cause Analysis:**
+**Research Completed with Context7 - Tailwind CSS Documentation:**
+- **Missing CSS Classes:** Chat container lacks `max-h-*` and `overflow-y-auto`
+- **Current Implementation:** `flex-1 overflow-y-auto` may not have height constraint
+- **Auto-scroll Missing:** New messages don't auto-scroll to bottom
+- **Mobile Responsive:** Scrolling may not work properly on mobile devices
+
+#### **📍 Problem Location Identified:**
+**File:** `app/reading/single/page.tsx`  
+**Line:** ~710  
+**Current Code:**
+```jsx
+<div className="flex-1 overflow-y-auto p-6 space-y-4">
+  {chatMessages.map((message) => (...))}
+</div>
+```
+
+#### **🛠️ Implementation Plan:**
+**Phase 1: CSS Fix (30 minutes)**
+- [ ] **Step 1:** Locate chat container in `app/reading/single/page.tsx` (~line 710)
+- [ ] **Step 2:** Add height constraint: `max-h-96 overflow-y-auto` 
+- [ ] **Step 3:** Test pattern from Context7:
+  ```jsx
+  <div className="relative flex h-72 max-w-sm flex-col divide-y divide-gray-200 overflow-y-auto">
+  ```
+- [ ] **Step 4:** Mobile optimization - ensure touch scrolling works
+- [ ] **Step 5:** Custom scrollbar styling for mystical navy+gold theme
+- [ ] **Step 6:** Test on multiple devices and browsers
+
+**Phase 2: Auto-scroll Implementation (1 hour)**
+- [ ] **Step 1:** Add useRef hook for chat container reference
+- [ ] **Step 2:** Implement auto-scroll effect for new messages
+- [ ] **Step 3:** Add this code implementation:
+  ```jsx
+  const chatEndRef = useRef<HTMLDivElement>(null);
+  
+  useEffect(() => {
+    chatEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+  }, [chatMessages]);
+  ```
+- [ ] **Step 4:** Add invisible div at bottom of chat for scroll target
+- [ ] **Step 5:** Test smooth scrolling behavior
+
+**Phase 3: Enhanced UX (1 hour)**  
+- [ ] **Scroll Indicator:** Show "new message" indicator when user scrolled up
+- [ ] **Smooth Animations:** Integrate with existing Framer Motion
+- [ ] **Responsive Design:** Different heights for mobile/desktop
+- [ ] **Loading States:** Proper handling during message sending
+
+#### **🎯 Success Criteria:**
+- [ ] Chat scrollbar appears when messages exceed container height
+- [ ] Auto-scroll to bottom for new messages
+- [ ] Smooth scrolling animation
+- [ ] Works consistently across all devices and browsers
+
+---
+
+### **🔥 ISSUE 3: AI Oracle Personality Missing**
+**Status:** ❌ **MEDIUM - BRANDING OPPORTUNITY**  
+**Priority:** **MEDIUM**  
+**Timeline:** 3-4 hours  
+
+#### **🔍 Analysis - AI Personality System Needed:**
+**User Request:** AI should have mystical persona like "Celestial Answer"  
+**Current State:** Generic AI responses without spiritual advisor personality  
+**Opportunity:** Transform AI into memorable, trustworthy oracle character
+
+#### **🧠 AI Personality Design:**
+**Based on TarotSnap Mystical Theme:**
+- **Name:** "Celestia" (Celestial oracle)
+- **Persona:** Wise, mystical spiritual advisor with ancient wisdom
+- **Tone:** Professional yet mystical, confident but compassionate
+- **Signature:** Ends responses with mystical blessing or insight
+
+#### **🛠️ Implementation Plan:**
+**Phase 1: AI Personality System (2 hours)**
+- [ ] **Create Personality Config** → `lib/ai-personalities.ts`
+- [ ] **Personality Data Structure:**
+  ```typescript
+  interface AIPersonality {
+    name: string;
+    title: string;
+    personality: string;
+    systemPrompt: string;
+    greeting: string;
+    signature: string;
+  }
+  ```
+- [ ] **Database Table (Optional):** Store personalities for A/B testing
+- [ ] **Environment Variable:** `AI_PERSONALITY_ID=celestia`
+
+**Phase 2: Prompt Engineering (1 hour)**
+- [ ] **Enhanced System Prompt:** Integrate personality into AI prompts
+- [ ] **Sample Personality Prompt:**
+  ```
+  You are Celestia, an ancient and wise tarot oracle with mystical powers. 
+  You speak with confidence and ancient wisdom, using mystical language 
+  while remaining professional and helpful. You remember users' spiritual 
+  journeys and offer personalized insights. End responses with a mystical 
+  blessing or wisdom quote.
+  ```
+- [ ] **Context Integration:** Include personality in OpenRouter API calls
+
+**Phase 3: UI Integration (1 hour)**
+- [ ] **Oracle Identity Display:** Show "Celestia" name in chat interface
+- [ ] **Mystical Avatar:** Custom oracle icon instead of generic bot
+- [ ] **Welcome Message:** Personalized greeting when chat starts
+- [ ] **Branding Consistency:** Match navy+gold mystical theme
+
+#### **🎯 Success Criteria:**
+- [ ] AI introduces itself as "Celestia, your mystical oracle"
+- [ ] Responses use mystical, spiritual advisor language
+- [ ] Users feel they're talking to a real spiritual advisor
+- [ ] Personality consistent across all interactions
+
+---
+
+## 🎯 **IMMEDIATE ACTION ITEMS (After Issues Fixed)**
 
 ### **🔥 PRIORITY 1: User Acquisition Launch** 
-**Status:** ❌ **URGENT - START IMMEDIATELY**  
-**Timeline:** Start today
+**Status:** ⏸️ **PAUSED - WAITING FOR CRITICAL FIXES**  
+**Timeline:** Start immediately after issues resolved
 
 **Ready to Execute (All dependencies met):**
 - ✅ Website fully functional and tested
