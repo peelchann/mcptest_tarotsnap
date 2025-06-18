@@ -54,8 +54,12 @@
 - [x] 🚨 **Step 1: Check Local Environment** → ❌ CONFIRMED: Environment variables missing
 - [x] 🚨 **Step 2: Create .env.local file** → ✅ COMPLETED: Working Supabase values found and configured
 - [x] 🚨 **Step 3: Get Supabase Keys** → ✅ FOUND: Actual keys located in previous configuration
-- [ ] 🚨 **Step 4: Update Vercel Environment** → Add same variables to Vercel → Redeploy ⚡ **CRITICAL NEXT STEP**
-- [ ] 🚨 **Step 5: Test Registration** → Try creating account on both local and live site
+- [x] 🚨 **Step 4: Update Vercel Environment** → ✅ COMPLETED: Vercel environment variables updated
+- [x] 🚨 **Step 5: Redeploy Production** → ✅ COMPLETED: Git push triggered automatic Vercel redeploy
+- [x] 🚨 **Step 6: Test Registration** → ✅ LOCAL WORKS: Signup succeeds but no email received
+- [ ] 🚨 **Step 7: Configure SMTP Email Delivery** → Set up SendGrid/Mailgun for email confirmation ⚡ **CRITICAL FOR STATS**
+- [ ] 🚨 **Step 8: Test Production Environment** → ❌ HUGE DIFFERENCE: Production still shows "Invalid API key"
+- [ ] 🚨 **Step 9: Debug Vercel Deployment** → Verify auto-deploy completed and environment variables applied
 
 **🔧 TEMPLATE FOR .env.local FILE:**
 ```bash
@@ -67,8 +71,22 @@ NEXT_PUBLIC_SUPABASE_URL=https://your-project-id.supabase.co
 NEXT_PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key_here
 ```
 
-**Phase 2: Secondary Issues (After API Fixed)**
-- [ ] **Email Delivery Configuration** → SMTP setup (moved to secondary priority)
+**Phase 2: Email Delivery Configuration (CRITICAL FOR STATS)**
+- [ ] **SendGrid SMTP Setup** → Configure production email delivery system
+  - [ ] Create SendGrid account (100 emails/day free)
+  - [ ] Get API key from SendGrid Dashboard
+  - [ ] Configure Supabase SMTP settings
+  - [ ] Test email delivery end-to-end
+  - [ ] Update Vercel environment with SMTP credentials
+
+**Phase 3: Production Environment Debug (CRITICAL)**
+- [ ] **Diagnose Production vs Local Differences** → Same code, different behavior
+- [ ] **Verify Vercel Environment Variables** → Check if auto-deploy applied changes
+- [ ] **Check Vercel Build Logs** → Confirm successful deployment
+- [ ] **Test Production API Endpoints** → Direct API testing vs UI testing
+- [ ] **Browser Cache Issues** → Hard refresh, incognito testing
+
+**Phase 4: Secondary Issues (After Critical Fixes)**
 - [ ] **Chat Scrollbar Fix** → `max-h-96 overflow-y-auto` 
 - [ ] **AI Oracle Personality** → "Celestia" mystical persona
 
@@ -83,6 +101,32 @@ NEXT_PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key_here
 - [ ] Email verification links work correctly
 - [ ] Registration completion rate >95%
 - [ ] No email delivery errors in Supabase logs
+
+---
+
+### **📝 DEPLOYMENT PROCESS NOTES (GitHub → Vercel Auto-Deploy)**
+
+#### **🔄 How Auto-Deployment Works:**
+1. **Git Push** → `git push origin main` triggers webhook
+2. **Vercel Detection** → Vercel detects new commit automatically
+3. **Build Process** → Vercel rebuilds with updated environment variables
+4. **Deploy** → New version goes live at https://tarot-snap.vercel.app
+5. **Timing** → Usually takes 2-3 minutes for full deployment
+
+#### **🚨 Current Issue: Production ≠ Local**
+**Confirmed Symptoms:**
+- ✅ **Local Environment**: Signup works, gets checkmark ✓
+- ❌ **Production Environment**: Still shows "Invalid API key" error  
+- ✅ **Git Push**: Successfully completed to GitHub
+- ❓ **Auto-Deploy**: May not have applied environment variables correctly
+
+#### **🔧 Production Debug Checklist:**
+- [ ] **Check Vercel Dashboard** → Verify latest deployment shows "Ready" status
+- [ ] **Verify Environment Variables** → Confirm variables saved in Vercel settings
+- [ ] **Check Build Logs** → Look for environment variable loading errors
+- [ ] **Test Browser Cache** → Try incognito/private browsing mode  
+- [ ] **API Direct Test** → Test Supabase connection via browser console
+- [ ] **Force Redeploy** → Manual redeploy if auto-deploy didn't work properly
 
 ---
 
