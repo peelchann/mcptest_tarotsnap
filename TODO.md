@@ -25,78 +25,58 @@
 
 ---
 
-### **🔥 ISSUE 1: Email Registration System Failure**
-**Status:** ❌ **CRITICAL - BLOCKS USER SIGNUP**  
-**Priority:** **HIGHEST**  
-**Timeline:** 4-6 hours  
+### **🔥 ISSUE 1: Supabase API Connection Failure** 
+**Status:** ❌ **CRITICAL - BLOCKS ALL USER SIGNUP**  
+**Priority:** **EMERGENCY**  
+**Timeline:** 1-2 hours  
 
-#### **🔍 Root Cause Analysis Required:**
-**Research Completed with Context7 - Supabase Auth Documentation:**
-- **SMTP Configuration:** May be missing `GOTRUE_SMTP_*` environment variables
-- **Email Templates:** Default templates may not be configured in Supabase Dashboard
-- **Site URL:** `GOTRUE_SITE_URL` must match production domain
-- **Email Verification:** May be disabled in Supabase Auth settings
+#### **🚨 CONFIRMED ISSUE - "Invalid API Key" Error:**
+**Screenshot Evidence:** User registration form shows "Invalid API key" error  
+**Impact:** 100% of users blocked from creating accounts  
+**Root Cause:** Missing or incorrect Supabase environment variables in Vercel production  
 
-#### **📋 Investigation Steps:**
-- [x] **Check Environment Configuration** → .env.local verified with correct Supabase URL/key
-- [x] **Analyze Auth Code Implementation** → SignupForm and AuthProvider code reviewed  
-- [x] **Review Middleware Configuration** → Auth handling confirmed working
-- [ ] **Check Supabase Dashboard** → Authentication → Settings → Email Templates ⚠️ **NEED USER ACCESS**
-- [ ] **Verify SMTP Configuration** → Check if custom SMTP provider configured ⚠️ **NEED USER ACCESS**
-- [ ] **Review Environment Variables:** 
-  ```
-  GOTRUE_SITE_URL=https://tarot-snap.vercel.app
-  GOTRUE_SMTP_HOST=smtp.provider.com
-  GOTRUE_SMTP_PORT=587
-  GOTRUE_SMTP_USER=email@example.com  
-  GOTRUE_SMTP_PASS=password
-  GOTRUE_SMTP_ADMIN_EMAIL=support@tarotsnap.com
-  ```
-- [ ] **Test Email Delivery** → Auth → Users → Invite User (manual test)
-- [ ] **Check Supabase Logs** → Dashboard → Logs → Auth logs for errors
+#### **🔍 Critical Environment Variables Check Required:**
+**URGENT - Vercel Production Environment:**
+- [ ] **NEXT_PUBLIC_SUPABASE_URL** → Must match Supabase project URL
+- [ ] **NEXT_PUBLIC_SUPABASE_ANON_KEY** → Must match current Supabase anon/public key
+- [ ] **SUPABASE_SERVICE_ROLE_KEY** → Backend operations (if used)
 
-#### **🛠️ Implementation Plan:**
-**Phase 1: Diagnosis (1-2 hours)** 
-- [x] ✅ **Code Analysis Complete** → Environment config + auth implementation verified
-- [x] ✅ **Root Cause Identified** → Email confirmation enabled but SMTP not configured
-- [x] ✅ **COMPLETED** → Login to Supabase Dashboard  
-- [x] ✅ **COMPLETED** → Navigate to Authentication → Settings → Email Templates
-- [x] ✅ **CONFIRMED** → Email confirmation enabled but no SMTP configured
-- [x] ✅ **USER DECISION** → Keep email confirmation enabled (professional approach)
-- [ ] 🔧 **IN PROGRESS** → **PROPER FIX:** Configure SMTP for email delivery
-  - [x] ✅ **Check if Supabase has built-in email service** → Built-in exists but not production-ready
-  - [ ] 🔧 **IN PROGRESS** → Set up SendGrid SMTP (100 emails/day free)
-    - [ ] **Step 1:** Go to [sendgrid.com](https://sendgrid.com) → Create free account
-    - [ ] **Step 2:** Verify email and complete onboarding 
-    - [ ] **Step 3:** Dashboard → Settings → API Keys → Create API Key "TarotSnap"
-    - [ ] **Step 4:** Copy API key (starts with `SG.`) - **KEEP SECURE**
-    - [ ] **Step 5:** In Supabase Dashboard → Click "Set up custom SMTP server"
-    - [ ] **Step 6:** Configure SMTP settings:
-      ```
-      Sender email: noreply@tarotsnap.com
-      Sender name: TarotSnap - Mystical Oracle  
-      Host: smtp.sendgrid.net
-      Port: 587
-      Username: apikey
-      Password: [Your SendGrid API Key]
-      ```
-    - [ ] **Step 7:** Save SMTP configuration in Supabase
-    - [ ] **Step 8:** Test registration with real email on localhost:3000
-    - [ ] **Step 9:** Verify confirmation email received and works
-  - [ ] **FINAL:** Deploy to production and verify email delivery working
-- [ ] Test with manual user invite to isolate issue
+#### **📋 Investigation Steps - PRIORITY ORDER:**
+- [x] **Local Environment Verified** → .env.local works in development
+- [x] **Frontend Code Confirmed** → SignupForm and AuthProvider implementation correct
+- [ ] **🚨 VERCEL ENVIRONMENT CHECK** → Production environment variables verification
+- [ ] **Supabase Project Status** → Verify project is active and keys haven't rotated
+- [ ] **Basic Auth Test** → Test simple Supabase connection before registration
+- [ ] **Network/CORS Check** → Verify domain whitelist in Supabase settings
 
-**Phase 2: SMTP Setup (2-3 hours if needed)**
-- [ ] **If using Supabase default:** Check email delivery status in dashboard
-- [ ] **If custom SMTP needed:** Configure reliable provider (SendGrid/Mailgun)
-- [ ] **Environment Variables:** Add SMTP config to Vercel environment
-- [ ] **Email Templates:** Customize for TarotSnap mystical branding
+#### **🛠️ IMMEDIATE ACTION PLAN:**
+**Phase 1: Emergency API Fix (30 minutes - 1 hour)** 
+- [x] 🚨 **Step 1: Check Local Environment** → ❌ CONFIRMED: Environment variables missing
+- [x] 🚨 **Step 2: Create .env.local file** → ✅ COMPLETED: Working Supabase values found and configured
+- [x] 🚨 **Step 3: Get Supabase Keys** → ✅ FOUND: Actual keys located in previous configuration
+- [ ] 🚨 **Step 4: Update Vercel Environment** → Add same variables to Vercel → Redeploy ⚡ **CRITICAL NEXT STEP**
+- [ ] 🚨 **Step 5: Test Registration** → Try creating account on both local and live site
 
-**Phase 3: Testing & Verification (1 hour)**
-- [ ] **Manual Registration Test** → Create test account with real email
-- [ ] **Email Delivery Test** → Verify confirmation email received
-- [ ] **Click-through Test** → Complete email verification flow
-- [ ] **User Experience Test** → Full registration → login → reading flow
+**🔧 TEMPLATE FOR .env.local FILE:**
+```bash
+# OpenRouter API Configuration  
+OPENROUTER_API_KEY=your_openrouter_api_key_here
+
+# Supabase Configuration - REQUIRED FOR AUTH
+NEXT_PUBLIC_SUPABASE_URL=https://your-project-id.supabase.co
+NEXT_PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key_here
+```
+
+**Phase 2: Secondary Issues (After API Fixed)**
+- [ ] **Email Delivery Configuration** → SMTP setup (moved to secondary priority)
+- [ ] **Chat Scrollbar Fix** → `max-h-96 overflow-y-auto` 
+- [ ] **AI Oracle Personality** → "Celestia" mystical persona
+
+**Phase 3: Verification & Launch (30 minutes)**
+- [ ] **Full Registration Flow Test** → Create test account end-to-end
+- [ ] **Authentication Verification** → Login/logout cycle
+- [ ] **Reading Experience Test** → Complete user journey
+- [ ] **Ready for User Acquisition** → Begin marketing campaigns
 
 #### **🎯 Success Criteria:**
 - [ ] New users receive confirmation emails within 30 seconds
