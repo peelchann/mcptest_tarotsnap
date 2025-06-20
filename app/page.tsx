@@ -5,6 +5,7 @@ import { motion, useAnimation } from "framer-motion"
 import { cn } from "@/lib/utils"
 import { Sparkles, Eye, Stars, Moon, Zap, Clock, Brain, Heart } from "lucide-react"
 import Link from "next/link"
+import { MysticalHeader } from "@/app/components/MysticalHeader"
 
 interface MousePosition {
   x: number
@@ -352,6 +353,9 @@ function TarotSnapHomepage() {
 
   return (
     <div className="relative min-h-screen bg-gradient-to-br from-slate-950 via-blue-950 to-indigo-950 overflow-hidden">
+      {/* Mystical Authentication Header */}
+      <MysticalHeader />
+      
       {/* Subtle Background Particles */}
       <Particles
         className="absolute inset-0"
