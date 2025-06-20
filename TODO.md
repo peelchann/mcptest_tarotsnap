@@ -63,10 +63,11 @@
 **Three Critical Issues Status:**
 
 1. ✅ **Email Registration System** - **COMPLETED!** → SMTP fully operational with Resend
-2. **🔥 Chat UI Scrollbar Missing** - 🚀 **READY** → Chat becomes unusable when longer  
-3. **🔥 AI Oracle Identity Missing** - 🚀 **READY** → Generic AI responses instead of mystical persona
+2. **🚨 Landing Page Auth Missing** - 🆕 **CRITICAL** → No login/signup on main page blocks premium conversion
+3. **🔥 Chat UI Scrollbar Missing** - 🚀 **READY** → Chat becomes unusable when longer  
+4. **🔥 AI Oracle Identity Missing** - 🚀 **READY** → Generic AI responses instead of mystical persona
 
-**📊 OVERALL PROGRESS:** Email system complete, deployment sync resolved - ready for chat & AI personality fixes  
+**📊 OVERALL PROGRESS:** Email + deployment resolved, now adding auth UX + chat fixes  
 **🎉 MAJOR WIN:** SMTP debugging + deployment sync both completed with full methodology documentation
 
 ---
@@ -212,7 +213,86 @@ SMTP_FROM=hello@yourdomain.com
 
 ---
 
-### **🔥 ISSUE 2: Chat UI Scrollbar Missing**
+### **🚨 ISSUE 2: Landing Page Authentication Missing** 🆕 **CRITICAL UX/BUSINESS BLOCKER**
+**Status:** 🚨 **CRITICAL - BLOCKS USER ACCOUNTS & PREMIUM CONVERSION**  
+**Priority:** **#1 - HIGHEST BUSINESS IMPACT**  
+**Timeline:** 4-6 hours (planning + implementation)  
+**Coding Rule Applied:** Medium-scale change requiring plan.md before implementation
+
+#### **🔍 CRITICAL ISSUE ANALYSIS:**
+**Problem:** Landing page has no visible login/signup functionality  
+**Current State:** Users see beautiful mystical homepage but cannot access accounts  
+**Business Impact:** 
+- 🚫 **Blocks freemium conversion funnel** - no path to premium features
+- 🚫 **No access to Memory Bank system** - core differentiator unusable
+- 🚫 **Poor returning user experience** - must navigate to find login
+- 🚫 **SEO/analytics tracking incomplete** - no user identification
+
+#### **📋 SUPABASE AUTH INTEGRATION RESEARCH (Context7 Completed)**
+**✅ Key Findings from Context7 Supabase Auth Documentation:**
+- **Existing Implementation:** AuthModal.tsx, LoginForm.tsx, SignupForm.tsx already built
+- **OAuth Providers:** GitHub, Google, Discord available (external providers enabled)
+- **Magic Links:** Email-based passwordless auth supported  
+- **Mobile Optimization:** Responsive design patterns documented
+- **Security:** Row Level Security (RLS) policies implemented
+
+#### **🎯 RESOLUTION PLAN (Following @coding-rule Medium-scale approach)**
+
+**Phase 1: Research & Design (1-2 hours) - PLANNING ONLY**
+- [x] ✅ **Sequential thinking analysis** completed
+- [x] ✅ **Context7 Supabase auth research** completed  
+- [x] ✅ **Existing auth components audit** completed (AuthModal, LoginForm, SignupForm found)
+- [ ] **Create detailed plan.md** for auth integration approach
+- [ ] **Design placement strategy** for navy+gold mystical theme
+- [ ] **Mobile responsive strategy** for auth buttons
+- [ ] **User journey mapping** from landing to premium features
+
+**Phase 2: Header/Navigation Integration (1-2 hours)**
+- [ ] **Add auth state management** to landing page
+- [ ] **Design auth buttons** consistent with mystical navy+gold theme
+- [ ] **Implement header navigation** with Login/Signup buttons
+- [ ] **AuthModal integration** with existing components
+- [ ] **Responsive mobile menu** with auth options
+
+**Phase 3: Visual Design & UX (1-2 hours)**  
+- [ ] **Theme consistency** - ensure auth UI matches mystical aesthetic
+- [ ] **Hover animations** consistent with existing particle effects
+- [ ] **Loading states** for auth actions
+- [ ] **Error handling** with mystical-themed messages
+- [ ] **Success states** for login/signup completion
+
+**Phase 4: Testing & Optimization (1 hour)**
+- [ ] **End-to-end auth testing** from landing page
+- [ ] **Mobile responsiveness** verification
+- [ ] **Cross-browser compatibility** testing
+- [ ] **User journey optimization** landing → auth → reading
+- [ ] **Analytics integration** for conversion tracking
+
+#### **🎯 SUCCESS CRITERIA:**
+- [ ] **Login/Signup buttons** prominently visible on landing page header
+- [ ] **AuthModal opens** with consistent mystical design and animations
+- [ ] **Complete auth flow** works seamlessly from landing page
+- [ ] **Visual design** maintains navy+gold aesthetic with particle effects
+- [ ] **Mobile responsive** implementation verified across devices
+- [ ] **Conversion funnel** tracked from anonymous to authenticated user
+
+#### **📍 TECHNICAL INTEGRATION POINTS:**
+- **File:** `app/page.tsx` - main landing page component
+- **Components:** AuthModal.tsx, LoginForm.tsx, SignupForm.tsx (already exist)
+- **Auth Provider:** AuthProvider.tsx (existing Supabase integration)
+- **Design System:** Consistent with MysticalParticles and navy+gold theme
+- **Responsive:** Mobile-first approach with Tailwind CSS
+
+#### **🔧 CONTEXT7 RECOMMENDED PATTERNS:**
+- **OAuth Integration:** GitHub/Google providers for quick signup
+- **Magic Links:** Email-based passwordless option  
+- **JWT Management:** Access token + refresh token flow
+- **RLS Security:** User data isolation via Supabase policies
+- **Session Management:** Persistent auth state across page reloads
+
+---
+
+### **🔥 ISSUE 3: Chat UI Scrollbar Missing**
 **Status:** ❌ **HIGH - BREAKS USER EXPERIENCE**  
 **Priority:** **HIGH**  
 **Timeline:** 2-3 hours  
