@@ -355,21 +355,6 @@ function TarotSnapHomepage() {
     <div className="relative min-h-screen bg-gradient-to-br from-slate-950 via-blue-950 to-indigo-950 overflow-hidden">
       {/* Mystical Authentication Header */}
       <MysticalHeader />
-      
-      {/* Subtle Background Particles */}
-      <Particles
-        className="absolute inset-0"
-        quantity={80}
-        ease={40}
-        color="#FFD700"
-        refresh
-      />
-
-      {/* Background Gradient Effects */}
-      <div className="absolute inset-0 overflow-hidden">
-        <div className="absolute top-0 left-1/4 w-96 h-96 bg-amber-500/10 rounded-full blur-3xl animate-pulse" />
-        <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-indigo-500/10 rounded-full blur-3xl animate-pulse delay-1000" />
-      </div>
 
       {/* Main Content Container */}
       <div className="relative z-10 min-h-screen">
@@ -507,42 +492,9 @@ function TarotSnapHomepage() {
                       <div className="absolute bottom-3 left-3 w-4 h-4 border-l-2 border-b-2 border-amber-400/50" />
                       <div className="absolute bottom-3 right-3 w-4 h-4 border-r-2 border-b-2 border-amber-400/50" />
                     </div>
-
-                    {/* Floating aura effect */}
-                    <div className="absolute inset-0 pointer-events-none">
-                      <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-48 h-48 md:w-64 md:h-64 lg:w-80 lg:h-80 xl:w-96 xl:h-96 bg-amber-500/5 rounded-full blur-3xl group-hover:bg-amber-500/10 transition-all duration-500" />
-                    </div>
                   </motion.div>
                 ))}
               </div>
-
-              {/* Mystical energy lines between cards - subtle background effect */}
-              <motion.div
-                className="absolute inset-0 pointer-events-none opacity-10"
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 0.1 }}
-                transition={{ delay: 2, duration: 2 }}
-              >
-                <svg className="w-full h-full">
-                  <defs>
-                    <linearGradient id="energyGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-                      <stop offset="0%" stopColor="#FFD700" stopOpacity="0.3" />
-                      <stop offset="50%" stopColor="#FFA500" stopOpacity="0.6" />
-                      <stop offset="100%" stopColor="#FF8C00" stopOpacity="0.3" />
-                    </linearGradient>
-                  </defs>
-                  <motion.path
-                    d="M 150 300 Q 400 250 650 300 Q 500 450 300 400"
-                    stroke="url(#energyGradient)"
-                    strokeWidth="2"
-                    fill="none"
-                    strokeDasharray="5,5"
-                    initial={{ pathLength: 0 }}
-                    animate={{ pathLength: 1 }}
-                    transition={{ delay: 2, duration: 3, ease: "easeInOut" }}
-                  />
-                </svg>
-              </motion.div>
             </motion.div>
           </div>
         </div>
