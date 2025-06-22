@@ -358,8 +358,8 @@ function TarotSnapHomepage() {
 
       {/* Main Content Container */}
       <div className="relative z-10 min-h-screen">
-        <div className="px-6 lg:px-12 py-6 lg:py-12">
-          <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-[40%_auto] gap-8 lg:gap-12 xl:gap-16 min-h-[calc(100vh-120px)] items-center">
+        <div className="container mx-auto px-6 lg:px-10 2xl:px-0 py-6 lg:py-12">
+          <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-[40%_auto] gap-8 lg:gap-12 xl:gap-16 2xl:gap-20 min-h-[calc(100vh-120px)] items-center max-w-7xl mx-auto">
             
             {/* Left Side - Content */}
             <motion.div
@@ -447,7 +447,7 @@ function TarotSnapHomepage() {
               transition={{ delay: 0.4, duration: 1 }}
             >
               {/* Mobile: Horizontal scroll, Desktop: Grid */}
-              <div className="flex lg:grid lg:grid-cols-3 gap-6 lg:gap-8 w-full h-full items-center justify-center lg:justify-items-center px-4 overflow-x-auto lg:overflow-x-visible snap-x snap-mandatory lg:snap-none scrollbar-hide">
+              <div className="flex lg:grid lg:grid-cols-3 gap-6 lg:gap-8 xl:gap-10 2xl:gap-12 w-full h-full items-center justify-center lg:justify-items-center px-4 overflow-x-auto lg:overflow-x-visible snap-x snap-mandatory lg:snap-none scrollbar-hide">
                 {mysticalCards.map((card, i) => (
                   <motion.div
                     key={card.name}
@@ -463,7 +463,7 @@ function TarotSnapHomepage() {
                     {/* Card Container */}
                       <div 
                         className={cn(
-                          "relative w-[clamp(160px,50vw,220px)] aspect-[2/3]",
+                          "relative w-[clamp(160px,18vw,220px)] aspect-[2/3]",
                           "bg-gradient-to-br from-slate-900 via-blue-900 to-indigo-900",
                           "rounded-xl lg:rounded-2xl border-2 border-amber-400/40 shadow-2xl shadow-amber-500/20",
                           "backdrop-blur-sm cursor-pointer group",
