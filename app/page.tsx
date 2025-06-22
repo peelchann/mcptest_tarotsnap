@@ -373,32 +373,32 @@ function TarotSnapHomepage() {
 
       {/* Main Content Container */}
       <div className="relative z-10 min-h-screen">
-        <div className="container mx-auto px-8 py-12">
-          <div className="grid lg:grid-cols-2 gap-12 min-h-screen items-center">
+        <div className="container mx-auto px-4 md:px-8 py-6 md:py-12">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 min-h-screen items-center">
             
             {/* Left Side - Content */}
             <motion.div
               initial={{ opacity: 0, x: -50 }}
               animate={controls}
-              className="space-y-8"
+              className="space-y-6 md:space-y-8 text-center lg:text-left"
             >
               {/* Competitive Advantage Badge */}
               <motion.div
                 initial={{ opacity: 0, scale: 0.9 }}
                 animate={{ opacity: 1, scale: 1 }}
                 transition={{ delay: 0.3, duration: 0.6 }}
-                className="inline-flex items-center gap-3 bg-gradient-to-r from-amber-500/20 to-orange-500/20 backdrop-blur-sm border border-amber-400/30 rounded-full px-6 py-3"
+                className="inline-flex items-center gap-3 bg-gradient-to-r from-amber-500/20 to-orange-500/20 backdrop-blur-sm border border-amber-400/30 rounded-full px-4 md:px-6 py-2 md:py-3 mx-auto lg:mx-0"
               >
-                <Zap className="w-5 h-5 text-amber-400" />
-                <span className="text-amber-300 font-semibold text-sm">
+                <Zap className="w-4 h-4 md:w-5 md:h-5 text-amber-400" />
+                <span className="text-amber-300 font-semibold text-xs md:text-sm">
                   Unlike TarotOO - We Remember Your Journey
                 </span>
               </motion.div>
 
               {/* Main Heading */}
-              <div className="space-y-4">
+              <div className="space-y-3 md:space-y-4">
                 <motion.h1 
-                  className="text-6xl lg:text-7xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-amber-400 via-yellow-300 to-orange-400 leading-tight"
+                  className="text-4xl md:text-6xl lg:text-7xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-amber-400 via-yellow-300 to-orange-400 leading-tight"
                   initial={{ opacity: 0, y: 30 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.5, duration: 0.8 }}
@@ -407,7 +407,7 @@ function TarotSnapHomepage() {
                 </motion.h1>
                 
                 <motion.h2
-                  className="text-2xl lg:text-3xl text-slate-300 font-light"
+                  className="text-lg md:text-2xl lg:text-3xl text-slate-300 font-light px-4 lg:px-0"
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.7, duration: 0.8 }}
@@ -418,28 +418,28 @@ function TarotSnapHomepage() {
 
               {/* Key Differentiators */}
               <motion.div 
-                className="space-y-4"
+                className="space-y-3 md:space-y-4 max-w-md mx-auto lg:mx-0"
                 initial={{ opacity: 0, y: 30 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.9, duration: 0.8 }}
               >
-                <div className="flex items-center gap-3 text-slate-300">
-                  <Brain className="w-5 h-5 text-amber-400 flex-shrink-0" />
+                <div className="flex items-center gap-3 text-slate-300 text-sm md:text-base">
+                  <Brain className="w-4 h-4 md:w-5 md:h-5 text-amber-400 flex-shrink-0" />
                   <span>Builds deep understanding of your spiritual path</span>
                 </div>
-                <div className="flex items-center gap-3 text-slate-300">
-                  <Clock className="w-5 h-5 text-amber-400 flex-shrink-0" />
+                <div className="flex items-center gap-3 text-slate-300 text-sm md:text-base">
+                  <Clock className="w-4 h-4 md:w-5 md:h-5 text-amber-400 flex-shrink-0" />
                   <span>Instant readings, 24/7 - no waiting for human readers</span>
                 </div>
-                <div className="flex items-center gap-3 text-slate-300">
-                  <Heart className="w-5 h-5 text-amber-400 flex-shrink-0" />
+                <div className="flex items-center gap-3 text-slate-300 text-sm md:text-base">
+                  <Heart className="w-4 h-4 md:w-5 md:h-5 text-amber-400 flex-shrink-0" />
                   <span>Personal growth tracking across all your sessions</span>
                 </div>
               </motion.div>
 
               {/* Value Proposition */}
               <motion.p 
-                className="text-xl text-slate-400 leading-relaxed max-w-lg"
+                className="text-base md:text-xl text-slate-400 leading-relaxed max-w-lg mx-auto lg:mx-0 px-4 lg:px-0"
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 transition={{ delay: 1.1, duration: 0.8 }}
@@ -453,18 +453,19 @@ function TarotSnapHomepage() {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 1.3, duration: 0.6 }}
+                className="pt-2 md:pt-4"
               >
                 <Link href="/reading/single">
                   <motion.button
-                    className="group relative px-8 py-4 bg-gradient-to-r from-amber-600 via-yellow-500 to-orange-500 rounded-full text-slate-900 font-bold text-lg shadow-2xl shadow-amber-500/25"
+                    className="group relative px-6 md:px-8 py-3 md:py-4 bg-gradient-to-r from-amber-600 via-yellow-500 to-orange-500 rounded-full text-slate-900 font-bold text-base md:text-lg shadow-2xl shadow-amber-500/25 mx-auto lg:mx-0 block lg:inline-block"
                     whileHover={{ 
                       scale: 1.02,
                       boxShadow: "0 20px 40px -12px rgba(245, 158, 11, 0.4)"
                     }}
                     whileTap={{ scale: 0.98 }}
                   >
-                    <span className="relative z-10 flex items-center gap-3">
-                      <Sparkles className="w-5 h-5" />
+                    <span className="relative z-10 flex items-center gap-2 md:gap-3 justify-center">
+                      <Sparkles className="w-4 h-4 md:w-5 md:h-5" />
                       <span>Start Your Journey</span>
                     </span>
                     
@@ -477,12 +478,12 @@ function TarotSnapHomepage() {
 
             {/* Right Side - Floating Tarot Cards */}
             <motion.div
-              className="relative h-full min-h-[600px] flex items-center justify-center"
+              className="relative h-64 md:h-96 lg:h-full lg:min-h-[600px] flex items-center justify-center order-first lg:order-last"
               initial={{ opacity: 0, x: 50 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ delay: 0.4, duration: 1 }}
             >
-              <div className="relative w-full max-w-md">
+              <div className="relative w-full max-w-xs md:max-w-md">
                 {mysticalCards.map((card, i) => (
                   <motion.div
                     key={card.name}
@@ -492,64 +493,64 @@ function TarotSnapHomepage() {
                     animate={["visible", "floating"]}
                     className="absolute"
                     style={{
-                      left: `${20 + i * 15}%`,
-                      top: `${10 + i * 25}%`,
+                      left: `${15 + i * 12}%`,
+                      top: `${5 + i * 20}%`,
                       zIndex: 3 - i
                     }}
                   >
                     {/* Card Container */}
                     <div className={cn(
-                      "relative w-40 h-64 lg:w-48 lg:h-80",
+                      "relative w-24 h-40 md:w-32 md:h-52 lg:w-40 lg:h-64 xl:w-48 xl:h-80",
                       "bg-gradient-to-br from-slate-900 via-blue-900 to-indigo-900",
-                      "rounded-2xl border-2 border-amber-400/40 shadow-2xl shadow-amber-500/20",
+                      "rounded-xl lg:rounded-2xl border border-amber-400/40 md:border-2 shadow-2xl shadow-amber-500/20",
                       "backdrop-blur-sm cursor-pointer group",
                       "hover:border-amber-400/70 transition-all duration-300"
                     )}>
                       {/* Inner glow */}
-                      <div className="absolute inset-2 rounded-xl border border-amber-400/20 group-hover:border-amber-400/40 transition-all duration-300" />
+                      <div className="absolute inset-1 md:inset-2 rounded-lg lg:rounded-xl border border-amber-400/20 group-hover:border-amber-400/40 transition-all duration-300" />
                       
                       {/* Card face gradient */}
                       <div className={cn(
-                        "absolute inset-0 rounded-2xl opacity-20 group-hover:opacity-30 transition-opacity duration-300",
+                        "absolute inset-0 rounded-xl lg:rounded-2xl opacity-20 group-hover:opacity-30 transition-opacity duration-300",
                         `bg-gradient-to-br ${card.gradient}`
                       )} />
                       
                       {/* Card Icon */}
-                      <div className="absolute top-8 left-1/2 transform -translate-x-1/2">
+                      <div className="absolute top-4 md:top-6 lg:top-8 left-1/2 transform -translate-x-1/2">
                         <div className="relative">
-                          <card.icon className="w-12 h-12 lg:w-14 lg:h-14 text-amber-300 drop-shadow-lg" />
+                          <card.icon className="w-6 h-6 md:w-8 md:h-8 lg:w-12 lg:h-12 xl:w-14 xl:h-14 text-amber-300 drop-shadow-lg" />
                           {/* Icon glow */}
                           <div className="absolute inset-0 bg-amber-400/30 rounded-full blur-lg scale-150 opacity-50" />
                         </div>
                       </div>
                       
                       {/* Card Name */}
-                      <div className="absolute bottom-16 left-1/2 transform -translate-x-1/2 text-center">
-                        <div className="text-amber-300 font-bold text-lg lg:text-xl tracking-wide mb-1">
+                      <div className="absolute bottom-8 md:bottom-12 lg:bottom-16 left-1/2 transform -translate-x-1/2 text-center px-1">
+                        <div className="text-amber-300 font-bold text-xs md:text-sm lg:text-lg xl:text-xl tracking-wide mb-1">
                           {card.name}
                         </div>
-                        <div className="text-slate-400 text-sm">
+                        <div className="text-slate-400 text-xs md:text-xs lg:text-sm">
                           {card.meaning}
                         </div>
                       </div>
                       
                       {/* Mystical corners */}
-                      <div className="absolute top-3 left-3 w-4 h-4 border-l-2 border-t-2 border-amber-400/50" />
-                      <div className="absolute top-3 right-3 w-4 h-4 border-r-2 border-t-2 border-amber-400/50" />
-                      <div className="absolute bottom-3 left-3 w-4 h-4 border-l-2 border-b-2 border-amber-400/50" />
-                      <div className="absolute bottom-3 right-3 w-4 h-4 border-r-2 border-b-2 border-amber-400/50" />
+                      <div className="absolute top-2 md:top-3 left-2 md:left-3 w-2 h-2 md:w-4 md:h-4 border-l border-t md:border-l-2 md:border-t-2 border-amber-400/50" />
+                      <div className="absolute top-2 md:top-3 right-2 md:right-3 w-2 h-2 md:w-4 md:h-4 border-r border-t md:border-r-2 md:border-t-2 border-amber-400/50" />
+                      <div className="absolute bottom-2 md:bottom-3 left-2 md:left-3 w-2 h-2 md:w-4 md:h-4 border-l border-b md:border-l-2 md:border-b-2 border-amber-400/50" />
+                      <div className="absolute bottom-2 md:bottom-3 right-2 md:right-3 w-2 h-2 md:w-4 md:h-4 border-r border-b md:border-r-2 md:border-b-2 border-amber-400/50" />
                     </div>
 
                     {/* Floating aura effect */}
                     <div className="absolute inset-0 pointer-events-none">
-                      <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-64 h-64 lg:w-80 lg:h-80 bg-amber-500/5 rounded-full blur-3xl group-hover:bg-amber-500/10 transition-all duration-500" />
+                      <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-32 h-32 md:w-48 md:h-48 lg:w-64 lg:h-64 xl:w-80 xl:h-80 bg-amber-500/5 rounded-full blur-3xl group-hover:bg-amber-500/10 transition-all duration-500" />
                     </div>
                   </motion.div>
                 ))}
 
-                {/* Mystical energy lines between cards */}
+                {/* Mystical energy lines between cards - hidden on mobile for clarity */}
                 <motion.div
-                  className="absolute inset-0 pointer-events-none"
+                  className="absolute inset-0 pointer-events-none hidden md:block"
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
                   transition={{ delay: 2, duration: 2 }}
@@ -580,11 +581,11 @@ function TarotSnapHomepage() {
         </div>
 
         {/* Bottom Mystical Quote */}
-        <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 text-center text-amber-400/60">
+        <div className="absolute bottom-4 md:bottom-8 left-1/2 transform -translate-x-1/2 text-center text-amber-400/60 px-4">
           <motion.div
             animate={{ opacity: [0.4, 0.8, 0.4] }}
             transition={{ duration: 4, repeat: Infinity }}
-            className="text-sm font-light tracking-wider"
+            className="text-xs md:text-sm font-light tracking-wider"
           >
             ✨ "The cards reveal what the soul already knows" ✨
           </motion.div>
