@@ -358,19 +358,19 @@ function TarotSnapHomepage() {
 
       {/* Main Content Container */}
       <div className="relative z-10 min-h-screen">
-        <div className="container mx-auto px-4 md:px-8 py-4 md:py-8">
+        <div className="px-6 lg:px-12 py-6 lg:py-12">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-8 min-h-screen items-center">
             
             {/* Left Side - Content */}
             <motion.div
               initial={{ opacity: 0, x: -50 }}
               animate={controls}
-              className="space-y-8 md:space-y-12 text-center lg:text-left order-2 lg:order-1 max-w-none"
+              className="space-y-6 lg:space-y-12 text-center lg:text-left order-2 lg:order-1 max-w-none"
             >
               {/* Main Heading */}
-              <div className="space-y-4 md:space-y-6">
+                              <div className="space-y-3 lg:space-y-6">
                 <motion.h1 
-                  className="text-5xl md:text-6xl lg:text-7xl xl:text-8xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-amber-400 via-yellow-300 to-orange-400 leading-none tracking-tight max-w-none"
+                                      className="text-[clamp(2.5rem,8vw,5rem)] font-bold bg-clip-text text-transparent bg-gradient-to-r from-amber-400 via-yellow-300 to-orange-400 leading-tight tracking-tight max-w-none"
                   initial={{ opacity: 0, y: 30 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.5, duration: 0.8 }}
@@ -379,7 +379,7 @@ function TarotSnapHomepage() {
                 </motion.h1>
                 
                 <motion.h2
-                  className="text-2xl md:text-3xl lg:text-4xl xl:text-5xl text-slate-300 font-light leading-relaxed max-w-none"
+                                      className="text-[clamp(1.25rem,4vw,2rem)] text-slate-300 font-light leading-relaxed max-w-none"
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.7, duration: 0.8 }}
@@ -393,7 +393,7 @@ function TarotSnapHomepage() {
 
               {/* Simple Value Proposition */}
               <motion.p 
-                className="text-xl md:text-2xl lg:text-3xl text-slate-400 leading-relaxed max-w-none font-light"
+                className="text-[clamp(1rem,3vw,1.5rem)] text-slate-400 leading-relaxed max-w-prose font-light"
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 transition={{ delay: 0.9, duration: 0.8 }}
@@ -406,11 +406,11 @@ function TarotSnapHomepage() {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 1.1, duration: 0.6 }}
-                className="pt-4 md:pt-8"
+                                  className="pt-4 lg:pt-8"
               >
                 <Link href="/reading/single">
                   <motion.button
-                    className="group relative px-10 md:px-12 py-5 md:py-6 bg-gradient-to-r from-amber-600 via-yellow-500 to-orange-500 rounded-full text-slate-900 font-bold text-xl md:text-2xl shadow-2xl shadow-amber-500/25"
+                                          className="group relative px-8 lg:px-12 py-4 lg:py-6 bg-gradient-to-r from-amber-600 via-yellow-500 to-orange-500 rounded-full text-slate-900 font-bold text-[clamp(1rem,2.5vw,1.25rem)] shadow-2xl shadow-amber-500/25"
                     whileHover={{ 
                       scale: 1.02,
                       boxShadow: "0 20px 40px -12px rgba(245, 158, 11, 0.4)"
@@ -431,33 +431,33 @@ function TarotSnapHomepage() {
 
             {/* Right Side - Floating Tarot Cards */}
             <motion.div
-              className="relative h-[500px] md:h-[600px] lg:h-full lg:min-h-[700px] flex items-center justify-center order-1 lg:order-2"
+              className="relative h-[400px] lg:h-full lg:min-h-[600px] flex items-center justify-center order-1 lg:order-2"
               initial={{ opacity: 0, x: 50 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ delay: 0.4, duration: 1 }}
             >
-              {/* CSS Grid Layout for Cards */}
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6 lg:gap-8 w-full h-full items-center justify-items-center px-4">
+              {/* Mobile: Horizontal scroll, Desktop: Grid */}
+              <div className="flex lg:grid lg:grid-cols-3 gap-6 lg:gap-8 w-full h-full items-center justify-center lg:justify-items-center px-4 overflow-x-auto lg:overflow-x-visible snap-x snap-mandatory lg:snap-none scrollbar-hide">
                 {mysticalCards.map((card, i) => (
                   <motion.div
                     key={card.name}
-                    custom={i}
-                    variants={cardVariants}
-                    initial="hidden"
-                    animate={["visible", "floating"]}
-                    className="relative"
-                    style={{
-                      transform: `rotate(${(i - 1) * 5}deg)` // Subtle rotation for mystical feel
-                    }}
+                                          custom={i}
+                      variants={cardVariants}
+                      initial="hidden"
+                      animate={["visible", "floating"]}
+                      className="relative flex-shrink-0 snap-center"
+                      style={{
+                        transform: `rotate(${(i - 1) * 5}deg)` // Subtle rotation for mystical feel
+                      }}
                   >
                     {/* Card Container */}
-                    <div className={cn(
-                      "relative w-36 h-60 md:w-44 md:h-72 lg:w-52 lg:h-84 xl:w-60 xl:h-96",
-                      "bg-gradient-to-br from-slate-900 via-blue-900 to-indigo-900",
-                      "rounded-xl lg:rounded-2xl border-2 border-amber-400/40 shadow-2xl shadow-amber-500/20",
-                      "backdrop-blur-sm cursor-pointer group",
-                      "hover:border-amber-400/70 hover:scale-105 transition-all duration-300"
-                    )}>
+                                          <div className={cn(
+                        "relative w-[clamp(160px,24vw,220px)] aspect-[2/3]",
+                        "bg-gradient-to-br from-slate-900 via-blue-900 to-indigo-900",
+                        "rounded-xl lg:rounded-2xl border-2 border-amber-400/40 shadow-2xl shadow-amber-500/20",
+                        "backdrop-blur-sm cursor-pointer group",
+                        "hover:border-amber-400/70 hover:scale-105 transition-all duration-300"
+                      )}>
                       {/* Inner glow */}
                       <div className="absolute inset-2 rounded-lg lg:rounded-xl border border-amber-400/20 group-hover:border-amber-400/40 transition-all duration-300" />
                       

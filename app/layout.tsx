@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import StarsBackground, { StarsFallback } from "./components/StarsBackground";
-import ScrollingSymbols from "./components/ScrollingSymbols";
 import { AuthProvider } from "./providers/AuthProvider";
 import { GoogleAnalytics } from '@next/third-parties/google';
 import StructuredData from "./components/StructuredData";
@@ -114,12 +113,9 @@ export default function RootLayout({
         {/* Dynamic canvas-based stars that replace the fallback once loaded */}
         <StarsBackground />
         
-        {/* Decorative scrolling witch symbols */}
-        <ScrollingSymbols />
-        
         {/* Content */}
         <AuthProvider>
-          <main className="relative z-10 min-h-screen container mx-auto px-4 py-8">
+          <main className="relative z-10 min-h-screen">
             {children}
           </main>
         </AuthProvider>

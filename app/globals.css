@@ -149,6 +149,17 @@
   @apply w-full p-3 bg-purple-900/40 border border-purple-400/50 rounded-lg text-purple-100 placeholder-purple-300/60 focus:border-gold-400 focus:ring-2 focus:ring-gold-400/50 focus:outline-none transition-all duration-300 backdrop-blur-sm;
 }
 
+/* Scrollbar hide utility for mobile cards */
+@layer utilities {
+  .scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
+  }
+}
+
 /* Custom color classes */
 .text-gold-400 {
   color: #facc15;
