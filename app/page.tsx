@@ -373,32 +373,19 @@ function TarotSnapHomepage() {
 
       {/* Main Content Container */}
       <div className="relative z-10 min-h-screen">
-        <div className="container mx-auto px-4 md:px-8 py-6 md:py-12">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 min-h-screen items-center">
+        <div className="container mx-auto px-4 md:px-8 py-4 md:py-8">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-8 min-h-screen items-center">
             
             {/* Left Side - Content */}
             <motion.div
               initial={{ opacity: 0, x: -50 }}
               animate={controls}
-              className="space-y-6 md:space-y-8 text-center lg:text-left"
+              className="space-y-8 md:space-y-12 text-center lg:text-left order-2 lg:order-1 max-w-none"
             >
-              {/* Competitive Advantage Badge */}
-              <motion.div
-                initial={{ opacity: 0, scale: 0.9 }}
-                animate={{ opacity: 1, scale: 1 }}
-                transition={{ delay: 0.3, duration: 0.6 }}
-                className="inline-flex items-center gap-3 bg-gradient-to-r from-amber-500/20 to-orange-500/20 backdrop-blur-sm border border-amber-400/30 rounded-full px-4 md:px-6 py-2 md:py-3 mx-auto lg:mx-0"
-              >
-                <Zap className="w-4 h-4 md:w-5 md:h-5 text-amber-400" />
-                <span className="text-amber-300 font-semibold text-xs md:text-sm">
-                  Unlike TarotOO - We Remember Your Journey
-                </span>
-              </motion.div>
-
               {/* Main Heading */}
-              <div className="space-y-3 md:space-y-4">
+              <div className="space-y-4 md:space-y-6">
                 <motion.h1 
-                  className="text-4xl md:text-6xl lg:text-7xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-amber-400 via-yellow-300 to-orange-400 leading-tight"
+                  className="text-5xl md:text-6xl lg:text-7xl xl:text-8xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-amber-400 via-yellow-300 to-orange-400 leading-none tracking-tight max-w-none"
                   initial={{ opacity: 0, y: 30 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.5, duration: 0.8 }}
@@ -407,65 +394,46 @@ function TarotSnapHomepage() {
                 </motion.h1>
                 
                 <motion.h2
-                  className="text-lg md:text-2xl lg:text-3xl text-slate-300 font-light px-4 lg:px-0"
+                  className="text-2xl md:text-3xl lg:text-4xl xl:text-5xl text-slate-300 font-light leading-relaxed max-w-none"
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.7, duration: 0.8 }}
                 >
-                  Your AI Mystic That <span className="text-amber-300 font-semibold">Evolves With You</span>
+                  Your AI Mystic That{" "}
+                  <span className="text-amber-300 font-semibold block lg:inline">
+                    Evolves With You
+                  </span>
                 </motion.h2>
               </div>
 
-              {/* Key Differentiators */}
-              <motion.div 
-                className="space-y-3 md:space-y-4 max-w-md mx-auto lg:mx-0"
-                initial={{ opacity: 0, y: 30 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.9, duration: 0.8 }}
-              >
-                <div className="flex items-center gap-3 text-slate-300 text-sm md:text-base">
-                  <Brain className="w-4 h-4 md:w-5 md:h-5 text-amber-400 flex-shrink-0" />
-                  <span>Builds deep understanding of your spiritual path</span>
-                </div>
-                <div className="flex items-center gap-3 text-slate-300 text-sm md:text-base">
-                  <Clock className="w-4 h-4 md:w-5 md:h-5 text-amber-400 flex-shrink-0" />
-                  <span>Instant readings, 24/7 - no waiting for human readers</span>
-                </div>
-                <div className="flex items-center gap-3 text-slate-300 text-sm md:text-base">
-                  <Heart className="w-4 h-4 md:w-5 md:h-5 text-amber-400 flex-shrink-0" />
-                  <span>Personal growth tracking across all your sessions</span>
-                </div>
-              </motion.div>
-
-              {/* Value Proposition */}
+              {/* Simple Value Proposition */}
               <motion.p 
-                className="text-base md:text-xl text-slate-400 leading-relaxed max-w-lg mx-auto lg:mx-0 px-4 lg:px-0"
+                className="text-xl md:text-2xl lg:text-3xl text-slate-400 leading-relaxed max-w-none font-light"
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
-                transition={{ delay: 1.1, duration: 0.8 }}
+                transition={{ delay: 0.9, duration: 0.8 }}
               >
-                Ancient wisdom meets AI memory. Every reading builds upon your last, 
-                creating truly personalized spiritual guidance.
+                Get instant readings that remember your journey
               </motion.p>
 
               {/* CTA Button */}
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 1.3, duration: 0.6 }}
-                className="pt-2 md:pt-4"
+                transition={{ delay: 1.1, duration: 0.6 }}
+                className="pt-4 md:pt-8"
               >
                 <Link href="/reading/single">
                   <motion.button
-                    className="group relative px-6 md:px-8 py-3 md:py-4 bg-gradient-to-r from-amber-600 via-yellow-500 to-orange-500 rounded-full text-slate-900 font-bold text-base md:text-lg shadow-2xl shadow-amber-500/25 mx-auto lg:mx-0 block lg:inline-block"
+                    className="group relative px-10 md:px-12 py-5 md:py-6 bg-gradient-to-r from-amber-600 via-yellow-500 to-orange-500 rounded-full text-slate-900 font-bold text-xl md:text-2xl shadow-2xl shadow-amber-500/25"
                     whileHover={{ 
                       scale: 1.02,
                       boxShadow: "0 20px 40px -12px rgba(245, 158, 11, 0.4)"
                     }}
                     whileTap={{ scale: 0.98 }}
                   >
-                    <span className="relative z-10 flex items-center gap-2 md:gap-3 justify-center">
-                      <Sparkles className="w-4 h-4 md:w-5 md:h-5" />
+                    <span className="relative z-10 flex items-center gap-3 justify-center">
+                      <Sparkles className="w-6 h-6 md:w-7 md:h-7" />
                       <span>Start Your Journey</span>
                     </span>
                     
@@ -478,12 +446,13 @@ function TarotSnapHomepage() {
 
             {/* Right Side - Floating Tarot Cards */}
             <motion.div
-              className="relative h-64 md:h-96 lg:h-full lg:min-h-[600px] flex items-center justify-center order-first lg:order-last"
+              className="relative h-[500px] md:h-[600px] lg:h-full lg:min-h-[700px] flex items-center justify-center order-1 lg:order-2"
               initial={{ opacity: 0, x: 50 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ delay: 0.4, duration: 1 }}
             >
-              <div className="relative w-full max-w-xs md:max-w-md">
+              {/* CSS Grid Layout for Cards */}
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6 lg:gap-8 w-full h-full items-center justify-items-center px-4">
                 {mysticalCards.map((card, i) => (
                   <motion.div
                     key={card.name}
@@ -491,23 +460,21 @@ function TarotSnapHomepage() {
                     variants={cardVariants}
                     initial="hidden"
                     animate={["visible", "floating"]}
-                    className="absolute"
+                    className="relative"
                     style={{
-                      left: `${15 + i * 12}%`,
-                      top: `${5 + i * 20}%`,
-                      zIndex: 3 - i
+                      transform: `rotate(${(i - 1) * 5}deg)` // Subtle rotation for mystical feel
                     }}
                   >
                     {/* Card Container */}
                     <div className={cn(
-                      "relative w-24 h-40 md:w-32 md:h-52 lg:w-40 lg:h-64 xl:w-48 xl:h-80",
+                      "relative w-36 h-60 md:w-44 md:h-72 lg:w-52 lg:h-84 xl:w-60 xl:h-96",
                       "bg-gradient-to-br from-slate-900 via-blue-900 to-indigo-900",
-                      "rounded-xl lg:rounded-2xl border border-amber-400/40 md:border-2 shadow-2xl shadow-amber-500/20",
+                      "rounded-xl lg:rounded-2xl border-2 border-amber-400/40 shadow-2xl shadow-amber-500/20",
                       "backdrop-blur-sm cursor-pointer group",
-                      "hover:border-amber-400/70 transition-all duration-300"
+                      "hover:border-amber-400/70 hover:scale-105 transition-all duration-300"
                     )}>
                       {/* Inner glow */}
-                      <div className="absolute inset-1 md:inset-2 rounded-lg lg:rounded-xl border border-amber-400/20 group-hover:border-amber-400/40 transition-all duration-300" />
+                      <div className="absolute inset-2 rounded-lg lg:rounded-xl border border-amber-400/20 group-hover:border-amber-400/40 transition-all duration-300" />
                       
                       {/* Card face gradient */}
                       <div className={cn(
@@ -516,76 +483,76 @@ function TarotSnapHomepage() {
                       )} />
                       
                       {/* Card Icon */}
-                      <div className="absolute top-4 md:top-6 lg:top-8 left-1/2 transform -translate-x-1/2">
+                      <div className="absolute top-8 md:top-12 lg:top-16 left-1/2 transform -translate-x-1/2">
                         <div className="relative">
-                          <card.icon className="w-6 h-6 md:w-8 md:h-8 lg:w-12 lg:h-12 xl:w-14 xl:h-14 text-amber-300 drop-shadow-lg" />
+                          <card.icon className="w-10 h-10 md:w-14 md:h-14 lg:w-18 lg:h-18 xl:w-20 xl:h-20 text-amber-300 drop-shadow-lg" />
                           {/* Icon glow */}
                           <div className="absolute inset-0 bg-amber-400/30 rounded-full blur-lg scale-150 opacity-50" />
                         </div>
                       </div>
                       
                       {/* Card Name */}
-                      <div className="absolute bottom-8 md:bottom-12 lg:bottom-16 left-1/2 transform -translate-x-1/2 text-center px-1">
-                        <div className="text-amber-300 font-bold text-xs md:text-sm lg:text-lg xl:text-xl tracking-wide mb-1">
+                      <div className="absolute bottom-12 md:bottom-16 lg:bottom-20 left-1/2 transform -translate-x-1/2 text-center px-2">
+                        <div className="text-amber-300 font-bold text-base md:text-lg lg:text-xl xl:text-2xl tracking-wide mb-2">
                           {card.name}
                         </div>
-                        <div className="text-slate-400 text-xs md:text-xs lg:text-sm">
+                        <div className="text-slate-400 text-sm md:text-base lg:text-lg">
                           {card.meaning}
                         </div>
                       </div>
                       
                       {/* Mystical corners */}
-                      <div className="absolute top-2 md:top-3 left-2 md:left-3 w-2 h-2 md:w-4 md:h-4 border-l border-t md:border-l-2 md:border-t-2 border-amber-400/50" />
-                      <div className="absolute top-2 md:top-3 right-2 md:right-3 w-2 h-2 md:w-4 md:h-4 border-r border-t md:border-r-2 md:border-t-2 border-amber-400/50" />
-                      <div className="absolute bottom-2 md:bottom-3 left-2 md:left-3 w-2 h-2 md:w-4 md:h-4 border-l border-b md:border-l-2 md:border-b-2 border-amber-400/50" />
-                      <div className="absolute bottom-2 md:bottom-3 right-2 md:right-3 w-2 h-2 md:w-4 md:h-4 border-r border-b md:border-r-2 md:border-b-2 border-amber-400/50" />
+                      <div className="absolute top-3 left-3 w-4 h-4 border-l-2 border-t-2 border-amber-400/50" />
+                      <div className="absolute top-3 right-3 w-4 h-4 border-r-2 border-t-2 border-amber-400/50" />
+                      <div className="absolute bottom-3 left-3 w-4 h-4 border-l-2 border-b-2 border-amber-400/50" />
+                      <div className="absolute bottom-3 right-3 w-4 h-4 border-r-2 border-b-2 border-amber-400/50" />
                     </div>
 
                     {/* Floating aura effect */}
                     <div className="absolute inset-0 pointer-events-none">
-                      <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-32 h-32 md:w-48 md:h-48 lg:w-64 lg:h-64 xl:w-80 xl:h-80 bg-amber-500/5 rounded-full blur-3xl group-hover:bg-amber-500/10 transition-all duration-500" />
+                      <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-48 h-48 md:w-64 md:h-64 lg:w-80 lg:h-80 xl:w-96 xl:h-96 bg-amber-500/5 rounded-full blur-3xl group-hover:bg-amber-500/10 transition-all duration-500" />
                     </div>
                   </motion.div>
                 ))}
-
-                {/* Mystical energy lines between cards - hidden on mobile for clarity */}
-                <motion.div
-                  className="absolute inset-0 pointer-events-none hidden md:block"
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  transition={{ delay: 2, duration: 2 }}
-                >
-                  <svg className="w-full h-full opacity-20">
-                    <defs>
-                      <linearGradient id="energyGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-                        <stop offset="0%" stopColor="#FFD700" stopOpacity="0.3" />
-                        <stop offset="50%" stopColor="#FFA500" stopOpacity="0.6" />
-                        <stop offset="100%" stopColor="#FF8C00" stopOpacity="0.3" />
-                      </linearGradient>
-                    </defs>
-                    <motion.path
-                      d="M 60 80 Q 200 150 120 300 Q 180 400 260 360"
-                      stroke="url(#energyGradient)"
-                      strokeWidth="2"
-                      fill="none"
-                      strokeDasharray="5,5"
-                      initial={{ pathLength: 0 }}
-                      animate={{ pathLength: 1 }}
-                      transition={{ delay: 2, duration: 3, ease: "easeInOut" }}
-                    />
-                  </svg>
-                </motion.div>
               </div>
+
+              {/* Mystical energy lines between cards - subtle background effect */}
+              <motion.div
+                className="absolute inset-0 pointer-events-none opacity-10"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 0.1 }}
+                transition={{ delay: 2, duration: 2 }}
+              >
+                <svg className="w-full h-full">
+                  <defs>
+                    <linearGradient id="energyGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                      <stop offset="0%" stopColor="#FFD700" stopOpacity="0.3" />
+                      <stop offset="50%" stopColor="#FFA500" stopOpacity="0.6" />
+                      <stop offset="100%" stopColor="#FF8C00" stopOpacity="0.3" />
+                    </linearGradient>
+                  </defs>
+                  <motion.path
+                    d="M 150 300 Q 400 250 650 300 Q 500 450 300 400"
+                    stroke="url(#energyGradient)"
+                    strokeWidth="2"
+                    fill="none"
+                    strokeDasharray="5,5"
+                    initial={{ pathLength: 0 }}
+                    animate={{ pathLength: 1 }}
+                    transition={{ delay: 2, duration: 3, ease: "easeInOut" }}
+                  />
+                </svg>
+              </motion.div>
             </motion.div>
           </div>
         </div>
 
         {/* Bottom Mystical Quote */}
-        <div className="absolute bottom-4 md:bottom-8 left-1/2 transform -translate-x-1/2 text-center text-amber-400/60 px-4">
+        <div className="absolute bottom-4 md:bottom-6 left-1/2 transform -translate-x-1/2 text-center text-amber-400/60 px-4">
           <motion.div
             animate={{ opacity: [0.4, 0.8, 0.4] }}
             transition={{ duration: 4, repeat: Infinity }}
-            className="text-xs md:text-sm font-light tracking-wider"
+            className="text-sm md:text-base font-light tracking-wider"
           >
             ✨ "The cards reveal what the soul already knows" ✨
           </motion.div>
