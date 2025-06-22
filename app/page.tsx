@@ -359,18 +359,18 @@ function TarotSnapHomepage() {
       {/* Main Content Container */}
       <div className="relative z-10 min-h-screen">
         <div className="px-6 lg:px-12 py-6 lg:py-12">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-8 min-h-screen items-center">
+          <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-[40%_auto] gap-8 lg:gap-12 xl:gap-16 min-h-[calc(100vh-120px)] items-center">
             
             {/* Left Side - Content */}
             <motion.div
               initial={{ opacity: 0, x: -50 }}
               animate={controls}
-              className="space-y-6 lg:space-y-12 text-center lg:text-left order-2 lg:order-1 max-w-none"
+              className="space-y-6 lg:space-y-12 text-center lg:text-left order-1 lg:order-1 max-w-none"
             >
               {/* Main Heading */}
                               <div className="space-y-3 lg:space-y-6">
                 <motion.h1 
-                                      className="text-[clamp(2.5rem,8vw,5rem)] font-bold bg-clip-text text-transparent bg-gradient-to-r from-amber-400 via-yellow-300 to-orange-400 leading-tight tracking-tight max-w-none"
+                    className="text-[clamp(2.25rem,6vw,4rem)] font-bold bg-clip-text text-transparent bg-gradient-to-r from-amber-400 via-yellow-300 to-orange-400 leading-tight tracking-tight max-w-none"
                   initial={{ opacity: 0, y: 30 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.5, duration: 0.8 }}
@@ -412,10 +412,20 @@ function TarotSnapHomepage() {
                   <motion.button
                                           className="group relative px-8 lg:px-12 py-4 lg:py-6 bg-gradient-to-r from-amber-600 via-yellow-500 to-orange-500 rounded-full text-slate-900 font-bold text-[clamp(1rem,2.5vw,1.25rem)] shadow-2xl shadow-amber-500/25"
                     whileHover={{ 
-                      scale: 1.02,
-                      boxShadow: "0 20px 40px -12px rgba(245, 158, 11, 0.4)"
+                      scale: 1.05,
+                      boxShadow: "0 25px 50px -12px rgba(245, 158, 11, 0.5)"
                     }}
-                    whileTap={{ scale: 0.98 }}
+                    whileTap={{ scale: 0.95 }}
+                    animate={{
+                      boxShadow: [
+                        "0 10px 30px -12px rgba(245, 158, 11, 0.25)",
+                        "0 15px 40px -12px rgba(245, 158, 11, 0.35)",
+                        "0 10px 30px -12px rgba(245, 158, 11, 0.25)"
+                      ]
+                    }}
+                    transition={{
+                      boxShadow: { duration: 4, repeat: Infinity, ease: "easeInOut" }
+                    }}
                   >
                     <span className="relative z-10 flex items-center gap-3 justify-center">
                       <Sparkles className="w-6 h-6 md:w-7 md:h-7" />
@@ -431,7 +441,7 @@ function TarotSnapHomepage() {
 
             {/* Right Side - Floating Tarot Cards */}
             <motion.div
-              className="relative h-[400px] lg:h-full lg:min-h-[600px] flex items-center justify-center order-1 lg:order-2"
+              className="relative h-[300px] lg:h-full lg:min-h-[600px] flex items-center justify-center order-2 lg:order-2"
               initial={{ opacity: 0, x: 50 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ delay: 0.4, duration: 1 }}
@@ -451,13 +461,19 @@ function TarotSnapHomepage() {
                       }}
                   >
                     {/* Card Container */}
-                                          <div className={cn(
-                        "relative w-[clamp(160px,24vw,220px)] aspect-[2/3]",
-                        "bg-gradient-to-br from-slate-900 via-blue-900 to-indigo-900",
-                        "rounded-xl lg:rounded-2xl border-2 border-amber-400/40 shadow-2xl shadow-amber-500/20",
-                        "backdrop-blur-sm cursor-pointer group",
-                        "hover:border-amber-400/70 hover:scale-105 transition-all duration-300"
-                      )}>
+                      <div 
+                        className={cn(
+                          "relative w-[clamp(160px,50vw,220px)] aspect-[2/3]",
+                          "bg-gradient-to-br from-slate-900 via-blue-900 to-indigo-900",
+                          "rounded-xl lg:rounded-2xl border-2 border-amber-400/40 shadow-2xl shadow-amber-500/20",
+                          "backdrop-blur-sm cursor-pointer group",
+                          "hover:border-amber-400/70 hover:scale-105 hover:shadow-amber-500/40 transition-all duration-300",
+                          "focus-visible:ring-4 focus-visible:ring-amber-400/70 focus-visible:outline-none"
+                        )}
+                        tabIndex={0}
+                        role="button"
+                        aria-label={`${card.name} - ${card.meaning}`}
+                      >
                       {/* Inner glow */}
                       <div className="absolute inset-2 rounded-lg lg:rounded-xl border border-amber-400/20 group-hover:border-amber-400/40 transition-all duration-300" />
                       
