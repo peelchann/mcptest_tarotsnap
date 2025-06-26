@@ -11,6 +11,35 @@ interface ArtisticDeckProps {
   className?: string;
 }
 
+// Professional floating animation variants
+const floatVariants = {
+  initial: { y: 0 },
+  animate: {
+    y: [0, -12, 0],
+    transition: {
+      duration: 4,
+      ease: "easeInOut",
+      repeat: Infinity,
+      repeatType: "mirror" as const
+    }
+  }
+};
+
+// Staggered float for visual variety
+const createStaggeredFloat = (delay: number) => ({
+  initial: { y: 0 },
+  animate: {
+    y: [0, -8, 0],
+    transition: {
+      duration: 3.5,
+      ease: "easeInOut",
+      repeat: Infinity,
+      repeatType: "mirror" as const,
+      delay
+    }
+  }
+});
+
 export const ArtisticDeck: React.FC<ArtisticDeckProps> = ({ 
   cards, 
   className = '' 
@@ -21,13 +50,6 @@ export const ArtisticDeck: React.FC<ArtisticDeckProps> = ({
   // Allow only first three cards
   const trio = cards.slice(0, 3);
   
-  // Tiered positioning: side cards lower, middle card on top
-  const cardPositions = [
-    { yPos: 16, rotation: 'md:-rotate-3', zIndex: 1 }, // Left card
-    { yPos: 0, rotation: '', zIndex: 10 },             // Middle card (on top)
-    { yPos: 16, rotation: 'md:rotate-3', zIndex: 1 }   // Right card
-  ] as const;
-
   // Failsafe: Ensure cards are visible after 2 seconds if animations fail
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -49,9 +71,14 @@ export const ArtisticDeck: React.FC<ArtisticDeckProps> = ({
         className
       )}
     >
-      {/* Desktop Layout - Clean fixed layout with no overflow */}
+      {/* Desktop Layout - Clean fixed layout with floating animations */}
       <div className="hidden md:flex gap-8">
         {trio.map((card, i) => {
+          // Create unique floating animations for each card
+          const floatVariant = i === 1 
+            ? floatVariants // Main card gets primary float
+            : createStaggeredFloat(i * 0.8); // Side cards get staggered float
+
           return (
             <motion.div
               key={card.id}
@@ -60,7 +87,7 @@ export const ArtisticDeck: React.FC<ArtisticDeckProps> = ({
                 "relative w-44 aspect-[3/5] rounded-lg shrink-0",
                 "focus:outline-none focus:ring-4 focus:ring-amber-400/40",
                 "hero-card-fallback", // CSS fallback class
-                "hover:-translate-y-1 transition-transform duration-150",
+                "transition-transform duration-150",
                 // Subtle rotations for desktop
                 i === 0 && "-rotate-3",
                 i === 2 && "rotate-3"
@@ -83,7 +110,7 @@ export const ArtisticDeck: React.FC<ArtisticDeckProps> = ({
                 scale: 1.05,
                 rotateX: 2,
                 rotateY: -4,
-                y: i === 1 ? -4 : 20, // Lift based on original position
+                y: i === 1 ? -8 : 16, // Lift based on original position + slight lift
                 transition: { 
                   duration: 0.2,
                   ease: "easeOut"
@@ -97,41 +124,49 @@ export const ArtisticDeck: React.FC<ArtisticDeckProps> = ({
               role="button"
               aria-label={`View ${card.name} tarot card`}
             >
-              {/* Card container with proper aspect ratio */}
-              <div className="w-full h-full relative">
-                <TarotCard
-                  card={card}
-                  isReversed={card.isReversed}
-                  isFlipped={true}
-                  className="w-full h-full"
-                  onClick={() => {
-                    console.log(`Selected card: ${card.name}`);
-                  }}
-                />
+              {/* Floating container with GPU-friendly transforms */}
+              <motion.div
+                className="w-full h-full"
+                variants={prefersReducedMotion ? undefined : floatVariant}
+                initial={prefersReducedMotion ? undefined : "initial"}
+                animate={prefersReducedMotion ? undefined : "animate"}
+              >
+                {/* Card container with proper aspect ratio */}
+                <div className="w-full h-full relative">
+                  <TarotCard
+                    card={card}
+                    isReversed={card.isReversed}
+                    isFlipped={true}
+                    className="w-full h-full"
+                    onClick={() => {
+                      console.log(`Selected card: ${card.name}`);
+                    }}
+                  />
 
-                {/* Desktop caption */}
-                <figcaption
-                  className={cn(
-                    "absolute -bottom-12 left-1/2 -translate-x-1/2",
-                    "text-center w-full max-w-[176px]", // Match card width
-                    "bg-slate-900/95 text-slate-100 backdrop-blur-sm",
-                    "rounded-lg px-3 py-2 shadow-lg"
-                  )}
-                >
-                  <p className="text-amber-300 font-semibold text-sm leading-tight">
-                    {card.name}
-                  </p>
-                  <p className="text-xs text-slate-400 mt-1 leading-relaxed">
-                    {card.keywords.slice(0, 2).join(' • ')}
-                  </p>
-                </figcaption>
-              </div>
+                  {/* Desktop caption */}
+                  <figcaption
+                    className={cn(
+                      "absolute -bottom-12 left-1/2 -translate-x-1/2",
+                      "text-center w-full max-w-[176px]", // Match card width
+                      "bg-slate-900/95 text-slate-100 backdrop-blur-sm",
+                      "rounded-lg px-3 py-2 shadow-lg"
+                    )}
+                  >
+                    <p className="text-amber-300 font-semibold text-sm leading-tight">
+                      {card.name}
+                    </p>
+                    <p className="text-xs text-slate-400 mt-1 leading-relaxed">
+                      {card.keywords.slice(0, 2).join(' • ')}
+                    </p>
+                  </figcaption>
+                </div>
+              </motion.div>
             </motion.div>
           );
         })}
       </div>
 
-      {/* Mobile Layout - Swipe row with hidden scrollbar */}
+      {/* Mobile Layout - Lightweight swipe row (no floating for performance) */}
       <div className="md:hidden flex gap-4 overflow-x-auto snap-x snap-mandatory pb-2 scrollbar-hide">
         {trio.map((card, i) => {
           return (
@@ -156,7 +191,7 @@ export const ArtisticDeck: React.FC<ArtisticDeckProps> = ({
               role="button"
               aria-label={`View ${card.name} tarot card`}
             >
-              {/* Card container */}
+              {/* Card container - no floating on mobile for performance */}
               <div className="w-full h-full relative">
                 <TarotCard
                   card={card}
