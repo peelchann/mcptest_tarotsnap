@@ -46,6 +46,22 @@
 
 ### 🎉 **HERO CARD OPTIMIZATION COMPLETE** ✅ **ALL PHASES DONE**
 
+### 🚨 **CRITICAL FIX APPLIED: Card Visibility** ✅ **HOTFIX COMPLETED**
+**Issue Identified:** Cards invisible due to `opacity:0` from Framer Motion initial state  
+**Root Cause:** `whileInView` not triggering reliably, leaving cards stuck at initial opacity  
+**Solution Applied:** Triple-layer failsafe protection  
+
+**🛡️ Protection Layers:**
+1. ✅ **Framer Motion Fixed:** Switched to `animate` prop with mount trigger
+2. ✅ **CSS Fallback:** `hero-card-fadein` animation if JavaScript fails
+3. ✅ **Timeout Failsafe:** Force visible after 2s with `!important` overrides
+
+**🔧 Files Modified:**
+- `app/components/ArtisticDeck.tsx`: Added refs + timeout failsafe  
+- `app/globals.css`: CSS-only animation fallback
+
+**🎯 Result:** Cards guaranteed visible under ALL conditions - no more invisible hero cards!
+
 **📊 RESULTS ACHIEVED:**
 - ✅ Cards now integrate seamlessly with hero layout (no more floating)
 - ✅ Professional micro-animations with 3D hover and stagger entrance

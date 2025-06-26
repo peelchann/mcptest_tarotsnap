@@ -21,8 +21,12 @@ export const ArtisticDeck: React.FC<ArtisticDeckProps> = ({
   // Allow only first three cards
   const trio = cards.slice(0, 3);
   
-  // Simple rotation values for mystical effect (no complex positioning)
-  const rotations = [-4, 0, 6] as const;
+  // Tiered positioning: side cards lower, middle card on top
+  const cardPositions = [
+    { yPos: 16, rotation: 'md:-rotate-3', zIndex: 1 }, // Left card
+    { yPos: 0, rotation: '', zIndex: 10 },             // Middle card (on top)
+    { yPos: 16, rotation: 'md:rotate-3', zIndex: 1 }   // Right card
+  ] as const;
 
   // Failsafe: Ensure cards are visible after 2 seconds if animations fail
   useEffect(() => {
@@ -40,57 +44,53 @@ export const ArtisticDeck: React.FC<ArtisticDeckProps> = ({
   return (
     <div
       className={cn(
-        "flex justify-center md:justify-end",
-        // Mobile: horizontal scroll with snap
-        "overflow-x-auto md:overflow-x-visible",
-        "snap-x snap-mandatory md:snap-none",
-        "pb-4 md:pb-0", // padding for mobile scrollbar
+        "flex items-center justify-center lg:justify-end",
+        "order-2 lg:order-2 min-h-[420px]",
         className
       )}
     >
-      <div className="flex items-start gap-4 md:gap-0">
+      {/* Refined flex layout with proper gaps and responsive behavior */}
+      <div className={cn(
+        "flex md:gap-8 gap-4",
+        "md:flex-row flex-nowrap overflow-x-auto snap-x md:snap-none",
+        "pb-4 md:pb-0" // padding for mobile scrollbar
+      )}>
         {trio.map((card, i) => {
+          const position = cardPositions[i];
+          
           return (
             <motion.div
               key={card.id}
               ref={(el) => { cardRefs.current[i] = el; }}
               className={cn(
-                "relative shrink-0",
-                // Fixed aspect ratio container to prevent caption overflow
-                "w-[200px] md:w-[220px] aspect-[3/5]",
-                // Simple overlap on desktop using negative margins
-                i > 0 && "md:-ml-8",
-                // Mobile: snap scroll behavior
-                "snap-center md:snap-align-none",
-                // Focus glow effect for accessibility
-                "focus:outline-none focus:ring-4 focus:ring-amber-400/40 rounded-lg",
-                // CSS fallback class
-                "hero-card-fallback"
+                "shrink-0 w-44 md:w-56 aspect-[3/5]",
+                position.rotation, // Subtle rotation on desktop only
+                "focus:outline-none focus:ring-4 focus:ring-amber-400/40",
+                "rounded-lg snap-center",
+                "hero-card-fallback", // CSS fallback class
+                "hover:-translate-y-1 transition-transform duration-150" // Subtle lift on hover
               )}
               style={{
-                // Simple rotation only - no complex transforms
-                transform: `rotate(${rotations[i]}deg)`,
-                // Proper z-index for overlap
-                zIndex: trio.length - i,
+                zIndex: position.zIndex,
               }}
               initial={{ opacity: 0, y: 40, scale: 0.9 }}
-              animate={{ 
+              whileInView={{ 
                 opacity: 1, 
-                y: 0,
+                y: position.yPos, // Tiered positioning
                 scale: 1
               }}
               transition={{ 
-                delay: prefersReducedMotion ? 0 : i * 0.1, // Respect motion preferences
                 duration: prefersReducedMotion ? 0.2 : 0.6,
-                ease: [0.25, 0.46, 0.45, 0.94] // Smooth easing
+                delay: prefersReducedMotion ? 0 : (i + 1) * 0.1, // Stagger: 0.1, 0.2, 0.3
+                ease: [0.25, 0.46, 0.45, 0.94]
               }}
               whileHover={{
-                scale: 1.08,
-                rotateX: 8,
-                rotateY: 12,
-                z: 20,
+                scale: 1.05,
+                rotateX: 5,
+                rotateY: 8,
+                y: position.yPos - 4, // Lift slightly higher
                 transition: { 
-                  duration: 0.3,
+                  duration: 0.2,
                   ease: "easeOut"
                 }
               }}
@@ -98,7 +98,12 @@ export const ArtisticDeck: React.FC<ArtisticDeckProps> = ({
                 scale: 0.98,
                 transition: { duration: 0.15 }
               }}
-              tabIndex={0} // Make focusable for accessibility
+              viewport={{ 
+                once: true, 
+                amount: 0.3,
+                margin: "0px 0px -50px 0px"
+              }}
+              tabIndex={0}
               role="button"
               aria-label={`View ${card.name} tarot card`}
             >
@@ -114,19 +119,19 @@ export const ArtisticDeck: React.FC<ArtisticDeckProps> = ({
                   }}
                 />
 
-                {/* Improved caption with responsive sizing */}
+                {/* Refined caption with better responsive sizing */}
                 <figcaption
                   className={cn(
                     "absolute -bottom-12 left-1/2 -translate-x-1/2",
-                    "text-center w-full max-w-[160px]", // Responsive width instead of character limit
-                    "bg-slate-900/90 text-slate-100 backdrop-blur-sm",
-                    "rounded-lg px-3 py-2"
+                    "text-center w-full max-w-[180px]", // Slightly wider for better text flow
+                    "bg-slate-900/95 text-slate-100 backdrop-blur-sm",
+                    "rounded-lg px-3 py-2 shadow-lg"
                   )}
                 >
-                  <p className="text-amber-300 font-semibold text-sm md:text-base truncate">
+                  <p className="text-amber-300 font-semibold text-sm md:text-base leading-tight">
                     {card.name}
                   </p>
-                  <p className="text-xs text-slate-400 mt-1 truncate">
+                  <p className="text-xs text-slate-400 mt-1 leading-relaxed">
                     {card.keywords.slice(0, 2).join(' • ')}
                   </p>
                 </figcaption>
