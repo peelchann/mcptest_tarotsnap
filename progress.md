@@ -1,6 +1,6 @@
 # TarotSnap Progress Log - CONSOLIDATED
 
-**Last Updated:** January 10, 2025  
+**Last Updated:** January 11, 2025  
 **Current Status:** 🎯 **MASTER PLAN ACTIVE**  
 **Live URL:** https://tarot-snap.vercel.app  
 **Phase:** Task Consolidation Complete  
@@ -121,6 +121,44 @@ Result: MASTER_PLAN.md with 40 actionable tasks
 - **Cross-Viewport Testing:** Verified on 2560×1440, 1440×900, 375×667 breakpoints
 - **Files Modified:** `app/components/ArtisticDeck.tsx` (new), `app/page.tsx` (updated)
 - **Documentation:** Updated `TODO.md`, `UIUX_ENHANCEMENT_TASKS.md` with task tracking
+
+---
+
+## 🎨 **ACTIVE DEVELOPMENT: HERO CARD OPTIMIZATION**
+
+### **January 11, 2025 - Designer-Grade Analysis Applied**
+**Status:** 🔄 **IN PROGRESS** - Implementing professional UX fixes
+**Priority:** **CRITICAL** - Conversion impact optimization
+**Approach:** Feature branch implementation with A/B testing
+
+### **🔍 Root Cause Analysis Completed:**
+**Designer Feedback Summary:**
+- **Issue 1:** Cards feel "detached" (floating, truncated captions, no visual rhythm)
+- **Issue 2:** Complex CSS transforms break hero grid cohesion
+- **Issue 3:** Caption overflow on mobile due to fixed `max-w-[20ch]`
+- **Issue 4:** Missing micro-animations for tactile depth
+
+### **🛠️ Technical Implementation Plan:**
+
+**Phase 1: Two-Column Flex Refactor (2 hours)**
+- [ ] Replace complex ArtisticDeck transforms with simple overlap + rotation
+- [ ] Implement dedicated media column in hero grid
+- [ ] Add aspect-ratio containers to prevent caption overflow
+
+**Phase 2: Micro-Animation Enhancement (3 hours)**
+- [ ] Add Framer Motion entrance stagger (0.1s delays)
+- [ ] Implement 3D tilt on hover (max 8° rotation)
+- [ ] Add soft gold glow on focus for accessibility
+
+**Phase 3: Performance & Testing (1 hour)**
+- [ ] Convert tarot images to WebP format
+- [ ] Add explicit width/height to prevent CLS
+- [ ] Deploy to Vercel preview for A/B testing
+
+**Expected Business Impact:**
+- 15% bounce rate decrease
+- 20% reading completion increase  
+- 25% session duration increase
 
 ---
 

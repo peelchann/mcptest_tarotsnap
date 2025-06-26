@@ -1,8 +1,68 @@
 # TarotSnap TODO - CONSOLIDATED
 
-**Last Updated:** January 10, 2025  
-**Status:** 🎯 **MASTER PLAN ACTIVE** - Tasks consolidated from 264 → 40  
+**Last Updated:** January 11, 2025  
+**Status:** 🎯 **HERO CARD OPTIMIZATION ACTIVE** - Tasks consolidated from 264 → 40  
 **Live URL:** https://tarot-snap.vercel.app  
+
+---
+
+## 🔥 **URGENT PRIORITY: HERO CARD OPTIMIZATION**
+
+### **🚨 PRIORITY #1: HERO SECTION CARD FIXES** 🆕 **CRITICAL UX ENHANCEMENT**
+**Status:** 🔄 **IN PROGRESS** - Designer analysis applied  
+**Timeline:** 6 hours total (2+3+1 phase approach)  
+**Impact:** Major conversion rate improvement opportunity  
+
+**Problem Identified:** Cards feel "detached" and break visual rhythm despite excellent functionality
+**Designer Analysis:** Professional UX review identified specific technical issues with transforms and layout
+**Business Impact:** Expected 15% bounce rate decrease, 20% reading completion increase
+
+#### **🎯 PHASE-BASED IMPLEMENTATION PLAN**
+
+**Phase 1: Two-Column Flex Refactor (2 hours)** ✅ **COMPLETED**
+- [x] **File:** `app/components/ArtisticDeck.tsx` 
+  - ✅ Replace complex CSS transforms with simple negative margins + rotation
+  - ✅ Add `aspect-[3/5]` containers to prevent caption overflow
+  - ✅ Implement horizontal scroll on mobile (`overflow-x-auto snap-x`)
+
+- [x] **File:** `app/page.tsx`
+  - ✅ Refactor hero grid to dedicated media column layout
+  - ✅ Switch from absolute positioning to flex layout
+  - ✅ Apply `flex justify-center md:justify-end` pattern
+
+**Phase 2: Micro-Animation Enhancement (3 hours)** ✅ **COMPLETED**
+- [x] **File:** `app/components/ArtisticDeck.tsx`
+  - ✅ Add stagger entrance animation using Framer Motion (`delay: i*0.1`)
+  - ✅ Implement 3D hover effects (`rotateX: 5, rotateY: 8, scale: 1.05`)
+  - ✅ Add soft gold glow on focus (`focus:ring-4 focus:ring-amber-400/40`)
+  - ✅ Enhance tactile feedback with smooth transitions
+  - ✅ Implement mobile-friendly touch interactions
+
+**Phase 3: Performance & Testing (1 hour)** 🔄 **IN PROGRESS**
+- [ ] Convert tarot images to WebP format for faster loading
+- [ ] Add explicit width/height attributes to prevent CLS
+- [ ] Run Lighthouse audit to verify CLS < 0.1
+- [ ] Deploy to Vercel preview URL for A/B testing
+
+#### **✅ SUCCESS CRITERIA**
+- [ ] Cards feel integrated into hero layout (not floating)
+- [ ] Captions display properly on all screen sizes without clipping
+- [ ] Smooth micro-animations enhance tactile feel
+- [ ] Lighthouse CLS score < 0.1
+- [ ] No regression in existing functionality
+
+#### **🔧 TECHNICAL SPECIFICATIONS**
+**Files to Modify:**
+- `app/components/ArtisticDeck.tsx` (main refactor)
+- `app/page.tsx` (grid layout changes)
+- `tailwind.config.ts` (if needed for aspect-ratio)
+
+**Libraries Used:**
+- ✅ Framer Motion v12.16.0 (already installed)
+- ✅ Tailwind CSS with animate plugin
+- ✅ Next.js Image optimization
+
+**Risk Assessment:** LOW - Visual layer only, preserves all backend functionality
 
 ---
 

@@ -65,10 +65,10 @@ function TarotSnapHomepage() {
             </div>
 
             {/* Right Side - Artistic Tarot Deck */}
-            <div className="relative h-[400px] lg:h-full lg:min-h-[600px] flex items-center justify-center order-2 lg:order-2">
+            <div className="relative flex items-center justify-center lg:justify-end order-2 lg:order-2 min-h-[500px] lg:min-h-[600px]">
               <ArtisticDeck 
                 cards={randomCards}
-                className="w-full h-full"
+                className="w-full max-w-none"
               />
             </div>
           </div>
