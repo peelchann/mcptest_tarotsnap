@@ -1,6 +1,6 @@
 'use client';
 
-import React from 'react';
+import React, { useEffect, useRef } from 'react';
 import { motion, useReducedMotion } from 'framer-motion';
 import { cn } from '@/lib/utils';
 import TarotCard from './TarotCard';
@@ -16,12 +16,26 @@ export const ArtisticDeck: React.FC<ArtisticDeckProps> = ({
   className = '' 
 }) => {
   const prefersReducedMotion = useReducedMotion();
+  const cardRefs = useRef<(HTMLDivElement | null)[]>([]);
   
   // Allow only first three cards
   const trio = cards.slice(0, 3);
   
   // Simple rotation values for mystical effect (no complex positioning)
   const rotations = [-4, 0, 6] as const;
+
+  // Failsafe: Ensure cards are visible after 2 seconds if animations fail
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      cardRefs.current.forEach((card) => {
+        if (card) {
+          card.classList.add('hero-card-visible');
+        }
+      });
+    }, 2000);
+
+    return () => clearTimeout(timer);
+  }, []);
 
   return (
     <div
@@ -39,6 +53,7 @@ export const ArtisticDeck: React.FC<ArtisticDeckProps> = ({
           return (
             <motion.div
               key={card.id}
+              ref={(el) => { cardRefs.current[i] = el; }}
               className={cn(
                 "relative shrink-0",
                 // Fixed aspect ratio container to prevent caption overflow
@@ -48,7 +63,9 @@ export const ArtisticDeck: React.FC<ArtisticDeckProps> = ({
                 // Mobile: snap scroll behavior
                 "snap-center md:snap-align-none",
                 // Focus glow effect for accessibility
-                "focus:outline-none focus:ring-4 focus:ring-amber-400/40 rounded-lg"
+                "focus:outline-none focus:ring-4 focus:ring-amber-400/40 rounded-lg",
+                // CSS fallback class
+                "hero-card-fallback"
               )}
               style={{
                 // Simple rotation only - no complex transforms
@@ -57,15 +74,15 @@ export const ArtisticDeck: React.FC<ArtisticDeckProps> = ({
                 zIndex: trio.length - i,
               }}
               initial={{ opacity: 0, y: 40, scale: 0.9 }}
-              whileInView={{ 
+              animate={{ 
                 opacity: 1, 
                 y: 0,
-                scale: 1,
-                transition: { 
-                  delay: i * 0.1, // Entrance stagger
-                  duration: 0.6,
-                  ease: [0.25, 0.46, 0.45, 0.94] // Smooth easing
-                } 
+                scale: 1
+              }}
+              transition={{ 
+                delay: prefersReducedMotion ? 0 : i * 0.1, // Respect motion preferences
+                duration: prefersReducedMotion ? 0.2 : 0.6,
+                ease: [0.25, 0.46, 0.45, 0.94] // Smooth easing
               }}
               whileHover={{
                 scale: 1.08,
@@ -81,7 +98,6 @@ export const ArtisticDeck: React.FC<ArtisticDeckProps> = ({
                 scale: 0.98,
                 transition: { duration: 0.15 }
               }}
-              viewport={{ once: true }}
               tabIndex={0} // Make focusable for accessibility
               role="button"
               aria-label={`View ${card.name} tarot card`}
