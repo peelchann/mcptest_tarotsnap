@@ -1166,3 +1166,26 @@ All technical requirements met for immediate scale:
 - `app/components/ArtisticDeck.tsx`: Complete layout redesign with utility classes  
 
 **🎯 Result:** Cards now have elegant "fanned tarot spread" appearance with professional visual hierarchy!
+
+### 🚀 **CRITICAL FIX: Horizontal Scrollbar Elimination** ✅ **RESPONSIVE FIX COMPLETED**
+**Issue Resolved:** Horizontal scrollbar appearing on desktop, cards getting cropped  
+**Root Cause:** Single layout trying to serve both desktop and mobile needs  
+**Solution Applied:** Separated desktop and mobile layouts with targeted optimizations  
+
+**🖥️ Desktop Layout Improvements:**
+1. ✅ **Clean Fixed Layout:** `hidden md:flex gap-8` - no overflow, no scrollbar
+2. ✅ **Optimal Card Sizing:** `w-44` (176px) fits within hero grid constraints
+3. ✅ **Simplified Tiering:** Middle card `y:0`, side cards `y:24` (clean depth)
+4. ✅ **Subtle Rotations:** `-rotate-3` / `rotate-3` (desktop-only refinement)
+
+**📱 Mobile Layout Optimizations:**
+1. ✅ **Hidden Scrollbar:** `scrollbar-hide` utility for cross-browser support
+2. ✅ **Touch-Optimized:** `w-40` cards perfect for mobile interaction
+3. ✅ **Snap Behavior:** `snap-x snap-mandatory` for smooth swipe experience
+4. ✅ **Performance:** Simplified animations for mobile devices
+
+**🔧 Files Modified:**
+- `app/components/ArtisticDeck.tsx`: Complete responsive layout separation  
+- `app/globals.css`: Added `scrollbar-hide` utility class
+
+**🎯 Result:** Perfect display on all screen sizes - no more horizontal scrollbar cropping!
