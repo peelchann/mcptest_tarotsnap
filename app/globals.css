@@ -708,3 +708,16 @@ body {
   transform: translateY(0) scale(1) !important;
   transition: all 0.5s ease-out;
 }
+
+/* Hide scrollbars while maintaining functionality */
+.scrollbar-hide {
+  /* IE and Edge */
+  -ms-overflow-style: none;
+  /* Firefox */
+  scrollbar-width: none;
+}
+
+.scrollbar-hide::-webkit-scrollbar {
+  /* Safari and Chrome */
+  display: none;
+}
