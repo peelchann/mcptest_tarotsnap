@@ -1,11 +1,14 @@
 import { createBrowserClient, createServerClient } from '@supabase/ssr'
+import type { SupabaseClient } from '@supabase/supabase-js'
 
 // Supabase client for browser/client-side operations
-export const createBrowserSupabaseClient = () =>
-  createBrowserClient(
+export const createBrowserSupabaseClient = () => {
+  if (typeof window === 'undefined' || !process.env.NEXT_PUBLIC_SUPABASE_URL || !process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY) return {} as SupabaseClient
+  return createBrowserClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
   )
+}
 
 // Supabase client for server-side operations (API routes, middleware)
 // Note: This should only be called from server components, API routes, or middleware
