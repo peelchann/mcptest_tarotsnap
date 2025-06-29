@@ -198,7 +198,7 @@ TarotSnap is evolving beyond one-off readings to become a **personal spiritual a
 
 ## 📄 **License**
 
-This project is licensed under the MIT License - see the LICENSE file for details.
+This project is licensed under the [MIT License](LICENSE).
 
 ## 🆘 **Support & Troubleshooting**
 
