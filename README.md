@@ -144,6 +144,10 @@ Watch mode:
 npm run test:watch
 ```
 
+The API route tests in `__tests__/api` mock OpenRouter and Supabase so they can
+run offline. Simply run `npm test` after installing dependencies to execute
+them.
+
 ### **Quality Assurance**
 - ✅ Complete browser automation testing with Playwright
 - ✅ End-to-end user journey verification
