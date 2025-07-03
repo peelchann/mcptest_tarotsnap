@@ -311,7 +311,7 @@ on:
 **Time-bound**: Complete by [Date + 2 weeks]
 
 **Tasks:**
-- [ ] **Task 2.1**: Implement `prefers-reduced-motion` support
+- [x] **Task 2.1**: Implement `prefers-reduced-motion` support
   - **Owner**: Frontend Developer
   - **Due**: [Date + 1 week]
   - **Acceptance Criteria**: All animations respect user motion preferences
@@ -319,7 +319,7 @@ on:
   - **Owner**: Frontend Developer
   - **Due**: [Date + 1.5 weeks]
   - **Acceptance Criteria**: Maximum 5 concurrent animations, 60fps performance
-- [ ] **Task 2.3**: Add Core Web Vitals monitoring
+- [x] **Task 2.3**: Add Core Web Vitals monitoring
   - **Owner**: DevOps Engineer
   - **Due**: [Date + 2 weeks]
   - **Acceptance Criteria**: Real-time performance monitoring dashboard
