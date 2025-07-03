@@ -2,7 +2,8 @@ import type { Metadata } from "next";
 import "./globals.css";
 import StarsBackground, { StarsFallback } from "./components/StarsBackground";
 import { AuthProvider } from "./providers/AuthProvider";
-import { GoogleAnalytics } from '@next/third-parties/google';
+import { GoogleAnalytics, sendGAEvent } from '@next/third-parties/google';
+import type { NextWebVitalsMetric } from 'next/app';
 import StructuredData from "./components/StructuredData";
 
 export const metadata: Metadata = {
@@ -130,6 +131,18 @@ export default function RootLayout({
 }
 
 // Prevent error toasts from appearing
-export function reportWebVitals(): void {
-  // Silence is golden - intentionally not reporting to disable dev toasts
+export function reportWebVitals(metric: NextWebVitalsMetric): void {
+  if (
+    metric.label === 'web-vital' &&
+    process.env.NODE_ENV === 'production' &&
+    process.env.NEXT_PUBLIC_GA_ID
+  ) {
+    const value = metric.name === 'CLS' ? metric.value * 1000 : metric.value;
+    sendGAEvent('event', metric.name, {
+      event_category: 'Web Vitals',
+      value: Math.round(value),
+      event_label: metric.id,
+      non_interaction: true,
+    });
+  }
 }
