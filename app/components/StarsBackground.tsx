@@ -15,10 +15,16 @@ export default function StarsBackground() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [mounted, setMounted] = useState(false);
   const [isCanvasSupported, setIsCanvasSupported] = useState(true);
-  
+
   useEffect(() => {
     setMounted(true);
-    
+
+    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+    if (prefersReducedMotion.matches) {
+      setIsCanvasSupported(false);
+      return;
+    }
+
     // Check if canvas is supported
     const testCanvas = document.createElement('canvas');
     setIsCanvasSupported(!!testCanvas.getContext('2d'));
