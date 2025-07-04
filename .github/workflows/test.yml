@@ -26,3 +26,6 @@ jobs:
 
       - name: Run tests
         run: npm test
+
+      - name: Validate tarot images
+        run: npm run check:images
