@@ -1,8 +1,176 @@
 # TarotSnap TODO - CONSOLIDATED
 
 **Last Updated:** January 11, 2025  
-**Status:** 🎯 **HERO CARD OPTIMIZATION ACTIVE** - Tasks consolidated from 264 → 40  
+**Status:** 🎯 **TECHNICAL AUDIT REMEDIATION ACTIVE** - Critical config fixes required  
 **Live URL:** https://tarot-snap.vercel.app  
+
+---
+
+## 🚨 **URGENT PRIORITY: TECHNICAL AUDIT REMEDIATION**
+
+### **🔧 PRIORITY #0: CONFIGURATION FIXES** 🆕 **CRITICAL INFRASTRUCTURE**
+**Status:** 🚨 **REQUIRES IMMEDIATE ACTION**  
+**Timeline:** 2-4 hours total  
+**Impact:** Fixes broken linting, build warnings, and configuration conflicts  
+**Audit Grade:** 4.2/5.0 overall, but critical config issues block quality pipeline
+
+**Technical Audit Findings:** Comprehensive review identified excellent codex agent work with minor critical config conflicts
+
+#### **🎯 PRIORITY 1: MUST FIX (THIS WEEK)**
+
+**ESLint Configuration Conflict - HIGH PRIORITY** 🚨 **BLOCKING LINTING**
+- [ ] **File:** Remove `.eslintrc.json` (legacy format causing conflicts)
+- [ ] **Verify:** `eslint.config.mjs` (modern flat config) works standalone
+- [ ] **Test:** Run `npm run lint` to confirm linting pipeline works
+- [ ] **Impact:** Currently blocks code quality checks and CI/CD pipeline
+- [ ] **Root Cause:** Dual ESLint configs - `.eslintrc.json` tries to extend invalid "next/typescript"
+- [ ] **Timeline:** 30 minutes
+
+**Build Warnings Remediation - MEDIUM PRIORITY** ⚠️ **PRODUCTION WARNINGS**
+- [ ] **File:** `app/api/chat/export/route.ts` - Add dynamic route config
+- [ ] **Action:** Add `export const dynamic = 'force-dynamic'` to fix static generation error
+- [ ] **File:** `app/api/chat/history/route.ts` - Same fix if affected
+- [ ] **File:** `app/api/chat/message/route.ts` - Same fix if affected
+- [ ] **File:** `app/api/reading/route.ts` - Same fix if affected
+- [ ] **File:** `app/api/reading/memory/route.ts` - Same fix if affected
+- [ ] **Impact:** Eliminates build warnings and improves deployment reliability
+- [ ] **Timeline:** 45 minutes
+
+**Package License Inconsistency - LOW PRIORITY** 📄 **LEGAL CONSISTENCY**
+- [ ] **File:** `package.json` - Change `"license": "ISC"` to `"license": "MIT"`
+- [ ] **Verify:** LICENSE file already contains MIT license (codex agent added)
+- [ ] **Impact:** Ensures package.json matches actual license terms
+- [ ] **Timeline:** 5 minutes
+
+#### **🎯 PRIORITY 2: SHOULD FIX (NEXT 2 WEEKS)**
+
+**Image Optimization - PERFORMANCE ENHANCEMENT** 📸 **LARGE ASSETS**
+- [ ] **Analysis:** 22 tarot images total 40MB (1.5-2.3MB each)
+- [ ] **Action:** Convert JPEG to WebP format (50-80% size reduction)
+- [ ] **Tool:** Implement automated WebP conversion script
+- [ ] **Fallback:** Add JPEG fallback for older browsers
+- [ ] **Test:** Verify image validation script still passes
+- [ ] **Impact:** Faster loading, better user experience
+- [ ] **Timeline:** 4-6 hours
+
+**Component Refactoring - CODE QUALITY** 🧩 **LARGE COMPONENT**
+- [ ] **File:** `app/reading/single/SingleCardReadingClient.tsx` (802 lines)
+- [ ] **Action:** Break into smaller focused components:
+  - [ ] `ReadingForm.tsx` (question input + card drawing)
+  - [ ] `CardDisplay.tsx` (card reveal + interpretation)
+  - [ ] `ChatInterface.tsx` (AI chat + message handling)
+  - [ ] `ReadingState.tsx` (custom hook for state management)
+- [ ] **Impact:** Better maintainability, easier testing, improved code organization
+- [ ] **Timeline:** 6-8 hours
+
+#### **🎯 PRIORITY 3: COULD FIX (NEXT MONTH)**
+
+**Enhanced Testing Coverage - QUALITY ASSURANCE** 🧪 **TEST EXPANSION**
+- [ ] **E2E Tests:** Implement Playwright tests for critical user journeys
+- [ ] **Accessibility Tests:** Add WCAG 2.1 AA compliance testing
+- [ ] **Visual Regression:** Expand Chromatic visual testing
+- [ ] **Performance Tests:** Add Core Web Vitals monitoring
+- [ ] **API Tests:** Add comprehensive API route testing
+- [ ] **Timeline:** 12-16 hours
+
+**Performance Optimization - ADVANCED OPTIMIZATION** ⚡ **SPEED IMPROVEMENTS**
+- [ ] **Bundle Analysis:** Implement webpack-bundle-analyzer
+- [ ] **Lazy Loading:** Add dynamic imports for heavy components
+- [ ] **Caching Strategy:** Implement service worker for offline functionality
+- [ ] **Core Web Vitals:** Add real-time performance monitoring
+- [ ] **Timeline:** 8-10 hours
+
+#### **✅ TECHNICAL AUDIT SUCCESS CRITERIA**
+- [ ] ESLint pipeline working without errors
+- [ ] Build process completes without warnings
+- [ ] All API routes properly configured for dynamic rendering
+- [ ] Image assets optimized for web delivery
+- [ ] Component architecture follows Single Responsibility Principle
+- [ ] Test coverage exceeds 80% for critical paths
+
+#### **📊 AUDIT RESULTS SUMMARY**
+**Codex Agent Performance:** ⭐⭐⭐⭐⭐ **EXCELLENT** (A+ Grade)
+- ✅ **Security:** Critical XSS vulnerabilities eliminated with automated validation
+- ✅ **Architecture:** Professional Next.js 14 client/server separation
+- ✅ **CI/CD:** GitHub Actions pipeline with automated testing
+- ✅ **Documentation:** Comprehensive SMART goals and technical reviews
+
+**Quality Improvement:** 6.5/10 → 8.2/10 (+26% improvement)
+**Risk Level:** LOW (after config fixes applied)
+
+---
+
+## 🚀 **IMMEDIATE FOLLOW-UP ACTIONS**
+
+### **📋 NEXT SESSION PRIORITIES**
+
+**🎯 START IMMEDIATELY (Next 1 Hour):**
+- [ ] **Task 1:** Remove `.eslintrc.json` file and test linting pipeline
+- [ ] **Task 2:** Add `export const dynamic = 'force-dynamic'` to all API routes
+- [ ] **Task 3:** Update package.json license from "ISC" to "MIT"
+- [ ] **Verification:** Run `npm run lint` and `npm run build` to confirm fixes
+
+**📊 TRACKING & VALIDATION:**
+- [ ] **Create Branch:** `config-fixes-audit-remediation` for these changes
+- [ ] **Test Pipeline:** Verify GitHub Actions CI/CD passes after fixes
+- [ ] **Document Results:** Update audit findings in technical review report
+- [ ] **Mark Complete:** Check off tasks in Priority 1 section above
+
+### **🗓️ SPRINT PLANNING INTEGRATION**
+
+**Week 1 Sprint Items:**
+- [ ] **Assign Owner:** ESLint and build warning fixes (1-2 developers, 2 hours)
+- [ ] **Schedule Review:** Technical debt review meeting after Priority 1 completion
+- [ ] **Stakeholder Update:** Report audit findings and remediation plan to project leads
+
+**Week 2-3 Sprint Items:**
+- [ ] **Team Assignment:** Image optimization to performance/DevOps team (4-6 hours)
+- [ ] **Code Review:** Component refactoring requires senior developer review (6-8 hours)
+- [ ] **Testing:** QA team validation of component splits and image optimizations
+
+**Month 1 Backlog:**
+- [ ] **Epic Creation:** Enhanced testing coverage as dedicated epic (12-16 hours)
+- [ ] **Performance Monitoring:** Set up Core Web Vitals tracking and alerting
+- [ ] **Architecture Review:** Quarterly technical debt assessment
+
+### **📈 SUCCESS METRICS & MONITORING**
+
+**Quality Gates:**
+- [ ] **ESLint Score:** 0 linting errors after config fix
+- [ ] **Build Success:** 0 build warnings in production deployments
+- [ ] **Bundle Size:** <200KB first load JS maintained after optimizations
+- [ ] **Image Performance:** >50% reduction in image asset sizes (WebP conversion)
+
+**Review Checkpoints:**
+- [ ] **Daily:** Monitor GitHub Actions pipeline status
+- [ ] **Weekly:** Review TODO.md completion percentage
+- [ ] **Bi-weekly:** Technical debt score reassessment
+- [ ] **Monthly:** Full audit cycle repeat to validate improvements
+
+### **🔧 DEVELOPMENT WORKFLOW UPDATES**
+
+**Pre-Commit Checklist:**
+- [ ] **Add Hook:** Pre-commit lint checks (prevent config issues)
+- [ ] **Documentation:** Update CONTRIBUTING.md with audit-based standards
+- [ ] **Template:** Add PR template requiring audit compliance verification
+
+**Continuous Improvement:**
+- [ ] **Automation:** Implement automated image optimization in CI/CD
+- [ ] **Monitoring:** Add Lighthouse CI for performance regression detection
+- [ ] **Alerts:** Set up notifications for build warnings or linting failures
+
+### **📋 HANDOFF REQUIREMENTS**
+
+**For Next Developer Session:**
+- [ ] **Context:** Review technical audit report (section 📊)
+- [ ] **Environment:** Ensure local environment has latest changes from main
+- [ ] **Tools:** Verify Node.js 18+, npm latest, and development environment ready
+- [ ] **Communication:** Update team on progress via project channel/standup
+
+**Documentation Updates Needed:**
+- [ ] **README.md:** Add section about code quality standards and audit compliance
+- [ ] **docs/TECHNICAL_REVIEW_REPORT.md:** Update with post-remediation scores
+- [ ] **docs/SMART_GOALS_TASKS.md:** Mark security and architecture goals as completed
 
 ---
 
