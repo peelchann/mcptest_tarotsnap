@@ -87,7 +87,7 @@ export async function generateTarotReading(question: string): Promise<TarotReadi
     const promptTemplate = generateInitialReadingPrompt(question, selectedCard.name, selectedCard.keywords);
 
     const completion = await getOpenAIClient().chat.completions.create({
-      model: "meta-llama/llama-3.1-8b-instruct:free", // Free model on OpenRouter
+      model: "meta-llama/llama-3.3-70b-instruct:free", // Latest stable free model on OpenRouter
       messages: [
         {
           role: "system",
@@ -145,7 +145,7 @@ export async function generateFollowUpResponse(
     });
 
     const completion = await getOpenAIClient().chat.completions.create({
-      model: "meta-llama/llama-3.1-8b-instruct:free",
+      model: "meta-llama/llama-3.3-70b-instruct:free",
       messages: [
         {
           role: "system",
@@ -178,7 +178,7 @@ function extractSection(text: string, sectionName: string): string {
 export async function checkOpenRouterHealth(): Promise<boolean> {
   try {
     const response = await getOpenAIClient().chat.completions.create({
-      model: "meta-llama/llama-3.1-8b-instruct:free",
+      model: "meta-llama/llama-3.3-70b-instruct:free",
       messages: [{ role: "user", content: "Hello" }],
       max_tokens: 10,
     });

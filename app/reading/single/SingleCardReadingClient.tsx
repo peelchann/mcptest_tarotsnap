@@ -715,7 +715,7 @@ export default function SingleCardReading() {
                   
                   <CardContent className="flex-1 flex flex-col p-0">
                     {/* Messages */}
-                    <div className="h-96 max-h-96 overflow-y-auto p-6 space-y-4 scroll-smooth">
+                    <div className="h-96 max-h-96 overflow-y-auto p-6 space-y-4 scroll-smooth mystical-scrollbar">
                       {chatMessages.map((message) => (
                         <motion.div
                           key={message.id}

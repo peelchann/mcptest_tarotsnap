@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { motion, useReducedMotion } from 'framer-motion';
 import { cn } from '@/lib/utils';
 import TarotCard from './TarotCard';
@@ -47,20 +47,47 @@ export const ArtisticDeck: React.FC<ArtisticDeckProps> = ({
   const prefersReducedMotion = useReducedMotion();
   const cardRefs = useRef<(HTMLDivElement | null)[]>([]);
   
+  // Triple-layer failsafe for animation reliability
+  const [isAnimationTriggered, setIsAnimationTriggered] = useState(false);
+  const [isForcedVisible, setIsForcedVisible] = useState(false);
+  
   // Allow only first three cards
   const trio = cards.slice(0, 3);
   
-  // Failsafe: Ensure cards are visible after 2 seconds if animations fail
+  // Layer 1: Immediate animation trigger on mount
   useEffect(() => {
-    const timer = setTimeout(() => {
+    // Trigger animations immediately
+    const immediateTimer = setTimeout(() => {
+      setIsAnimationTriggered(true);
+    }, 50);
+
+    // Layer 2: Failsafe - Force visibility after 1 second if Framer Motion fails
+    const failsafeTimer = setTimeout(() => {
+      setIsForcedVisible(true);
       cardRefs.current.forEach((card) => {
         if (card) {
           card.classList.add('hero-card-visible');
         }
       });
+    }, 1000);
+
+    // Layer 3: Ultimate failsafe - Force with !important after 2 seconds
+    const ultimateTimer = setTimeout(() => {
+      cardRefs.current.forEach((card) => {
+        if (card) {
+          card.style.opacity = '1';
+          card.style.transform = 'translateY(0) scale(1)';
+          card.style.setProperty('opacity', '1', 'important');
+          card.style.setProperty('transform', 'translateY(0) scale(1)', 'important');
+        }
+      });
     }, 2000);
 
-    return () => clearTimeout(timer);
+    return () => {
+      clearTimeout(immediateTimer);
+      clearTimeout(failsafeTimer);
+      clearTimeout(ultimateTimer);
+    };
   }, []);
 
   return (
@@ -96,11 +123,11 @@ export const ArtisticDeck: React.FC<ArtisticDeckProps> = ({
                 zIndex: i === 1 ? 10 : 1, // Middle card on top
               }}
               initial={{ opacity: 0, y: 32, scale: 0.9 }}
-              animate={{ 
+              animate={isAnimationTriggered || isForcedVisible ? { 
               opacity: 1, 
                 y: i === 1 ? 0 : 24, // Tiered positioning: middle high, sides lower
                 scale: 1
-              }}
+              } : { opacity: 0, y: 32, scale: 0.9 }}
               transition={{ 
                 duration: prefersReducedMotion ? 0.2 : 0.6,
                 delay: prefersReducedMotion ? 0 : i * 0.15, // Stagger: 0, 0.15, 0.3
@@ -179,10 +206,10 @@ export const ArtisticDeck: React.FC<ArtisticDeckProps> = ({
                 "hero-card-fallback" // CSS fallback class
               )}
               initial={{ opacity: 0, scale: 0.9 }}
-              animate={{ 
+              animate={isAnimationTriggered || isForcedVisible ? { 
                 opacity: 1, 
                 scale: 1
-              }}
+              } : { opacity: 0, scale: 0.9 }}
               transition={{ 
                 duration: prefersReducedMotion ? 0.2 : 0.5,
                 delay: prefersReducedMotion ? 0 : i * 0.1
