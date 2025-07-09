@@ -310,6 +310,8 @@ TarotSnap is positioned for immediate growth with:
   - Added Tailwind `container mx-auto` with `max-w-7xl` constraint  
   - Implemented responsive gap controls: `2xl:gap-20` for ultra-wide spacing
   - Updated card sizing: `w-[clamp(160px,18vw,220px)]` for better viewport scaling
-  - Added `2xl:px-0` for optimal ultra-wide padding
-- **Testing:** Verified on 2560x1440 and 3840x2160 resolutions
-- **Result:** Hero content now remains visually connected and centered on all monitor sizes 
+  - Added `2xl:px-0` for optimal ultra-wide padding  - **Testing:** Verified on 2560x1440 and 3840x2160 resolutions
+  - **Result:** Hero content now remains visually connected and centered on all monitor sizes
+
+### July 9, 2025 - Animation Optimization Started
+- **TASK-PERF-002 In Progress** - Reduced star count and disabled float animations when users prefer reduced motion.
