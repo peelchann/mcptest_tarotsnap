@@ -1,12 +1,12 @@
 -- Chat Messages Table for TarotSnap Chat-Centric Memory System
 -- Migration: 20250109_chat_messages_fixed.sql
--- Fixed version that doesn't depend on reading_sessions table
+-- FIXED VERSION: Handles existing policies gracefully
 
 -- Create chat_sessions table (optional, for grouping conversations)
 CREATE TABLE IF NOT EXISTS public.chat_sessions (
     id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
     user_id UUID REFERENCES auth.users(id) ON DELETE CASCADE NOT NULL,
-    reading_id UUID, -- Removed foreign key constraint since reading_sessions doesn't exist yet
+    reading_id UUID, -- Simplified to avoid foreign key issues
     title TEXT,
     created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW() NOT NULL,
     updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW() NOT NULL
@@ -20,7 +20,7 @@ CREATE TABLE IF NOT EXISTS public.chat_messages (
     role TEXT CHECK (role IN ('user', 'ai')) NOT NULL,
     content TEXT NOT NULL,
     created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW() NOT NULL,
-    reading_id UUID, -- Removed foreign key constraint since reading_sessions doesn't exist yet
+    reading_id UUID, -- Simplified to avoid foreign key issues
     metadata JSONB DEFAULT '{}' -- For topics, emotion, insights, etc.
 );
 
@@ -35,6 +35,16 @@ CREATE INDEX IF NOT EXISTS idx_chat_messages_reading_id ON public.chat_messages(
 -- Enable Row Level Security (RLS)
 ALTER TABLE public.chat_sessions ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.chat_messages ENABLE ROW LEVEL SECURITY;
+
+-- Drop existing policies if they exist (to avoid conflicts)
+DROP POLICY IF EXISTS "Users can view their own chat sessions" ON public.chat_sessions;
+DROP POLICY IF EXISTS "Users can insert their own chat sessions" ON public.chat_sessions;
+DROP POLICY IF EXISTS "Users can update their own chat sessions" ON public.chat_sessions;
+DROP POLICY IF EXISTS "Users can delete their own chat sessions" ON public.chat_sessions;
+DROP POLICY IF EXISTS "Users can view their own chat messages" ON public.chat_messages;
+DROP POLICY IF EXISTS "Users can insert their own chat messages" ON public.chat_messages;
+DROP POLICY IF EXISTS "Users can update their own chat messages" ON public.chat_messages;
+DROP POLICY IF EXISTS "Users can delete their own chat messages" ON public.chat_messages;
 
 -- RLS Policies for chat_sessions
 CREATE POLICY "Users can view their own chat sessions" ON public.chat_sessions
@@ -61,6 +71,10 @@ CREATE POLICY "Users can update their own chat messages" ON public.chat_messages
 
 CREATE POLICY "Users can delete their own chat messages" ON public.chat_messages
     FOR DELETE USING (auth.uid() = user_id);
+
+-- Drop existing function and trigger if they exist
+DROP TRIGGER IF EXISTS update_chat_sessions_updated_at ON public.chat_sessions;
+DROP FUNCTION IF EXISTS update_updated_at_column();
 
 -- Create updated_at trigger for chat_sessions
 CREATE OR REPLACE FUNCTION update_updated_at_column()

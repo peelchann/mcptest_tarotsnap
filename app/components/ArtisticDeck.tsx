@@ -47,23 +47,18 @@ export const ArtisticDeck: React.FC<ArtisticDeckProps> = ({
   const prefersReducedMotion = useReducedMotion();
   const cardRefs = useRef<(HTMLDivElement | null)[]>([]);
   
-  // Triple-layer failsafe for animation reliability
-  const [isAnimationTriggered, setIsAnimationTriggered] = useState(false);
-  const [isForcedVisible, setIsForcedVisible] = useState(false);
+  // SSR-safe mount detection
+  const [isMounted, setIsMounted] = useState(false);
   
   // Allow only first three cards
   const trio = cards.slice(0, 3);
   
-  // Layer 1: Immediate animation trigger on mount
+  // Simple mount detection for SSR compatibility
   useEffect(() => {
-    // Trigger animations immediately
-    const immediateTimer = setTimeout(() => {
-      setIsAnimationTriggered(true);
-    }, 50);
-
-    // Layer 2: Failsafe - Force visibility after 1 second if Framer Motion fails
-    const failsafeTimer = setTimeout(() => {
-      setIsForcedVisible(true);
+    setIsMounted(true);
+    
+    // CSS fallback for maximum reliability
+    const timer = setTimeout(() => {
       cardRefs.current.forEach((card) => {
         if (card) {
           card.classList.add('hero-card-visible');
@@ -71,23 +66,7 @@ export const ArtisticDeck: React.FC<ArtisticDeckProps> = ({
       });
     }, 1000);
 
-    // Layer 3: Ultimate failsafe - Force with !important after 2 seconds
-    const ultimateTimer = setTimeout(() => {
-      cardRefs.current.forEach((card) => {
-        if (card) {
-          card.style.opacity = '1';
-          card.style.transform = 'translateY(0) scale(1)';
-          card.style.setProperty('opacity', '1', 'important');
-          card.style.setProperty('transform', 'translateY(0) scale(1)', 'important');
-        }
-      });
-    }, 2000);
-
-    return () => {
-      clearTimeout(immediateTimer);
-      clearTimeout(failsafeTimer);
-      clearTimeout(ultimateTimer);
-    };
+    return () => clearTimeout(timer);
   }, []);
 
   return (
@@ -100,17 +79,17 @@ export const ArtisticDeck: React.FC<ArtisticDeckProps> = ({
     >
       {/* Desktop Layout - Clean fixed layout with floating animations */}
       <div className="hidden md:flex gap-8">
-      {trio.map((card, i) => {
+        {trio.map((card, i) => {
           // Create unique floating animations for each card
           const floatVariant = i === 1 
             ? floatVariants // Main card gets primary float
             : createStaggeredFloat(i * 0.8); // Side cards get staggered float
 
-        return (
-          <motion.div
-            key={card.id}
+          return (
+            <motion.div
+              key={card.id}
               ref={(el) => { cardRefs.current[i] = el; }}
-            className={cn(
+              className={cn(
                 "relative w-44 aspect-[3/5] rounded-lg shrink-0",
                 "focus:outline-none focus:ring-4 focus:ring-amber-400/40",
                 "hero-card-fallback", // CSS fallback class
@@ -123,8 +102,8 @@ export const ArtisticDeck: React.FC<ArtisticDeckProps> = ({
                 zIndex: i === 1 ? 10 : 1, // Middle card on top
               }}
               initial={{ opacity: 0, y: 32, scale: 0.9 }}
-              animate={isAnimationTriggered || isForcedVisible ? { 
-              opacity: 1, 
+              animate={isMounted ? { 
+                opacity: 1, 
                 y: i === 1 ? 0 : 24, // Tiered positioning: middle high, sides lower
                 scale: 1
               } : { opacity: 0, y: 32, scale: 0.9 }}
@@ -132,9 +111,9 @@ export const ArtisticDeck: React.FC<ArtisticDeckProps> = ({
                 duration: prefersReducedMotion ? 0.2 : 0.6,
                 delay: prefersReducedMotion ? 0 : i * 0.15, // Stagger: 0, 0.15, 0.3
                 ease: [0.25, 0.46, 0.45, 0.94]
-            }}
-            whileHover={{
-              scale: 1.05,
+              }}
+              whileHover={{
+                scale: 1.05,
                 rotateX: 2,
                 rotateY: -4,
                 y: i === 1 ? -8 : 16, // Lift based on original position + slight lift
@@ -142,7 +121,7 @@ export const ArtisticDeck: React.FC<ArtisticDeckProps> = ({
                   duration: 0.2,
                   ease: "easeOut"
                 }
-            }}
+              }}
               whileTap={{
                 scale: 0.98,
                 transition: { duration: 0.15 }
@@ -157,21 +136,21 @@ export const ArtisticDeck: React.FC<ArtisticDeckProps> = ({
                 variants={prefersReducedMotion ? undefined : floatVariant}
                 initial={prefersReducedMotion ? undefined : "initial"}
                 animate={prefersReducedMotion ? undefined : "animate"}
-          >
+              >
                 {/* Card container with proper aspect ratio */}
                 <div className="w-full h-full relative">
-            <TarotCard
-              card={card}
-              isReversed={card.isReversed}
-              isFlipped={true}
-              className="w-full h-full"
-              onClick={() => {
-                console.log(`Selected card: ${card.name}`);
-              }}
-            />
+                  <TarotCard
+                    card={card}
+                    isReversed={card.isReversed}
+                    isFlipped={true}
+                    className="w-full h-full"
+                    onClick={() => {
+                      console.log(`Selected card: ${card.name}`);
+                    }}
+                  />
 
                   {/* Desktop caption */}
-            <figcaption
+                  <figcaption
                     className={cn(
                       "absolute -bottom-12 left-1/2 -translate-x-1/2",
                       "text-center w-full max-w-[176px]", // Match card width
@@ -206,7 +185,7 @@ export const ArtisticDeck: React.FC<ArtisticDeckProps> = ({
                 "hero-card-fallback" // CSS fallback class
               )}
               initial={{ opacity: 0, scale: 0.9 }}
-              animate={isAnimationTriggered || isForcedVisible ? { 
+              animate={isMounted ? { 
                 opacity: 1, 
                 scale: 1
               } : { opacity: 0, scale: 0.9 }}
@@ -237,19 +216,19 @@ export const ArtisticDeck: React.FC<ArtisticDeckProps> = ({
                     "text-center w-full max-w-[160px]",
                     "bg-slate-900/95 text-slate-100 backdrop-blur-sm",
                     "rounded-lg px-2 py-1 shadow-lg"
-              )}
-            >
+                  )}
+                >
                   <p className="text-amber-300 font-semibold text-xs leading-tight">
-                {card.name}
-              </p>
+                    {card.name}
+                  </p>
                   <p className="text-xs text-slate-400 mt-0.5 leading-relaxed">
-                {card.keywords.slice(0, 2).join(' • ')}
-              </p>
-            </figcaption>
+                    {card.keywords.slice(0, 2).join(' • ')}
+                  </p>
+                </figcaption>
               </div>
-          </motion.div>
-        );
-      })}
+            </motion.div>
+          );
+        })}
       </div>
     </div>
   );
