@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useRef, useEffect } from "react";
+import { useReducedMotion } from "framer-motion";
 import Image from "next/image";
 import type { TarotCard } from "../data/cards";
 
@@ -20,10 +21,11 @@ export const cardBackStyle = {
 // Reusable hook for generating stars
 export function useStarEffect() {
   const [stars, setStars] = useState<JSX.Element[]>([]);
+  const prefersReducedMotion = useReducedMotion();
   
   useEffect(() => {
     const starElements = [];
-    const numStars = Math.floor(Math.random() * 8) + 5;
+    const numStars = prefersReducedMotion ? 0 : Math.floor(Math.random() * 3) + 2;
     
     for (let i = 0; i < numStars; i++) {
       const size = Math.random() * 3 + 1;

@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { motion } from 'framer-motion';
+import { motion, useReducedMotion } from 'framer-motion';
 import TarotCard from './TarotCard';
 import { cards } from '../data/cards';
 
@@ -17,6 +17,7 @@ export default function MysticalCardDisplay({
   const [selectedCardId, setSelectedCardId] = useState<string | null>(null);
   const [mounted, setMounted] = useState(false);
   const [stars, setStars] = useState<JSX.Element[]>([]);
+  const prefersReducedMotion = useReducedMotion();
   
   // Get a random selection of cards
   const displayCards = useState(() => {
@@ -36,7 +37,7 @@ export default function MysticalCardDisplay({
     // Generate stars client-side only
     const generateStars = () => {
       const starsArray = [];
-      const numStars = 20;
+      const numStars = prefersReducedMotion ? 0 : 3;
       
       for (let i = 0; i < numStars; i++) {
         const size = Math.random() * 3 + 1;
@@ -163,7 +164,7 @@ export default function MysticalCardDisplay({
               <div
                 className="transform-gpu will-change-transform"
                 style={{
-                  animation: `float ${floatDuration}s ease-in-out infinite alternate`,
+                  animation: prefersReducedMotion ? 'none' : `float ${floatDuration}s ease-in-out infinite alternate`,
                   transform: `translateY(${floatY}px)`,
                 }}
               >
