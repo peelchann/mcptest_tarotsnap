@@ -184,24 +184,26 @@
 ## 🎨 **STRATEGIC OPPORTUNITIES (Next 1-2 Weeks)**
 
 ### **🎯 PRIORITY #4: UI/UX VISUAL REDESIGN** 🔥 **HIGH CONVERSION IMPACT**
-**Status:** [ ] **ANALYSIS COMPLETE - READY FOR IMPLEMENTATION**  
+**Status:** 🔄 **IN PROGRESS - AI ASSISTANT IMPLEMENTING**  
 **Timeline:** 1-2 weeks  
 **Impact:** 🚀 **15% bounce rate decrease, 20% conversion increase target**
 
-**Strategic Analysis:** Current design is "too pale and wordy" - lacks immediate visual impact despite excellent functionality
+**Strategic Analysis:** Current design is "too pale and wordy" - lacks immediate visual impact despite excellent functionality. User feedback: Cards stack on text in different ratios; need fancy mystical animations aligned with tarot feeling (e.g., floating cards, subtle glows, reveal effects). Ensure seamless loading with Suspense and preloading to avoid visible jumps.
 
 **Phase 1: AI Component Generation (1-2 days)**
 - [ ] **Create Branch:** `ui-revamp` to preserve working backend
 - [ ] **AI Design Tool:** Use v0.dev for navy+gold mystical components
 - [ ] **Key Prompt:** "Dark navy gradient tarot homepage with gold accents, three glowing tarot cards, mystical symbols, single prominent CTA button, minimal text"
 - [ ] **Critical Verification:** Smoke test to ensure readings still work end-to-end
+- [ ] Fix card stacking on text in different ratios (use responsive flex/grid with z-index and padding)
 
 **Phase 2: Design Principles Application (3-4 days)**
 - [ ] **Color System:** Navy-to-dark-navy gradient + metallic gold accents
 - [ ] **Typography:** Mystical serif headlines (Cinzel) + clean sans-serif body
 - [ ] **Content Reduction:** 50% text reduction, benefit-focused copy
-- [ ] **Micro-Animations:** Card hover effects, CTA shimmer, 150ms interactions
+- [ ] **Micro-Animations:** Card hover effects, CTA shimmer, 150ms interactions - Add fancy mystical animations (floating, glows, reveals)
 - [ ] **Accessibility:** Maintain 4.5:1 contrast ratio throughout
+- [ ] Implement seamless loading: Use React Suspense for components, preloading for assets
 
 **Phase 3: A/B Testing & Optimization (1 week)**
 - [ ] **Deploy:** Vercel Preview URL for comparison

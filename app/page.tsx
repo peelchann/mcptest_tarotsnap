@@ -11,7 +11,7 @@ import { ArtisticDeck } from "@/app/components/ArtisticDeck"
 
 function TarotSnapHomepage() {
   // Random tarot cards state with Context7 optimized initialization
-  const [randomCards, setRandomCards] = useState<TarotCardType[]>(() => getRandomCards(3))
+  const [randomCards, setRandomCards] = useState<TarotCardType[]>([])
   const [isLoaded, setIsLoaded] = useState(false)
 
   // Client-side randomization to prevent SSR hydration mismatch (Context7 best practice)
@@ -27,7 +27,7 @@ function TarotSnapHomepage() {
 
       {/* Main Content Container */}
       <div className="relative z-10 min-h-screen">
-        <div className="container mx-auto px-6 lg:px-10 2xl:px-0 py-6 lg:py-12">
+        <div className="container mx-auto px-4 py-8 md:py-16 max-w-7xl flex flex-col items-center">
           <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-[40%_auto] gap-8 lg:gap-12 xl:gap-16 2xl:gap-20 min-h-[calc(100vh-120px)] items-center max-w-7xl mx-auto">
             
             {/* Left Side - Content */}
@@ -54,12 +54,12 @@ function TarotSnapHomepage() {
               {/* CTA Button */}
               <div className="pt-4 lg:pt-8">
                 <Link href="/reading/single">
-                  <button className="group relative px-8 lg:px-12 py-4 lg:py-6 bg-gradient-to-r from-amber-600 via-yellow-500 to-orange-500 rounded-full text-slate-900 font-bold text-[clamp(1rem,2.5vw,1.25rem)] shadow-2xl shadow-amber-500/25 hover:scale-105 transition-transform">
-                    <span className="relative z-10 flex items-center gap-3 justify-center">
-                      <Sparkles className="w-6 h-6 md:w-7 md:h-7" />
-                      <span>Start Your Journey</span>
-                    </span>
-                  </button>
+                  <motion.button 
+                    whileHover={{ scale: 1.05, boxShadow: '0 0 15px rgba(255,215,0,0.4)' }}
+                    className="mt-8 px-8 py-4 bg-gradient-to-r from-amber-500 to-amber-600 text-indigo-900 font-bold rounded-full shadow-lg hover:from-amber-400 hover:to-amber-500 transition-all duration-300 z-20"
+                  >
+                    ✨ Start Your Journey
+                  </motion.button>
                 </Link>
               </div>
             </div>
