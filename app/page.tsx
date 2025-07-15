@@ -8,8 +8,14 @@ import Link from "next/link"
 import { MysticalHeader } from "@/app/components/MysticalHeader"
 import { getRandomCards, type TarotCard as TarotCardType } from "@/app/data/cards"
 import { ArtisticDeck } from "@/app/components/ArtisticDeck"
+import NewHomepage from "@/app/components/NewHomepage"
 
 function TarotSnapHomepage() {
+  // Temporarily use the new design
+  return <NewHomepage />
+}
+
+function OriginalTarotSnapHomepage() {
   // Random tarot cards state with Context7 optimized initialization
   const [randomCards, setRandomCards] = useState<TarotCardType[]>([])
   const [isLoaded, setIsLoaded] = useState(false)
@@ -86,3 +92,6 @@ function TarotSnapHomepage() {
 }
 
 export default TarotSnapHomepage
+
+// Original component preserved for reference
+// export default OriginalTarotSnapHomepage
