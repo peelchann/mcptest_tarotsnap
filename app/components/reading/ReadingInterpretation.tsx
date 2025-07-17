@@ -27,7 +27,7 @@ export function ReadingInterpretation({ reading, question }: ReadingInterpretati
           <Sparkles className="w-5 h-5" />
           Your Question
         </h3>
-        <p className="text-gray-700 text-lg italic">"{question}"</p>
+        <p className="text-gray-700 text-lg italic">&quot;{question}&quot;</p>
       </motion.div>
 
       {/* Main Interpretation */}

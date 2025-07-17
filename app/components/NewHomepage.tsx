@@ -367,7 +367,7 @@ function NewHomepage() {
             transition={{ duration: 0.8 }}
             className="text-amber-400/80 text-lg font-light tracking-wider"
           >
-            ✨ "The cards reveal what the soul already knows" ✨
+            ✨ &quot;The cards reveal what the soul already knows&quot; ✨
           </motion.div>
         </div>
       </div>
