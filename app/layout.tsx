@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import "./globals.css";
 import StarsBackground, { StarsFallback } from "./components/StarsBackground";
 import { AuthProvider } from "./providers/AuthProvider";
+import { MysticalHeader } from "@/app/components/MysticalHeader";
 import { GoogleAnalytics } from '@next/third-parties/google';
 import StructuredData from "./components/StructuredData";
 
@@ -115,7 +116,8 @@ export default function RootLayout({
         
         {/* Content */}
         <AuthProvider>
-          <main className="relative z-10 min-h-screen">
+          <MysticalHeader />
+          <main className="relative z-10 min-h-screen pt-20">
             {children}
           </main>
         </AuthProvider>
