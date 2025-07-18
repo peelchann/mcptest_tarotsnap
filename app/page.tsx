@@ -83,7 +83,7 @@ function OriginalTarotSnapHomepage() {
         {/* Bottom Mystical Quote */}
         <div className="absolute bottom-4 md:bottom-6 left-1/2 transform -translate-x-1/2 text-center text-amber-400/60 px-4">
           <div className="text-sm md:text-base font-light tracking-wider">
-            ✨ "The cards reveal what the soul already knows" ✨
+            ✨ &quot;The cards reveal what the soul already knows&quot; ✨
           </div>
         </div>
       </div>

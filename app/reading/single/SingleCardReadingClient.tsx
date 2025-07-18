@@ -608,7 +608,7 @@ export default function SingleCardReading() {
                   <Card className="border-white/20 bg-white/10 backdrop-blur-md">
                     <CardContent className="p-6">
                       <p className="text-sm font-medium mb-2 text-white">Your Question:</p>
-                      <p className="text-white/80 italic">"{question}"</p>
+                        <p className="text-white/80 italic">&quot;{question}&quot;</p>
                     </CardContent>
                   </Card>
                 )}
