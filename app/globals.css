@@ -746,3 +746,11 @@ body {
   background: rgba(200, 173, 127, 0.8);
   box-shadow: 0 0 8px rgba(200, 173, 127, 0.4);
 }
+
+/* Respect user motion preferences */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation: none !important;
+    transition: none !important;
+  }
+}
