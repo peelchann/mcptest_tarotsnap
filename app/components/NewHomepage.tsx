@@ -131,30 +131,34 @@ const HeroSection = ({ heroCard }: { heroCard: TarotCardType | null }) => {
           </h2>
         </motion.div>
 
-        {/* Central spinning tarot card */}
+        {/* Central 3D spinning tarot card */}
         <motion.div
           initial={{ opacity: 0, scale: 0.8 }}
           animate={isVisible ? { opacity: 1, scale: 1 } : { opacity: 0, scale: 0.8 }}
           transition={{ duration: 1, delay: 0.3, ease: "easeOut" }}
-          className="relative"
+          className="relative my-16"
         >
-          <div className="w-64 h-96 mx-auto relative">
+          <div className="w-64 h-96 mx-auto relative mb-8">
             {heroCard ? (
               <motion.div
                 className="w-full h-full relative"
                 animate={{ rotateY: 360 }}
                 transition={{ duration: 8, repeat: Infinity, ease: "linear" }}
-                whileHover={{ scale: 1.05 }}
+                whileHover={{ scale: 1.05, rotateX: 5 }}
                 style={{ transformStyle: "preserve-3d" }}
               >
-                <TarotCard
-                  card={heroCard}
-                  isReversed={false}
-                  isFlipped={true}
-                  className="w-full h-full shadow-2xl"
-                />
+                {/* Card without text spinning */}
+                <div className="w-full h-full relative">
+                  <TarotCard
+                    card={heroCard}
+                    isReversed={false}
+                    isFlipped={true}
+                    className="w-full h-full shadow-2xl"
+                    hideOverlayText={true}
+                  />
+                </div>
                 
-                {/* Mystical glow effect around the card */}
+                {/* Enhanced mystical glow effects */}
                 <div className="absolute inset-0 bg-amber-400/20 rounded-xl blur-xl animate-pulse pointer-events-none" />
                 <div className="absolute inset-0 bg-gradient-to-r from-purple-500/10 to-amber-500/10 rounded-xl blur-2xl animate-pulse pointer-events-none" />
               </motion.div>
@@ -175,17 +179,56 @@ const HeroSection = ({ heroCard }: { heroCard: TarotCardType | null }) => {
               </motion.div>
             )}
           </div>
+
+          {/* Card info - separate from spinning card, always readable */}
+          {heroCard && (
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={isVisible ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
+              transition={{ duration: 0.8, delay: 0.8, ease: "easeOut" }}
+              className="text-center space-y-2"
+            >
+              <h3 className="text-2xl font-bold text-amber-300 font-serif">
+                {heroCard.name}
+              </h3>
+              <p className="text-purple-300 text-sm tracking-wide">
+                {heroCard.keywords.slice(0, 3).join(' • ')}
+              </p>
+            </motion.div>
+          )}
         </motion.div>
 
-        {/* Subtitle */}
+        {/* Subtitle - positioned much lower to prevent stacking */}
         <motion.p
           initial={{ opacity: 0 }}
           animate={isVisible ? { opacity: 1 } : { opacity: 0 }}
           transition={{ duration: 0.8, delay: 0.6, ease: "easeOut" }}
-          className="text-xl text-purple-300 font-light max-w-2xl mx-auto"
+          className="text-xl text-purple-300 font-light max-w-2xl mx-auto mt-16 mb-8"
         >
           Ancient wisdom meets artificial intelligence. Instant insights, timeless guidance.
         </motion.p>
+
+        {/* Primary CTA Button */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={isVisible ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
+          transition={{ duration: 0.8, delay: 0.8, ease: "easeOut" }}
+          className="pt-8"
+        >
+          <Link href="/reading/single">
+            <motion.button 
+              whileHover={{ 
+                scale: 1.05, 
+                boxShadow: '0 0 30px rgba(255,215,0,0.5)',
+                y: -2
+              }}
+              whileTap={{ scale: 0.98 }}
+              className="px-12 py-4 bg-gradient-to-r from-amber-500 to-amber-600 text-purple-900 font-bold text-xl rounded-full shadow-2xl hover:from-amber-400 hover:to-amber-500 transition-all duration-300 border-2 border-amber-400/50"
+            >
+              ✨ Begin Your Reading
+            </motion.button>
+          </Link>
+        </motion.div>
       </div>
     </section>
   )
@@ -290,6 +333,7 @@ const FeaturedCardsSection = ({ cards }: { cards: TarotCardType[] }) => {
                   isReversed={card.isReversed}
                   isFlipped={true}
                   className="w-full h-full"
+                  hideOverlayText={true}
                 />
                 
                 {/* Card info overlay */}

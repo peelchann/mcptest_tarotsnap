@@ -53,6 +53,26 @@
 
 **Files Modified:** `app/globals.css` with `.mystical-scrollbar` classes
 
+### ✅ **HERO CARD SPINNING TEXT FIXED** 🎨 **UX CRITICAL**
+**Status:** 🎉 **RESOLVED** - 3D card animation now perfect
+**Timeline:** 20 minutes implementation  
+
+**Issue Resolved:**
+- **Problem:** Card text (name + keywords) spinning with 3D card animation, making it unreadable
+- **Root Cause:** TarotCard component has built-in text overlays that rotate with the card
+- **Solution:** Added `hideOverlayText` prop to conditionally hide built-in text overlays
+- **Result:** Clean 3D spinning card with separate readable text below ✅
+
+**Technical Implementation:**
+- ✅ Added `hideOverlayText?: boolean` prop to TarotCardProps interface
+- ✅ Conditional rendering for card title overlay and meaning display
+- ✅ Applied to both hero section and featured cards section
+- ✅ Card spins beautifully while text stays perfectly readable
+
+**Files Modified:**
+- `app/components/TarotCard.tsx` - Added prop and conditional text hiding
+- `app/components/NewHomepage.tsx` - Applied hideOverlayText={true} to hero and featured cards
+
 ### **🚀 DEPLOYMENT IMPACT:**
 - **API Functionality:** Restored 100% - users can generate readings ✅
 - **Visual Experience:** Hero cards always visible ✅  

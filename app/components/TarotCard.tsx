@@ -11,6 +11,7 @@ interface TarotCardProps {
   onClick?: () => void;
   isFlipped?: boolean;
   className?: string;
+  hideOverlayText?: boolean;
 }
 
 export default function TarotCard({ 
@@ -18,7 +19,8 @@ export default function TarotCard({
   isReversed = false, 
   onClick, 
   isFlipped = false,
-  className = '' 
+  className = '',
+  hideOverlayText = false
 }: TarotCardProps) {
   const [hovered, setHovered] = useState(false);
   const [mounted, setMounted] = useState(false);
@@ -238,7 +240,7 @@ export default function TarotCard({
               />
               
               {/* Enhanced card title overlay */}
-              {card.imagePath && !imageError && (
+              {card.imagePath && !imageError && !hideOverlayText && (
                 <motion.div 
                   className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-agatha-dark/95 to-transparent p-3"
                   initial={{ y: 20, opacity: 0 }}
@@ -354,7 +356,7 @@ export default function TarotCard({
       
       {/* Enhanced card meaning display */}
       <AnimatePresence>
-        {isFlipped && (
+        {isFlipped && !hideOverlayText && (
           <motion.div 
             className="mt-4 text-sm text-center"
             initial={{ opacity: 0, y: 20 }}
