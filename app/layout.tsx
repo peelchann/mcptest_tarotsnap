@@ -58,7 +58,7 @@ export const metadata: Metadata = {
     },
   },
   verification: {
-    google: 'your-google-verification-code', // Add when setting up Search Console
+    google: 'JDomEglmiJxAajLXTE4frGcLjRoIGFDsVIW2hrznc8g', // Google Search Console verification
   },
   alternates: {
     canonical: process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : 'http://localhost:3000',
