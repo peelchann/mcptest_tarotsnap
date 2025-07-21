@@ -1,10 +1,8 @@
 import { MetadataRoute } from 'next'
 
 export default function sitemap(): MetadataRoute.Sitemap {
-  const baseUrl = process.env.VERCEL_URL 
-    ? `https://${process.env.VERCEL_URL}` 
-    : process.env.NODE_ENV === 'production'
-    ? 'https://tarotsnap.com'  // Replace with actual domain when purchased
+  const baseUrl = process.env.NODE_ENV === 'production'
+    ? 'https://tarot-snap.vercel.app'  // Correct Vercel URL
     : 'http://localhost:3000'
 
   // Static routes
