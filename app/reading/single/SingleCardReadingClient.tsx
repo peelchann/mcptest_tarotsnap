@@ -483,7 +483,7 @@ export default function SingleCardReading() {
                       placeholder="Ask your question to the cards... (e.g., 'What should I focus on in my career?')"
                       value={question}
                       onChange={(e) => setQuestion(e.target.value)}
-                      className="min-h-[120px] bg-white/90 border-white/30 text-gray-800 placeholder:text-gray-500 resize-none"
+                      className="min-h-[120px] bg-slate-800/90 border-white/30 text-slate-200 placeholder:text-slate-400 resize-none"
                       maxLength={500}
                       onKeyDown={(e) => {
                         if (e.key === 'Enter' && !e.shiftKey && question.trim()) {
@@ -732,7 +732,7 @@ export default function SingleCardReading() {
                             <div className={`rounded-lg p-3 ${
                               message.role === 'user' 
                                 ? 'bg-blue-600 text-white' 
-                                : 'bg-white/90 text-gray-800'
+                                : 'bg-slate-800/90 text-slate-200'
                             }`}>
                               <pre className="whitespace-pre-wrap font-sans text-sm">{message.content}</pre>
                             </div>
@@ -749,7 +749,7 @@ export default function SingleCardReading() {
                           <div className="w-8 h-8 rounded-full bg-gold-500 flex items-center justify-center">
                             <Bot className="w-4 h-4 text-black" />
                           </div>
-                          <div className="bg-white/90 rounded-lg p-3">
+                          <div className="bg-slate-800/90 rounded-lg p-3">
                             <div className="flex gap-1">
                               <div className="w-2 h-2 bg-gray-600 rounded-full animate-pulse"></div>
                               <div className="w-2 h-2 bg-gray-600 rounded-full animate-pulse" style={{ animationDelay: '0.2s' }}></div>
@@ -771,7 +771,7 @@ export default function SingleCardReading() {
                           placeholder="Ask about your reading..."
                           value={newMessage}
                           onChange={(e) => setNewMessage(e.target.value)}
-                          className="min-h-[60px] resize-none bg-white/90 border-white/30 text-gray-800 placeholder:text-gray-500"
+                          className="min-h-[60px] resize-none bg-slate-800/90 border-white/30 text-slate-200 placeholder:text-slate-400"
                           onKeyDown={(e) => {
                             if (e.key === 'Enter' && !e.shiftKey) {
                               e.preventDefault();

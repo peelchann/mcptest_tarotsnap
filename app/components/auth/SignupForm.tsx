@@ -160,7 +160,7 @@ export function SignupForm({ onSuccess, onSwitchToLogin }: SignupFormProps) {
                   placeholder="Your mystical name"
                   value={formData.fullName}
                   onChange={(e) => handleInputChange('fullName', e.target.value)}
-                  className="pl-10 bg-white/90 border-white/30 text-gray-800 placeholder:text-gray-500"
+                  className="pl-10 bg-slate-800/90 border-white/30 text-slate-200 placeholder:text-slate-400"
                   required
                 />
               </div>
@@ -178,7 +178,7 @@ export function SignupForm({ onSuccess, onSwitchToLogin }: SignupFormProps) {
                   placeholder="your.email@example.com"
                   value={formData.email}
                   onChange={(e) => handleInputChange('email', e.target.value)}
-                  className="pl-10 bg-white/90 border-white/30 text-gray-800 placeholder:text-gray-500"
+                  className="pl-10 bg-slate-800/90 border-white/30 text-slate-200 placeholder:text-slate-400"
                   required
                 />
               </div>
@@ -196,7 +196,7 @@ export function SignupForm({ onSuccess, onSwitchToLogin }: SignupFormProps) {
                   placeholder="Create a mystical password (min 6 characters)"
                   value={formData.password}
                   onChange={(e) => handleInputChange('password', e.target.value)}
-                  className="pl-10 pr-10 bg-white/90 border-white/30 text-gray-800 placeholder:text-gray-500"
+                  className="pl-10 pr-10 bg-slate-800/90 border-white/30 text-slate-200 placeholder:text-slate-400"
                   required
                 />
                 <button
@@ -221,7 +221,7 @@ export function SignupForm({ onSuccess, onSwitchToLogin }: SignupFormProps) {
                   placeholder="Confirm your mystical password"
                   value={formData.confirmPassword}
                   onChange={(e) => handleInputChange('confirmPassword', e.target.value)}
-                  className="pl-10 pr-10 bg-white/90 border-white/30 text-gray-800 placeholder:text-gray-500"
+                  className="pl-10 pr-10 bg-slate-800/90 border-white/30 text-slate-200 placeholder:text-slate-400"
                   required
                 />
                 <button

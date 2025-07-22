@@ -205,7 +205,7 @@ const HeroSection = ({ heroCard }: { heroCard: TarotCardType | null }) => {
           transition={{ duration: 0.8, delay: 0.6, ease: "easeOut" }}
           className="text-xl text-purple-300 font-light max-w-2xl mx-auto mt-16 mb-8"
         >
-          Ancient wisdom meets artificial intelligence. Instant insights, timeless guidance.
+          Your AI mystic that <span className="text-amber-300 font-semibold">remembers your journey</span>. Get personalized readings that evolve with you.
         </motion.p>
 
         {/* Primary CTA Button */}
@@ -292,6 +292,68 @@ const ReadingTypesSection = ({ cards }: { cards: TarotCardType[] }) => {
                 
                 {/* Hover glow effect */}
                 <div className="absolute inset-0 bg-amber-400/5 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+              </div>
+            </motion.div>
+          ))}
+        </div>
+      </div>
+    </section>
+  )
+}
+
+// Memory Features section
+const MemoryFeaturesSection = () => {
+  const memoryFeatures = [
+    {
+      title: "Remembers Your Journey",
+      description: "Your AI mystic recalls past readings and grows more insightful with each conversation",
+      icon: "🧠",
+    },
+    {
+      title: "Personalized Insights", 
+      description: "Readings become more accurate as your spiritual advisor learns your patterns",
+      icon: "💫",
+    },
+    {
+      title: "Cross-Device Memory",
+      description: "Access your complete reading history from any device, anywhere",
+      icon: "☁️",
+    },
+  ]
+
+  return (
+    <section className="relative py-20 px-4 bg-gradient-to-r from-purple-900/20 to-indigo-900/20">
+      <div className="max-w-6xl mx-auto">
+        <motion.div
+          initial={{ opacity: 0, y: 30 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8 }}
+          className="text-center mb-16"
+        >
+          <h3 className="text-4xl font-bold text-amber-400 mb-4">A Reader That Remembers</h3>
+          <p className="text-xl text-purple-300">Unlike other tarot apps, TarotSnap builds a relationship with you</p>
+        </motion.div>
+
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+          {memoryFeatures.map((feature, index) => (
+            <motion.div
+              key={index}
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, margin: "-100px" }}
+              transition={{ duration: 0.6, delay: index * 0.15, ease: "easeOut" }}
+              whileHover={{ scale: 1.05, y: -5 }}
+              className="relative group cursor-pointer"
+            >
+              <div className="bg-gradient-to-br from-amber-900/30 to-yellow-900/30 backdrop-blur-sm border border-amber-400/40 rounded-xl p-6 h-full transition-all duration-300 group-hover:border-amber-400/60 group-hover:shadow-xl">
+                <div className="text-center space-y-4">
+                  <div className="text-5xl mb-4">{feature.icon}</div>
+                  <h4 className="text-xl font-semibold text-amber-300">{feature.title}</h4>
+                  <p className="text-purple-300 text-sm leading-relaxed">{feature.description}</p>
+                </div>
+                
+                {/* Enhanced hover glow effect */}
+                <div className="absolute inset-0 bg-amber-400/10 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
               </div>
             </motion.div>
           ))}
@@ -399,6 +461,9 @@ function NewHomepage() {
 
         {/* Reading Types */}
         <ReadingTypesSection cards={randomCards} />
+
+        {/* Memory Features */}
+        <MemoryFeaturesSection />
 
         {/* Featured Cards */}
         <FeaturedCardsSection cards={randomCards} />

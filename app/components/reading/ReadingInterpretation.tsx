@@ -35,25 +35,23 @@ export function ReadingInterpretation({ reading, question }: ReadingInterpretati
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.4, duration: 0.6 }}
+        className="mb-8"
       >
-        <Card className="bg-white/95 backdrop-blur-sm shadow-lg border-purple-200">
-          <CardHeader className="pb-4">
-            <CardTitle className="text-2xl text-purple-800 flex items-center gap-3">
-              <Heart className="w-6 h-6 text-rose-500" />
+        <Card className="bg-gradient-to-br from-slate-900/90 to-slate-800/90 backdrop-blur-sm shadow-lg border-purple-400/30">
+          <CardHeader className="pb-3">
+            <CardTitle className="text-xl text-purple-300 flex items-center gap-2">
+              <Sparkles className="w-5 h-5 text-purple-400" />
               Your Reading
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="prose prose-lg max-w-none">
-              <p className="text-gray-800 leading-relaxed text-lg">
-                {reading.interpretation}
-              </p>
-            </div>
+            <p className="text-slate-300 leading-relaxed text-lg">
+              {reading.interpretation || "The cards speak of transformation and new beginnings. Trust in the journey ahead and embrace the changes that are coming your way."}
+            </p>
           </CardContent>
         </Card>
       </motion.div>
 
-      {/* Additional Insights Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {/* Guidance Section */}
         <motion.div
@@ -61,15 +59,15 @@ export function ReadingInterpretation({ reading, question }: ReadingInterpretati
           animate={{ opacity: 1, x: 0 }}
           transition={{ delay: 0.6, duration: 0.6 }}
         >
-          <Card className="bg-white/95 backdrop-blur-sm shadow-lg border-indigo-200 h-full">
+          <Card className="bg-gradient-to-br from-slate-900/90 to-slate-800/90 backdrop-blur-sm shadow-lg border-indigo-400/30 h-full">
             <CardHeader className="pb-3">
-              <CardTitle className="text-xl text-indigo-800 flex items-center gap-2">
-                <Compass className="w-5 h-5 text-indigo-500" />
+              <CardTitle className="text-xl text-indigo-300 flex items-center gap-2">
+                <Compass className="w-5 h-5 text-indigo-400" />
                 Guidance
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <p className="text-gray-700 leading-relaxed">
+              <p className="text-slate-300 leading-relaxed">
                 {reading.guidance || "Trust your intuition and let your inner wisdom guide you forward. The path ahead is illuminated by your authentic choices."}
               </p>
             </CardContent>
@@ -82,15 +80,15 @@ export function ReadingInterpretation({ reading, question }: ReadingInterpretati
           animate={{ opacity: 1, x: 0 }}
           transition={{ delay: 0.8, duration: 0.6 }}
         >
-          <Card className="bg-white/95 backdrop-blur-sm shadow-lg border-emerald-200 h-full">
+          <Card className="bg-gradient-to-br from-slate-900/90 to-slate-800/90 backdrop-blur-sm shadow-lg border-emerald-400/30 h-full">
             <CardHeader className="pb-3">
-              <CardTitle className="text-xl text-emerald-800 flex items-center gap-2">
-                <Clock className="w-5 h-5 text-emerald-500" />
+              <CardTitle className="text-xl text-emerald-300 flex items-center gap-2">
+                <Clock className="w-5 h-5 text-emerald-400" />
                 Timing & Energy
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <p className="text-gray-700 leading-relaxed">
+              <p className="text-slate-300 leading-relaxed">
                 {reading.timeframe || "The energies surrounding this guidance are building momentum. Remain open to opportunities that align with your highest good."}
               </p>
             </CardContent>

@@ -91,7 +91,7 @@ export function LoginForm({ onSuccess, onSwitchToSignup }: LoginFormProps) {
                   placeholder="your.email@example.com"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  className="pl-10 bg-white/90 border-white/30 text-gray-800 placeholder:text-gray-500"
+                  className="pl-10 bg-slate-800/90 border-white/30 text-slate-200 placeholder:text-slate-400"
                   required
                 />
               </div>
@@ -109,7 +109,7 @@ export function LoginForm({ onSuccess, onSwitchToSignup }: LoginFormProps) {
                   placeholder="Enter your mystical password"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  className="pl-10 pr-10 bg-white/90 border-white/30 text-gray-800 placeholder:text-gray-500"
+                  className="pl-10 pr-10 bg-slate-800/90 border-white/30 text-slate-200 placeholder:text-slate-400"
                   required
                 />
                 <button
