@@ -746,3 +746,58 @@ body {
   background: rgba(200, 173, 127, 0.8);
   box-shadow: 0 0 8px rgba(200, 173, 127, 0.4);
 }
+
+/* iOS Safari Specific Overrides - CRITICAL for iPhone compatibility */
+@supports (-webkit-appearance: none) {
+  /* Force purple backgrounds on iOS Safari with !important */
+  .bg-purple-900\/80,
+  [class*="bg-purple-900/80"] {
+    background-color: rgba(88, 28, 135, 0.8) !important;
+    -webkit-background-color: rgba(88, 28, 135, 0.8) !important;
+  }
+  
+  .bg-purple-900\/90,
+  [class*="bg-purple-900/90"] {
+    background-color: rgba(88, 28, 135, 0.9) !important;
+    -webkit-background-color: rgba(88, 28, 135, 0.9) !important;
+  }
+  
+  .bg-slate-800\/90,
+  [class*="bg-slate-800/90"] {
+    background-color: rgba(30, 41, 59, 0.9) !important;
+    -webkit-background-color: rgba(30, 41, 59, 0.9) !important;
+  }
+  
+  /* Force text colors on iOS Safari */
+  .text-purple-100,
+  [class*="text-purple-100"] {
+    color: rgb(243, 232, 255) !important;
+    -webkit-text-fill-color: rgb(243, 232, 255) !important;
+  }
+  
+  .text-purple-200,
+  [class*="text-purple-200"] {
+    color: rgb(233, 213, 255) !important;
+    -webkit-text-fill-color: rgb(233, 213, 255) !important;
+  }
+  
+  /* Reset iOS Safari defaults that cause white backgrounds */
+  input, textarea, button, select {
+    -webkit-appearance: none !important;
+    appearance: none !important;
+    background-color: transparent !important;
+  }
+  
+  /* Force card backgrounds on iOS Safari */
+  [data-radix-collection-item] {
+    background-color: rgba(88, 28, 135, 0.8) !important;
+    -webkit-background-color: rgba(88, 28, 135, 0.8) !important;
+  }
+  
+  /* Override any system-imposed white backgrounds */
+  div[class*="bg-white"],
+  div[class*="bg-slate"] {
+    background-color: rgba(88, 28, 135, 0.8) !important;
+    -webkit-background-color: rgba(88, 28, 135, 0.8) !important;
+  }
+}

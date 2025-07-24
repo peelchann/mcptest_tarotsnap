@@ -99,6 +99,13 @@ export default function RootLayout({
   return (
     <html lang="en" className="dark" suppressHydrationWarning>
       <head>
+        {/* iOS Safari specific meta tags to prevent system color overrides */}
+        <meta name="color-scheme" content="dark" />
+        <meta name="theme-color" content="#4c1d95" />
+        <meta name="msapplication-navbutton-color" content="#4c1d95" />
+        <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+        <meta name="format-detection" content="telephone=no" />
+        
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="" />
         <link href="https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap" rel="stylesheet" />

@@ -467,13 +467,13 @@ export default function SingleCardReading() {
               exit={{ opacity: 0, y: -20 }}
               className="max-w-2xl mx-auto"
             >
-              <Card className="border-purple-400/30 bg-purple-900/80 backdrop-blur-md">
+              <Card className="border-purple-400/30 bg-purple-900/80 backdrop-blur-md" style={{ backgroundColor: 'rgba(88, 28, 135, 0.8)', colorScheme: 'dark' } as React.CSSProperties}>
                 <CardHeader className="text-center">
-                  <CardTitle className="text-2xl flex items-center justify-center gap-2 text-purple-100">
+                  <CardTitle className="text-2xl flex items-center justify-center gap-2 text-purple-100" style={{ color: 'rgb(243, 232, 255)' }}>
                     <Heart className="w-6 h-6 text-gold-400" />
                     What guidance do you seek?
                   </CardTitle>
-                  <CardDescription className="text-purple-200/80">
+                  <CardDescription className="text-purple-200/80" style={{ color: 'rgb(233, 213, 255)' }}>
                     Focus your intention and ask the universe for guidance
                   </CardDescription>
                 </CardHeader>
@@ -624,10 +624,10 @@ export default function SingleCardReading() {
               {/* Card Display */}
               <div className="space-y-6">
                 {question && (
-                  <Card className="border-purple-400/30 bg-purple-900/80 backdrop-blur-md">
+                  <Card className="border-purple-400/30 bg-purple-900/80 backdrop-blur-md" style={{ backgroundColor: 'rgba(88, 28, 135, 0.8)', colorScheme: 'dark' } as React.CSSProperties}>
                     <CardContent className="p-6">
-                      <p className="text-sm font-medium mb-2 text-purple-200">Your Question:</p>
-                      <p className="text-purple-100 italic">&quot;{question}&quot;</p>
+                      <p className="text-sm font-medium mb-2 text-purple-200" style={{ color: 'rgb(233, 213, 255)' }}>Your Question:</p>
+                      <p className="text-purple-100 italic" style={{ color: 'rgb(243, 232, 255)' }}>&quot;{question}&quot;</p>
                     </CardContent>
                   </Card>
                 )}
@@ -638,7 +638,7 @@ export default function SingleCardReading() {
                   transition={{ type: "spring", stiffness: 300, damping: 20 }}
                   className="text-center"
                 >
-                  <Card className="border-purple-400/30 bg-purple-900/80 backdrop-blur-md">
+                  <Card className="border-purple-400/30 bg-purple-900/80 backdrop-blur-md" style={{ backgroundColor: 'rgba(88, 28, 135, 0.8)', colorScheme: 'dark' } as React.CSSProperties}>
                     <CardContent className="p-6">
                       <div className="relative w-64 h-96 mx-auto mb-6 rounded-lg border-2 border-gold-400/50 overflow-hidden">
                         {reading.imagePath ? (
@@ -714,7 +714,7 @@ export default function SingleCardReading() {
                   />
                 )}
                 
-                <Card className="border-purple-400/30 bg-purple-900/80 backdrop-blur-md h-[600px] flex flex-col">
+                <Card className="border-purple-400/30 bg-purple-900/80 backdrop-blur-md h-[600px] flex flex-col" style={{ backgroundColor: 'rgba(88, 28, 135, 0.8)', colorScheme: 'dark' } as React.CSSProperties}>
                   <CardHeader>
                     <CardTitle className="flex items-center gap-2 text-purple-100">
                       <MessageCircle className="w-5 h-5 text-gold-400" />
