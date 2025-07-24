@@ -483,7 +483,7 @@ export default function SingleCardReading() {
                       placeholder="Ask your question to the cards... (e.g., 'What should I focus on in my career?')"
                       value={question}
                       onChange={(e) => setQuestion(e.target.value)}
-                      className="min-h-[120px] bg-slate-800/90 border-white/30 text-slate-200 placeholder:text-slate-400 resize-none"
+                      className="min-h-[120px] bg-purple-900/80 border-purple-400/50 text-purple-100 placeholder:text-purple-300/70 resize-none focus:bg-purple-900/90 focus:border-purple-300 transition-all duration-200 touch-manipulation"
                       maxLength={500}
                       onKeyDown={(e) => {
                         if (e.key === 'Enter' && !e.shiftKey && question.trim()) {
@@ -492,16 +492,35 @@ export default function SingleCardReading() {
                         }
                       }}
                     />
-                    <div className="flex justify-between text-sm text-white/60">
-                      <span>Press Enter to draw your card</span>
-                      <span>{question.length}/500</span>
+                    <div className="flex justify-between text-sm">
+                      <span className="text-purple-300/80">
+                        {question.length === 0 
+                          ? "Focus your intention and ask clearly" 
+                          : question.length < 10 
+                            ? "More specific questions lead to better readings"
+                            : "Press Enter when ready"
+                        }
+                      </span>
+                      <span className="text-purple-400/70">{question.length}/500</span>
                     </div>
+                    
+                    {/* Enhanced validation feedback */}
+                    {question.length > 0 && question.length < 10 && (
+                      <motion.div
+                        initial={{ opacity: 0, y: -5 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        className="flex items-center gap-2 text-amber-400 text-sm bg-amber-900/20 p-2 rounded-lg border border-amber-400/30"
+                      >
+                        <span>⭐</span>
+                        <span>Pro tip: Detailed questions unlock deeper insights</span>
+                      </motion.div>
+                    )}
                   </div>
                   
                   <Button
                     onClick={drawCard}
                     disabled={!question.trim() || isDrawing}
-                    className="w-full bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white py-3 text-lg font-semibold"
+                    className="w-full bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 text-white py-4 text-lg font-semibold min-h-[56px] touch-manipulation transition-all duration-200 shadow-lg hover:shadow-purple-500/25"
                   >
                     {isDrawing ? (
                       <div className="flex items-center gap-2">
@@ -762,30 +781,38 @@ export default function SingleCardReading() {
                     </div>
                     
                     {/* Message Input */}
-                    <div className="border-t border p-4">
+                    <div className="border-t border-purple-500/30 p-4">
                       <form 
                         onSubmit={(e) => { e.preventDefault(); handleSendMessage(); }}
                         className="flex gap-2"
                       >
-                        <Textarea
-                          placeholder="Ask about your reading..."
-                          value={newMessage}
-                          onChange={(e) => setNewMessage(e.target.value)}
-                          className="min-h-[60px] resize-none bg-slate-800/90 border-white/30 text-slate-200 placeholder:text-slate-400"
-                          onKeyDown={(e) => {
-                            if (e.key === 'Enter' && !e.shiftKey) {
-                              e.preventDefault();
-                              handleSendMessage();
-                            }
-                          }}
-                        />
+                        <div className="flex-1 space-y-2">
+                          <Textarea
+                            placeholder="Ask about your reading..."
+                            value={newMessage}
+                            onChange={(e) => setNewMessage(e.target.value)}
+                            className="min-h-[60px] resize-none bg-purple-900/80 border-purple-400/50 text-purple-100 placeholder:text-purple-300/70 focus:bg-purple-900/90 focus:border-purple-300 transition-all duration-200 touch-manipulation"
+                            maxLength={1000}
+                            onKeyDown={(e) => {
+                              if (e.key === 'Enter' && !e.shiftKey && newMessage.trim()) {
+                                e.preventDefault();
+                                handleSendMessage();
+                              }
+                            }}
+                          />
+                          {/* Enhanced helper text for mobile */}
+                          <div className="flex justify-between items-center text-xs text-purple-300/60">
+                            <span>Shift+Enter for new line • Enter to send</span>
+                            <span>{newMessage.length}/1000</span>
+                          </div>
+                        </div>
                         <Button 
                           type="submit" 
                           size="icon"
                           disabled={!newMessage.trim() || isThinking}
-                          className="self-end"
+                          className="self-start bg-purple-600 hover:bg-purple-700 border-purple-400/50 min-h-[60px] min-w-[60px] touch-manipulation transition-all duration-200"
                         >
-                          <Send className="w-4 h-4" />
+                          <Send className="w-5 h-5" />
                         </Button>
                       </form>
                     </div>

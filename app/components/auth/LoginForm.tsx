@@ -80,42 +80,42 @@ export function LoginForm({ onSuccess, onSwitchToSignup }: LoginFormProps) {
 
           <form onSubmit={handleSubmit} className="space-y-4">
             <div className="space-y-2">
-              <Label htmlFor="email" className="text-white/90 font-medium">
+              <Label htmlFor="email" className="text-purple-200 font-medium">
                 Email Address
               </Label>
               <div className="relative">
-                <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-white/50" />
+                <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-purple-300/70" />
                 <Input
                   id="email"
                   type="email"
                   placeholder="your.email@example.com"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  className="pl-10 bg-slate-800/90 border-white/30 text-slate-200 placeholder:text-slate-400"
+                  className="pl-10 bg-purple-900/80 border-purple-400/50 text-purple-100 placeholder:text-purple-300/70 focus:bg-purple-900/90 focus:border-purple-300 transition-all duration-200 min-h-[48px] touch-manipulation"
                   required
                 />
               </div>
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="password" className="text-white/90 font-medium">
+              <Label htmlFor="password" className="text-purple-200 font-medium">
                 Password
               </Label>
               <div className="relative">
-                <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-white/50" />
+                <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-purple-300/70" />
                 <Input
                   id="password"
                   type={showPassword ? 'text' : 'password'}
                   placeholder="Enter your mystical password"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  className="pl-10 pr-10 bg-slate-800/90 border-white/30 text-slate-200 placeholder:text-slate-400"
+                  className="pl-10 pr-12 bg-purple-900/80 border-purple-400/50 text-purple-100 placeholder:text-purple-300/70 focus:bg-purple-900/90 focus:border-purple-300 transition-all duration-200 min-h-[48px] touch-manipulation"
                   required
                 />
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-gray-700"
+                  className="absolute right-3 top-1/2 transform -translate-y-1/2 text-purple-300/70 hover:text-purple-200 w-6 h-6 flex items-center justify-center touch-manipulation"
                 >
                   {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
                 </button>
