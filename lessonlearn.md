@@ -397,3 +397,90 @@ Sender: onboard@resend.dev ← Pre-verified domain
 **Key Success Factor:** Combination of sequential thinking + authoritative documentation + systematic error tracking.
 
 --- 
+
+# TarotSnap Development Lessons Learned
+
+## 🍎 **CRITICAL: iOS Safari "Works On My Machine" Issue (January 2025)**
+
+### **THE PROBLEM:**
+- **Playwright mobile viewport testing ≠ actual iOS Safari rendering**
+- iPhone 13 Pro Max showed white backgrounds despite Tailwind purple classes
+- Desktop browser mobile simulation missed iOS Safari system color overrides
+- Classic "works on my machine" situation - passed testing but failed in production
+
+### **ROOT CAUSE:**
+- **iOS Safari System Color Scheme Enforcement**: iOS can override CSS with system/accessibility colors
+- **Webkit Rendering Differences**: Different CSS specificity rules than Chrome/Firefox
+- **Missing Meta Tags**: No `color-scheme="dark"` allowed system to force light colors
+- **CSS Specificity Issues**: Tailwind classes had lower priority than Safari defaults
+
+### **THE SOLUTION:**
+**Triple-Layer iOS Safari Protection:**
+1. **Meta Tags**: `color-scheme="dark"`, `theme-color`, `apple-mobile-web-app-status-bar-style`
+2. **Webkit CSS**: `@supports (-webkit-appearance: none)` with `!important` declarations  
+3. **Inline Style Fallbacks**: React inline styles as final safety net
+
+### **LESSON LEARNED:**
+- **Never trust desktop mobile simulation for iOS Safari**
+- **Always test on actual iOS devices before declaring mobile fixes complete**
+- **iOS Safari requires aggressive CSS specificity and webkit-specific overrides**
+- **User cache clearing is critical after CSS changes on mobile**
+
+### **SUCCESS METRICS:**
+- ✅ Confirmed working on iPhone 13 Pro Max after cache clear
+- ✅ Purple backgrounds displaying correctly across all mobile components
+- ✅ Consistent theming maintained on actual iOS devices
+
+---
+
+## 📊 **OpenRouter AI Model Switch Success (January 2025)**
+
+### **Problem:** 
+- Free tier `meta-llama/llama-3.3-70b-instruct:free` hit rate limits
+- "Rate limit exceeded" errors causing reading failures
+
+### **Solution:**
+- Switched to `meta-llama/llama-3.1-8b-instruct` (paid, stable)
+- 85% cost reduction compared to premium models
+- Zero rate limiting issues
+
+### **Lesson:** 
+- Free AI tiers unreliable for production
+- Paid models often cheaper than expected
+- Monitor AI model performance in production
+
+---
+
+## 🔐 **Supabase API Key Debugging Process**
+
+### **Problem:** 
+- "Invalid API key" errors on login
+- Environment variable issues
+
+### **Solution Process:**
+1. Verified `.env.local` file existence and format
+2. Checked for truncated API keys in environment variables  
+3. Manually retrieved complete keys from Supabase dashboard
+4. Confirmed API key format and project matching
+
+### **Lesson:**
+- Always verify complete API key strings (no truncation)
+- Environment variable debugging requires systematic verification
+- Supabase dashboard is source of truth for API keys
+
+---
+
+## 🚀 **Vercel Auto-Deployment vs Manual Deployment**
+
+### **Problem:**
+- Auto-deployment showing old UI despite new commits
+- User seeing cached/outdated versions
+
+### **Solution:**
+- Manual deployment with `vercel --prod` ensures immediate updates
+- Force production deployment for critical fixes
+
+### **Lesson:**
+- Auto-deployment can have delays or caching issues
+- Manual deployment gives immediate control for urgent fixes
+- Always verify production deployment matches local changes 

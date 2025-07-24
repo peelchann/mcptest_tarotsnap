@@ -1,8 +1,11 @@
 import { MetadataRoute } from 'next'
 
 export default function sitemap(): MetadataRoute.Sitemap {
-  const baseUrl = process.env.NODE_ENV === 'production'
-    ? 'https://tarot-snap.vercel.app'  // Correct Vercel URL
+  // Use VERCEL_URL for production deployments, fallback to localhost for dev
+  const baseUrl = process.env.VERCEL_URL 
+    ? `https://${process.env.VERCEL_URL}` 
+    : process.env.NODE_ENV === 'production'
+    ? 'https://tarot-snap-46b6osjei-peelchans-projects.vercel.app'  // Current production URL
     : 'http://localhost:3000'
 
   // Static routes
