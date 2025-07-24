@@ -467,13 +467,13 @@ export default function SingleCardReading() {
               exit={{ opacity: 0, y: -20 }}
               className="max-w-2xl mx-auto"
             >
-              <Card className="border-white/30 bg-white/10 backdrop-blur-md">
+              <Card className="border-purple-400/30 bg-purple-900/80 backdrop-blur-md">
                 <CardHeader className="text-center">
-                  <CardTitle className="text-2xl flex items-center justify-center gap-2 text-white">
+                  <CardTitle className="text-2xl flex items-center justify-center gap-2 text-purple-100">
                     <Heart className="w-6 h-6 text-gold-400" />
                     What guidance do you seek?
                   </CardTitle>
-                  <CardDescription className="text-white/80">
+                  <CardDescription className="text-purple-200/80">
                     Focus your intention and ask the universe for guidance
                   </CardDescription>
                 </CardHeader>
@@ -550,7 +550,7 @@ export default function SingleCardReading() {
                 transition={{ type: "spring", stiffness: 300, damping: 20, delay: 0.5 }}
                 className="max-w-sm mx-auto mb-8"
               >
-                <Card className="border-white/30 bg-white/10 backdrop-blur-md">
+                <Card className="border-purple-400/30 bg-purple-900/80 backdrop-blur-md">
                   <CardContent className="p-6">
                     <div className="relative w-64 h-96 mx-auto mb-6 rounded-lg border-2 border-gold-400/50 overflow-hidden">
                       {reading.imagePath ? (
@@ -589,7 +589,7 @@ export default function SingleCardReading() {
                       initial={{ opacity: 0 }}
                       animate={{ opacity: 1 }}
                       transition={{ delay: 1.2 }}
-                      className="text-white/80 text-lg"
+                      className="text-purple-100 text-lg"
                     >
                       {reading.meaning}
                     </motion.p>
@@ -624,10 +624,10 @@ export default function SingleCardReading() {
               {/* Card Display */}
               <div className="space-y-6">
                 {question && (
-                  <Card className="border-white/20 bg-white/10 backdrop-blur-md">
+                  <Card className="border-purple-400/30 bg-purple-900/80 backdrop-blur-md">
                     <CardContent className="p-6">
-                      <p className="text-sm font-medium mb-2 text-white">Your Question:</p>
-                        <p className="text-white/80 italic">&quot;{question}&quot;</p>
+                      <p className="text-sm font-medium mb-2 text-purple-200">Your Question:</p>
+                      <p className="text-purple-100 italic">&quot;{question}&quot;</p>
                     </CardContent>
                   </Card>
                 )}
@@ -638,7 +638,7 @@ export default function SingleCardReading() {
                   transition={{ type: "spring", stiffness: 300, damping: 20 }}
                   className="text-center"
                 >
-                  <Card className="border-white/30 bg-white/10 backdrop-blur-md">
+                  <Card className="border-purple-400/30 bg-purple-900/80 backdrop-blur-md">
                     <CardContent className="p-6">
                       <div className="relative w-64 h-96 mx-auto mb-6 rounded-lg border-2 border-gold-400/50 overflow-hidden">
                         {reading.imagePath ? (
@@ -666,28 +666,29 @@ export default function SingleCardReading() {
                         </div>
                       </div>
                       <h2 className="text-2xl font-bold mb-2 text-gold-400">{reading.card}</h2>
-                      <p className="text-white/80">{reading.meaning}</p>
+                      
+                      <p className="text-purple-100">{reading.meaning}</p>
                       
                       {/* Reading Details */}
                       <div className="mt-6 space-y-4 text-left">
                         <div>
                           <h3 className="font-semibold text-gold-400 mb-2">Interpretation</h3>
-                          <p className="text-sm text-white/70">{reading.interpretation}</p>
+                          <p className="text-sm text-purple-200">{reading.interpretation}</p>
                         </div>
                         
                         <div>
                           <h3 className="font-semibold text-gold-400 mb-2">Guidance</h3>
-                          <p className="text-sm text-white/70">{reading.guidance}</p>
+                          <p className="text-sm text-purple-200">{reading.guidance}</p>
                         </div>
                         
                         <div>
                           <h3 className="font-semibold text-gold-400 mb-2">Energy</h3>
-                          <p className="text-sm text-white/70">{reading.energy}</p>
+                          <p className="text-sm text-purple-200">{reading.energy}</p>
                         </div>
                         
                         <div>
                           <h3 className="font-semibold text-gold-400 mb-2">Timeframe</h3>
-                          <p className="text-sm text-white/70">{reading.timeframe}</p>
+                          <p className="text-sm text-purple-200">{reading.timeframe}</p>
                         </div>
                       </div>
                     </CardContent>
@@ -713,9 +714,9 @@ export default function SingleCardReading() {
                   />
                 )}
                 
-                <Card className="border-white/30 bg-white/10 backdrop-blur-md h-[600px] flex flex-col">
+                <Card className="border-purple-400/30 bg-purple-900/80 backdrop-blur-md h-[600px] flex flex-col">
                   <CardHeader>
-                    <CardTitle className="flex items-center gap-2 text-white">
+                    <CardTitle className="flex items-center gap-2 text-purple-100">
                       <MessageCircle className="w-5 h-5 text-gold-400" />
                       AI Oracle Chat
                       {user && (
@@ -724,7 +725,7 @@ export default function SingleCardReading() {
                         </span>
                       )}
                     </CardTitle>
-                    <CardDescription className="text-white/70">
+                    <CardDescription className="text-purple-200/80">
                       {user 
                         ? "Your conversations are saved and remembered across sessions"
                         : "Discuss your reading with our mystical AI guide"

@@ -21,13 +21,13 @@ export function ReadingInterpretation({ reading, question }: ReadingInterpretati
         initial={{ opacity: 0, x: -20 }}
         animate={{ opacity: 1, x: 0 }}
         transition={{ delay: 0.2, duration: 0.6 }}
-        className="bg-white/95 backdrop-blur-sm rounded-xl p-6 shadow-lg"
+        className="bg-purple-900/80 backdrop-blur-sm rounded-xl p-6 shadow-lg border border-purple-400/30"
       >
-        <h3 className="text-lg font-semibold text-purple-800 mb-2 flex items-center gap-2">
-          <Sparkles className="w-5 h-5" />
+        <h3 className="text-lg font-semibold text-purple-200 mb-2 flex items-center gap-2">
+          <Sparkles className="w-5 h-5 text-purple-300" />
           Your Question
         </h3>
-        <p className="text-gray-700 text-lg italic">&quot;{question}&quot;</p>
+        <p className="text-purple-100 text-lg italic">&quot;{question}&quot;</p>
       </motion.div>
 
       {/* Main Interpretation */}
