@@ -7,7 +7,14 @@ import type { ReadingSession, UserTheme, CardRelationship, UserPreferences } fro
 import { getAnonymousUserId } from '../analytics'
 
 export class ReadingStorageService {
-  private supabase = createBrowserSupabaseClient()
+  private supabase: any = null
+
+  private getSupabase() {
+    if (!this.supabase) {
+      this.supabase = createBrowserSupabaseClient()
+    }
+    return this.supabase
+  }
 
   /**
    * Helper to get the correct userId (authenticated or anonymous)
@@ -42,7 +49,7 @@ export class ReadingStorageService {
   }): Promise<{ success: boolean; sessionId?: string; error?: string }> {
     try {
       const userId = ReadingStorageService.resolveUserId(data.userId)
-      const { data: session, error } = await this.supabase
+      const { data: session, error } = await this.getSupabase()
         .from('reading_sessions')
         .insert({
           user_id: userId,

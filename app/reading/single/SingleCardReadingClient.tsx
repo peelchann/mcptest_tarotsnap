@@ -11,7 +11,7 @@ import { CardReveal } from '@/app/components/reading/CardReveal';
 import { ReadingInterpretation } from '@/app/components/reading/ReadingInterpretation';
 import { LoginPrompt } from '@/app/components/auth/LoginPrompt';
 import { TarotReading } from '@/lib/openrouter';
-import { createBrowserSupabaseClient } from '@/lib/supabase';
+import { useAuth } from '@/app/providers/AuthProvider';
 import { chatStorage } from '@/lib/services/chatStorage';
 import Image from 'next/image';
 import { 
@@ -54,7 +54,7 @@ export default function SingleCardReading() {
   const [currentSessionId, setCurrentSessionId] = useState<string | null>(null);
   const chatEndRef = useRef<HTMLDivElement>(null);
 
-  const supabase = createBrowserSupabaseClient();
+  const { supabase, user: authUser, loading: authLoading } = useAuth();
 
   useEffect(() => {
     // Track page view on component mount
@@ -66,6 +66,13 @@ export default function SingleCardReading() {
     const savedQuestion = sessionStorage.getItem('tarot-question');
     if (savedQuestion) {
       setQuestion(savedQuestion);
+    }
+  }, []);
+
+  useEffect(() => {
+    if (!supabase) {
+      setIsLoadingAuth(authLoading);
+      return;
     }
 
     // Initialize auth state
@@ -84,14 +91,14 @@ export default function SingleCardReading() {
 
     // Listen for auth changes
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      async (event, session) => {
+      async (event: any, session: any) => {
         setUser(session?.user ?? null);
         setIsLoadingAuth(false);
       }
     );
 
     return () => subscription.unsubscribe();
-  }, [supabase.auth]);
+  }, [supabase, authLoading]);
 
   useEffect(() => {
     if (question) {

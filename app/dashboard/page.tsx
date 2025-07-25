@@ -8,7 +8,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/app
 import { MysticalParticles } from '@/app/components/ui/MysticalParticles';
 import { ChatHistory } from '@/app/components/chat/ChatHistory';
 import { ChatPrivacyControls } from '@/app/components/privacy/ChatPrivacyControls';
-import { createBrowserSupabaseClient } from '@/lib/supabase';
+import { useAuth } from '@/app/providers/AuthProvider';
 import { chatStorage } from '@/lib/services/chatStorage';
 import { 
   ArrowLeft, 
@@ -25,32 +25,37 @@ export default function Dashboard() {
   const [user, setUser] = useState<any>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [messageCount, setMessageCount] = useState(0);
-  const supabase = createBrowserSupabaseClient();
+  const { supabase, user: authUser, loading: authLoading } = useAuth();
 
   useEffect(() => {
-         const initAuth = async () => {
-       try {
-         const { data: { user } } = await supabase.auth.getUser();
-         setUser(user);
-         
-         if (!user) {
-           router.push('/');
-         } else {
-           await loadMessageCount(); // Load message count for authenticated user
-         }
-       } catch (error) {
-         console.error('Error getting user:', error);
-         router.push('/');
-       } finally {
-         setIsLoading(false);
-       }
-     };
+    if (!supabase) {
+      setIsLoading(authLoading);
+      return;
+    }
+
+    const initAuth = async () => {
+      try {
+        const { data: { user } } = await supabase.auth.getUser();
+        setUser(user);
+        
+        if (!user) {
+          router.push('/');
+        } else {
+          await loadMessageCount(); // Load message count for authenticated user
+        }
+      } catch (error) {
+        console.error('Error getting user:', error);
+        router.push('/');
+      } finally {
+        setIsLoading(false);
+      }
+    };
 
     initAuth();
 
     // Listen for auth changes
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      async (event, session) => {
+      async (event: any, session: any) => {
         if (event === 'SIGNED_OUT' || !session?.user) {
           router.push('/');
         } else {
@@ -61,7 +66,7 @@ export default function Dashboard() {
     );
 
     return () => subscription.unsubscribe();
-  }, [supabase.auth, router]);
+  }, [supabase, router, authLoading]);
 
   const handleSessionSelect = (sessionId: string) => {
     // TODO: Navigate to a detailed chat view or restore the session in reading page
@@ -71,6 +76,12 @@ export default function Dashboard() {
   };
 
   const handleSignOut = async () => {
+    if (!supabase) {
+      console.warn('Cannot sign out: Supabase client not initialized');
+      router.push('/');
+      return;
+    }
+    
     try {
       await supabase.auth.signOut();
       router.push('/');
