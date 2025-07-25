@@ -1,7 +1,7 @@
 'use client'
 
 import { createContext, useContext, useEffect, useState } from 'react'
-import { User } from '@supabase/supabase-js'
+import { User, SupabaseClient } from '@supabase/supabase-js'
 import { createBrowserSupabaseClient } from '@/lib/supabase'
 import { UserProfile } from '@/lib/supabase'
 import { analytics } from '@/lib/analytics'
@@ -10,6 +10,7 @@ interface AuthContextType {
   user: User | null
   profile: UserProfile | null
   loading: boolean
+  supabase: SupabaseClient | null
   signUp: (email: string, password: string, fullName: string) => Promise<{ error?: string }>
   signIn: (email: string, password: string) => Promise<{ error?: string }>
   signOut: () => Promise<void>
@@ -35,10 +36,28 @@ export function AuthProvider({ children }: AuthProviderProps) {
   const [user, setUser] = useState<User | null>(null)
   const [profile, setProfile] = useState<UserProfile | null>(null)
   const [loading, setLoading] = useState(true)
-  const supabase = createBrowserSupabaseClient()
+  const [supabase, setSupabase] = useState<SupabaseClient | null>(null)
+
+  // Initialize Supabase client only on client-side to avoid SSR issues
+  useEffect(() => {
+    console.log('🔧 Initializing Supabase client on client-side')
+    try {
+      const client = createBrowserSupabaseClient()
+      setSupabase(client)
+      console.log('✅ Supabase client initialized successfully')
+    } catch (error) {
+      console.error('🚨 Failed to initialize Supabase client:', error)
+      setLoading(false)
+    }
+  }, [])
 
   // Fetch user profile from database
   const fetchProfile = async (userId: string): Promise<UserProfile | null> => {
+    if (!supabase) {
+      console.warn('⚠️ Supabase client not initialized, cannot fetch profile')
+      return null
+    }
+
     try {
       const { data, error } = await supabase
         .from('profiles')
@@ -60,6 +79,8 @@ export function AuthProvider({ children }: AuthProviderProps) {
 
   // Check if user is returning (has existing profile)
   const isReturningUser = async (userId: string): Promise<boolean> => {
+    if (!supabase) return false
+
     try {
       const { data, error } = await supabase
         .from('profiles')
@@ -77,16 +98,22 @@ export function AuthProvider({ children }: AuthProviderProps) {
     }
   }
 
-  // Initialize auth state
+  // Initialize auth state after Supabase client is ready
   useEffect(() => {
+    if (!supabase) return
+
     const initializeAuth = async () => {
       try {
+        console.log('🔍 Initializing auth state')
         const { data: { session } } = await supabase.auth.getSession()
         
         if (session?.user) {
+          console.log('👤 Found existing session')
           setUser(session.user)
           const userProfile = await fetchProfile(session.user.id)
           setProfile(userProfile)
+        } else {
+          console.log('🚫 No existing session found')
         }
       } catch (error) {
         console.error('Error initializing auth:', error)
@@ -101,7 +128,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
     // Listen for auth changes
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       async (event, session) => {
-        console.log('Auth event:', event)
+        console.log('🔔 Auth event:', event)
         
         if (session?.user) {
           setUser(session.user)
@@ -122,9 +149,13 @@ export function AuthProvider({ children }: AuthProviderProps) {
     )
 
     return () => subscription.unsubscribe()
-  }, [supabase.auth])
+  }, [supabase]) // Re-run when supabase client is initialized
 
   const signUp = async (email: string, password: string, fullName: string) => {
+    if (!supabase) {
+      return { error: 'Authentication system not ready. Please try again in a moment.' }
+    }
+
     try {
       const { data, error } = await supabase.auth.signUp({
         email,
@@ -137,6 +168,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
       })
 
       if (error) {
+        console.error('Signup error:', error)
         analytics.trackError('api_failure', `Signup failed: ${error.message}`, 'medium')
         return { error: error.message }
       }
@@ -148,12 +180,17 @@ export function AuthProvider({ children }: AuthProviderProps) {
 
       return {}
     } catch (error) {
+      console.error('Unexpected signup error:', error)
       analytics.trackError('unknown', 'Unexpected signup error', 'high')
       return { error: 'An unexpected error occurred during sign up' }
     }
   }
 
   const signIn = async (email: string, password: string) => {
+    if (!supabase) {
+      return { error: 'Authentication system not ready. Please try again in a moment.' }
+    }
+
     try {
       const { data, error } = await supabase.auth.signInWithPassword({
         email,
@@ -161,6 +198,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
       })
 
       if (error) {
+        console.error('Signin error:', error)
         analytics.trackError('api_failure', `Signin failed: ${error.message}`, 'medium')
         return { error: error.message }
       }
@@ -168,12 +206,18 @@ export function AuthProvider({ children }: AuthProviderProps) {
       // Track successful signin (detailed tracking happens in auth state change)
       return {}
     } catch (error) {
+      console.error('Unexpected signin error:', error)
       analytics.trackError('unknown', 'Unexpected signin error', 'high')
       return { error: 'An unexpected error occurred during sign in' }
     }
   }
 
   const signOut = async () => {
+    if (!supabase) {
+      console.warn('⚠️ Cannot sign out: Supabase client not initialized')
+      return
+    }
+
     try {
       await supabase.auth.signOut()
       setUser(null)
@@ -192,6 +236,10 @@ export function AuthProvider({ children }: AuthProviderProps) {
   const updateProfile = async (updates: Partial<UserProfile>) => {
     if (!user) {
       return { error: 'No user logged in' }
+    }
+
+    if (!supabase) {
+      return { error: 'Authentication system not ready. Please try again in a moment.' }
     }
 
     try {
@@ -218,7 +266,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
   }
 
   const refreshProfile = async () => {
-    if (user) {
+    if (user && supabase) {
       const userProfile = await fetchProfile(user.id)
       setProfile(userProfile)
     }
@@ -228,6 +276,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
     user,
     profile,
     loading,
+    supabase,
     signUp,
     signIn,
     signOut,

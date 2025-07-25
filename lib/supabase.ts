@@ -3,11 +3,36 @@ import type { SupabaseClient } from '@supabase/supabase-js'
 
 // Supabase client for browser/client-side operations
 export const createBrowserSupabaseClient = () => {
-  if (typeof window === 'undefined' || !process.env.NEXT_PUBLIC_SUPABASE_URL || !process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY) return {} as SupabaseClient
-  return createBrowserClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-  )
+  // Check if we're on the server side
+  if (typeof window === 'undefined') {
+    console.warn('🚨 createBrowserSupabaseClient called on server side')
+    return {} as SupabaseClient
+  }
+
+  // Check environment variables
+  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
+  const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+  
+  if (!supabaseUrl) {
+    console.error('🚨 MISSING: NEXT_PUBLIC_SUPABASE_URL environment variable')
+    throw new Error('Missing NEXT_PUBLIC_SUPABASE_URL environment variable')
+  }
+  
+  if (!supabaseAnonKey) {
+    console.error('🚨 MISSING: NEXT_PUBLIC_SUPABASE_ANON_KEY environment variable')
+    throw new Error('Missing NEXT_PUBLIC_SUPABASE_ANON_KEY environment variable')
+  }
+
+  try {
+    console.log('✅ Creating Supabase browser client')
+    console.log('URL:', supabaseUrl)
+    console.log('Key prefix:', supabaseAnonKey.substring(0, 20) + '...')
+    
+    return createBrowserClient(supabaseUrl, supabaseAnonKey)
+  } catch (error) {
+    console.error('🚨 Error creating Supabase browser client:', error)
+    throw error
+  }
 }
 
 // Supabase client for server-side operations (API routes, middleware)
