@@ -91,7 +91,7 @@ export class ReadingStorageService {
     for (const card of cards) {
       try {
         // Check if relationship exists
-        const { data: existing } = await this.supabase
+        const { data: existing } = await this.getSupabase()
           .from('card_relationships')
           .select('*')
           .eq('user_id', userId)
@@ -100,7 +100,7 @@ export class ReadingStorageService {
 
         if (existing) {
           // Update existing relationship
-          await this.supabase
+          await this.getSupabase()
             .from('card_relationships')
             .update({
               frequency_drawn: existing.frequency_drawn + 1,
@@ -110,7 +110,7 @@ export class ReadingStorageService {
             .eq('id', existing.id)
         } else {
           // Create new relationship
-          await this.supabase
+          await this.getSupabase()
             .from('card_relationships')
             .insert({
               user_id: userId,
@@ -135,7 +135,7 @@ export class ReadingStorageService {
     for (const themeName of themes) {
       try {
         // Check if theme exists
-        const { data: existing } = await this.supabase
+        const { data: existing } = await this.getSupabase()
           .from('user_themes')
           .select('*')
           .eq('user_id', userId)
@@ -144,7 +144,7 @@ export class ReadingStorageService {
 
         if (existing) {
           // Update existing theme
-          await this.supabase
+          await this.getSupabase()
             .from('user_themes')
             .update({
               frequency: existing.frequency + 1,
@@ -154,7 +154,7 @@ export class ReadingStorageService {
             .eq('id', existing.id)
         } else {
           // Create new theme
-          await this.supabase
+          await this.getSupabase()
             .from('user_themes')
             .insert({
               user_id: userId,
@@ -182,7 +182,7 @@ export class ReadingStorageService {
     resonance_level?: number
   }): Promise<{ success: boolean; error?: string }> {
     try {
-      const { error } = await this.supabase
+      const { error } = await this.getSupabase()
         .from('reading_sessions')
         .update({
           user_feedback: feedback
@@ -206,7 +206,7 @@ export class ReadingStorageService {
   async getUserReadingHistory(userId?: string, limit: number = 20): Promise<ReadingSession[]> {
     try {
       const resolvedId = ReadingStorageService.resolveUserId(userId)
-      const { data, error } = await this.supabase
+      const { data, error } = await this.getSupabase()
         .from('reading_sessions')
         .select('*')
         .eq('user_id', resolvedId)
@@ -231,7 +231,7 @@ export class ReadingStorageService {
   async getUserThemes(userId?: string, limit: number = 10): Promise<UserTheme[]> {
     try {
       const resolvedId = ReadingStorageService.resolveUserId(userId)
-      const { data, error } = await this.supabase
+      const { data, error } = await this.getSupabase()
         .from('user_themes')
         .select('*')
         .eq('user_id', resolvedId)
@@ -256,7 +256,7 @@ export class ReadingStorageService {
   async getUserCardRelationships(userId?: string, limit: number = 15): Promise<CardRelationship[]> {
     try {
       const resolvedId = ReadingStorageService.resolveUserId(userId)
-      const { data, error } = await this.supabase
+      const { data, error } = await this.getSupabase()
         .from('card_relationships')
         .select('*')
         .eq('user_id', resolvedId)
@@ -281,7 +281,7 @@ export class ReadingStorageService {
   async updateUserPreferences(preferences: Partial<UserPreferences>, userId?: string): Promise<{ success: boolean; error?: string }> {
     try {
       const resolvedId = ReadingStorageService.resolveUserId(userId)
-      const { error } = await this.supabase
+      const { error } = await this.getSupabase()
         .from('user_preferences')
         .upsert({
           user_id: resolvedId,
@@ -306,7 +306,7 @@ export class ReadingStorageService {
   async getUserPreferences(userId?: string): Promise<UserPreferences | null> {
     try {
       const resolvedId = ReadingStorageService.resolveUserId(userId)
-      const { data, error } = await this.supabase
+      const { data, error } = await this.getSupabase()
         .from('user_preferences')
         .select('*')
         .eq('user_id', resolvedId)

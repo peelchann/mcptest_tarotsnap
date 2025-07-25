@@ -52,7 +52,7 @@ export function ReadingInterpretation({ reading, question }: ReadingInterpretati
           <CardContent>
             <p className="text-slate-300 leading-relaxed text-lg">
               {reading.interpretation || "The cards speak of transformation and new beginnings. Trust in the journey ahead and embrace the changes that are coming your way."}
-            </p>
+              </p>
           </CardContent>
         </Card>
       </motion.div>
