@@ -1,4 +1,188 @@
-# 🎓 Lessons Learned: OpenRouter API Integration Debugging
+# 🎓 Lessons Learned: TarotSnap Critical Issue Debugging
+
+## 📋 Overview
+This document captures key lessons learned during critical debugging sessions for TarotSnap, focusing on authentication, environment variables, and deployment issues.
+
+---
+
+## 🚨 **CRITICAL: Supabase Authentication "Invalid API key" Issue (January 2025)**
+
+### **🔍 Problem Analysis**
+**Issue:** Users experiencing "Invalid API key" during `signInWithPassword`, blocking all authentication
+**Impact:** 100% authentication failure, Memory Bank system inaccessible, premium features blocked
+**Timeline:** Resolved in 2 hours using systematic debugging approach
+
+### **Root Cause Discovery**
+**Method:** Sequential debugging using Supabase logs and environment variable audit
+```
+Supabase Production Log Evidence:
+- Status: 401 Unauthorized  
+- API Key: "<invalid>"
+- JWT Analysis: "invalid": "Not a JWT"
+- Path: /auth/v1/token?grant_type=password
+```
+
+**Root Cause:** `NEXT_PUBLIC_SUPABASE_ANON_KEY` truncated in Vercel production environment
+- **Local:** Complete 240-character JWT token
+- **Vercel:** Truncated token ending mid-JWT, making it invalid
+- **Result:** Supabase rejected malformed API key with 401 error
+
+### **Debugging Methodology**
+**1. Environment Variable Audit:**
+```bash
+# Check local vs production
+vercel env ls  # Revealed missing ANON_KEY in production list
+vercel env pull .env.vercel.production  # Showed truncated token
+```
+
+**2. JWT Token Validation:**
+```bash
+# Compare token lengths
+Get-Content .env.local | Select-String "ANON_KEY" | ForEach-Object { $_.Line.Length }
+# Local: 240 characters (complete JWT)
+# Vercel: ~150 characters (truncated, invalid)
+```
+
+**3. Production Testing:**
+- Supabase logs showed `"Not a JWT"` error
+- Browser network tab confirmed 401 responses
+- Authentication modal showing "Invalid API key" instead of credential errors
+
+### **CLI-Based Solution (No Website UI Needed)**
+**Complete fix via Vercel CLI:**
+```bash
+# 1. Remove corrupted environment variable
+echo y | vercel env rm NEXT_PUBLIC_SUPABASE_ANON_KEY production
+
+# 2. Add complete token from local environment  
+$env:ANON_KEY = (Get-Content .env.local | Select-String "ANON_KEY").ToString().Split('=')[1].Trim('\"')
+echo $env:ANON_KEY | vercel env add NEXT_PUBLIC_SUPABASE_ANON_KEY production
+
+# 3. Redeploy with corrected environment
+vercel --prod
+```
+
+### **🎯 Key Lessons:**
+
+**1. Environment Variable Corruption:**
+- Vercel can truncate long environment variables during certain operations
+- Always verify production environment variables match local exactly
+- Use `vercel env pull` to audit deployed variables
+
+**2. JWT Token Validation:**
+- "Invalid API key" in Supabase = corrupted/missing JWT, not user credentials
+- Supabase logs provide definitive evidence of API key validity
+- Valid JWT tokens are ~240 characters, truncated ones fail immediately
+
+**3. CLI vs Dashboard Management:**
+- Vercel CLI can completely manage environment variables without web UI
+- CLI methods are often more reliable for complex environment variable operations
+- PowerShell piping can automate multi-step environment variable updates
+
+**4. Authentication vs Authorization:**
+- API key errors occur before user credential validation
+- Fix infrastructure (API keys) before debugging user authentication flows
+- Supabase auth logs clearly distinguish between API key and user credential issues
+
+### **Prevention Strategies:**
+```typescript
+// Add environment variable validation at startup
+export const createBrowserSupabaseClient = () => {
+  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
+  const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+  
+  if (!supabaseUrl || !supabaseAnonKey) {
+    throw new Error('Missing Supabase environment variables')
+  }
+  
+  // Validate JWT format
+  if (!supabaseAnonKey.startsWith('eyJ')) {
+    throw new Error('Invalid Supabase ANON key format - not a JWT')
+  }
+  
+  return createBrowserClient(supabaseUrl, supabaseAnonKey)
+}
+```
+
+**Business Impact:** Authentication fix unlocked complete Memory Bank system and premium features, enabling full competitive advantage.
+
+---
+
+## 🍎 **iOS Safari "Works On My Machine" Issue (January 2025)**
+
+### **🔍 Problem Analysis**
+**Issue:** iPhone 13 Pro Max showing white backgrounds despite Tailwind purple classes
+**Scope:** Mobile-only issue, perfect on desktop and local development
+**Impact:** Poor mobile UX, unreadable content on primary mobile platform
+
+### **Root Cause Discovery**
+**Evidence Collection:** Used Playwright MCP to capture mobile screenshots and investigate
+```
+Playwright Mobile Debugging:
+- Desktop: Perfect purple backgrounds (bg-purple-900/80)
+- iPhone Safari: White backgrounds overriding CSS
+- Root Cause: iOS Safari system color scheme enforcement
+```
+
+**Technical Analysis:**
+- iOS Safari enforces system color schemes over CSS
+- `prefers-color-scheme` detection was failing
+- Tailwind utility classes being overridden by WebKit defaults
+
+### **Triple-Layer Solution Implementation**
+**Layer 1: Meta Tag Prevention**
+```html
+<!-- Prevent iOS system color overrides -->
+<meta name="color-scheme" content="dark" />
+<meta name="theme-color" content="#4c1d95" />
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+```
+
+**Layer 2: Aggressive CSS Overrides**
+```css
+/* iOS Safari Specific Overrides - CRITICAL for iPhone compatibility */
+@supports (-webkit-appearance: none) {
+  .bg-purple-900\/80, [class*="bg-purple-900/80"] { 
+    background-color: rgba(88, 28, 135, 0.8) !important; 
+    -webkit-background-color: rgba(88, 28, 135, 0.8) !important; 
+  }
+  .text-purple-100, [class*="text-purple-100"] { 
+    color: rgb(243, 232, 255) !important; 
+    -webkit-text-fill-color: rgb(243, 232, 255) !important; 
+  }
+}
+```
+
+**Layer 3: React Inline Style Failsafe**
+```typescript
+// Critical Card components
+style={{ 
+  backgroundColor: 'rgba(88, 28, 135, 0.8)', 
+  WebkitBackgroundClip: 'initial', 
+  colorScheme: 'dark' 
+} as React.CSSProperties}
+```
+
+### **🎯 Key Lessons:**
+
+**1. Mobile Safari Specificity:**
+- iOS Safari has unique rendering behaviors not found in other browsers
+- System-level overrides can bypass standard CSS rules
+- "Works on my machine" often means iOS Safari compatibility issues
+
+**2. Defense-in-Depth Approach:**
+- Single fixes often fail on iOS Safari
+- Multiple layers ensure compatibility across different iOS versions
+- Meta tags + CSS + inline styles provide comprehensive coverage
+
+**3. CSS Debugging Strategies:**
+- `@supports (-webkit-appearance: none)` targets WebKit specifically
+- `!important` declarations necessary to override system defaults
+- `-webkit-` prefixed properties often required for iOS
+
+---
+
+## 🔄 **OpenRouter API Integration Debugging (December 2024)**
 
 ## 📋 Overview
 This document captures key lessons learned during the debugging and implementation of OpenRouter AI integration in TarotSnap, particularly around environment variable handling and Next.js API route patterns.
