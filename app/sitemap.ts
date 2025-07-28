@@ -1,11 +1,11 @@
 import { MetadataRoute } from 'next'
 
 export default function sitemap(): MetadataRoute.Sitemap {
-  // Improved base URL strategy with correct production URL
+  // Use main Vercel domain alias for production consistency
   const baseUrl = process.env.VERCEL_URL 
     ? `https://${process.env.VERCEL_URL}` 
     : process.env.NODE_ENV === 'production'
-    ? 'https://tarot-snap-nt4meoeyd-peelchans-projects.vercel.app'  // Updated to correct production URL
+    ? 'https://tarot-snap.vercel.app'  // Main Vercel alias - always accessible
     : 'http://localhost:3000'
 
   // Enhanced static routes with better SEO metadata
