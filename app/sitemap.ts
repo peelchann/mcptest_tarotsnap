@@ -1,14 +1,14 @@
 import { MetadataRoute } from 'next'
 
 export default function sitemap(): MetadataRoute.Sitemap {
-  // Use VERCEL_URL for production deployments, fallback to localhost for dev
+  // Improved base URL strategy with correct production URL
   const baseUrl = process.env.VERCEL_URL 
     ? `https://${process.env.VERCEL_URL}` 
     : process.env.NODE_ENV === 'production'
-    ? 'https://tarot-snap-46b6osjei-peelchans-projects.vercel.app'  // Current production URL
+    ? 'https://tarot-snap-nt4meoeyd-peelchans-projects.vercel.app'  // Updated to correct production URL
     : 'http://localhost:3000'
 
-  // Static routes
+  // Enhanced static routes with better SEO metadata
   const routes = [
     {
       url: baseUrl,
@@ -36,7 +36,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     },
   ]
 
-  // Add blog routes when blog is implemented
+  // Future enhancement: Add dynamic routes when implemented
   // const blogPosts = await getBlogPosts()
   // const blogRoutes = blogPosts.map((post) => ({
   //   url: `${baseUrl}/blog/${post.slug}`,

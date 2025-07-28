@@ -1,11 +1,11 @@
 import { MetadataRoute } from 'next'
 
 export default function robots(): MetadataRoute.Robots {
-  // Use VERCEL_URL for production deployments, fallback to current production URL
+  // Improved base URL strategy with correct production URL
   const baseUrl = process.env.VERCEL_URL 
     ? `https://${process.env.VERCEL_URL}` 
     : process.env.NODE_ENV === 'production'
-    ? 'https://tarot-snap-46b6osjei-peelchans-projects.vercel.app'  // Current production URL
+    ? 'https://tarot-snap-nt4meoeyd-peelchans-projects.vercel.app'  // Updated to correct production URL
     : 'http://localhost:3000'
 
   return {
