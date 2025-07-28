@@ -1,14 +1,13 @@
 import { MetadataRoute } from 'next'
 
 export default function sitemap(): MetadataRoute.Sitemap {
-  // Use main Vercel domain alias for production consistency
-  const baseUrl = process.env.VERCEL_URL 
-    ? `https://${process.env.VERCEL_URL}` 
-    : process.env.NODE_ENV === 'production'
-    ? 'https://tarot-snap.vercel.app'  // Main Vercel alias - always accessible
+  // Force main Vercel alias for production to ensure consistent URLs
+  // VERCEL_URL points to deployment-specific URLs which cause sitemap issues
+  const baseUrl = process.env.NODE_ENV === 'production'
+    ? 'https://tarot-snap.vercel.app'  // Always use main alias in production
     : 'http://localhost:3000'
 
-  // Enhanced static routes with better SEO metadata
+  // Enhanced static routes with correct URLs
   const routes = [
     {
       url: baseUrl,
@@ -35,15 +34,6 @@ export default function sitemap(): MetadataRoute.Sitemap {
       priority: 0.7,
     },
   ]
-
-  // Future enhancement: Add dynamic routes when implemented
-  // const blogPosts = await getBlogPosts()
-  // const blogRoutes = blogPosts.map((post) => ({
-  //   url: `${baseUrl}/blog/${post.slug}`,
-  //   lastModified: new Date(post.updatedAt),
-  //   changeFrequency: 'monthly' as const,
-  //   priority: 0.6,
-  // }))
 
   return routes
 } 
