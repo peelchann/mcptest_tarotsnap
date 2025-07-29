@@ -13,6 +13,7 @@ export default function robots(): MetadataRoute.Robots {
         allow: '/',
         disallow: [
           '/api/',
+          '/dashboard/',     // Block private dashboard
           '/dashboard/admin/',
           '/private/',
           '/_next/',
@@ -24,6 +25,7 @@ export default function robots(): MetadataRoute.Robots {
         allow: '/',
         disallow: [
           '/api/',
+          '/dashboard/',     // Block private dashboard for Google
           '/dashboard/admin/',
           '/private/',
         ],

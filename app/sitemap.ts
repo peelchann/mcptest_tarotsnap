@@ -7,7 +7,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     ? 'https://tarot-snap.vercel.app'  // Always use main alias in production
     : 'http://localhost:3000'
 
-  // Enhanced static routes with correct URLs
+  // Only include PUBLIC routes accessible without authentication
   const routes = [
     {
       url: baseUrl,
@@ -22,16 +22,16 @@ export default function sitemap(): MetadataRoute.Sitemap {
       priority: 0.8,
     },
     {
+      url: `${baseUrl}/reading`,
+      lastModified: new Date(),
+      changeFrequency: 'weekly' as const,
+      priority: 0.9,
+    },
+    {
       url: `${baseUrl}/reading/single`,
       lastModified: new Date(),
       changeFrequency: 'daily' as const,
       priority: 0.9,
-    },
-    {
-      url: `${baseUrl}/dashboard`,
-      lastModified: new Date(),
-      changeFrequency: 'weekly' as const,
-      priority: 0.7,
     },
   ]
 
