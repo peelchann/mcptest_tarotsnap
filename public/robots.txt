@@ -1,0 +1,23 @@
+# *
+User-agent: *
+Allow: /
+Disallow: /api/
+Disallow: /dashboard/
+Disallow: /dashboard/admin/
+Disallow: /private/
+Disallow: /_next/
+Disallow: /temp/
+
+# Googlebot
+User-agent: Googlebot
+Allow: /
+Disallow: /api/
+Disallow: /dashboard/
+Disallow: /dashboard/admin/
+Disallow: /private/
+
+# Host
+Host: https://tarot-snap.vercel.app
+
+# Sitemaps
+Sitemap: https://tarot-snap.vercel.app/sitemap.xml
