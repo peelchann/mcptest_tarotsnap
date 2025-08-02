@@ -2,7 +2,7 @@
 module.exports = {
   siteUrl: 'https://tarot-snap.vercel.app',
   generateRobotsTxt: true,
-  exclude: ['/dashboard', '/dashboard/*', '/private/*', '/api/*', '/_next/*', '/temp/*'],
+  exclude: ['/dashboard', '/dashboard/*', '/private/*', '/api/*', '/_next/*', '/temp/*', '/robots.txt'],
   changefreq: 'daily',
   priority: 0.7,
   sitemapSize: 5000,
