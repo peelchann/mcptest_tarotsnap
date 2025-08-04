@@ -3,6 +3,7 @@ module.exports = {
   siteUrl: 'https://tarot-snap.vercel.app',
   generateRobotsTxt: true,
   generateIndexSitemap: false,  // ← BULLET-PROOF FIX: Single sitemap only
+  sitemapBaseFileName: 'main-sitemap',  // ← CACHE-BUSTER: New filename bypasses GSC cache
   exclude: ['/dashboard', '/dashboard/*', '/private/*', '/api/*', '/_next/*', '/temp/*', '/robots.txt'],
   changefreq: 'daily',
   priority: 0.7,
