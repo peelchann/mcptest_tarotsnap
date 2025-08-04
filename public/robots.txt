@@ -20,4 +20,4 @@ Disallow: /private/
 Host: https://tarot-snap.vercel.app
 
 # Sitemaps
-Sitemap: https://tarot-snap.vercel.app/main-sitemap.xml
+Sitemap: https://tarot-snap.vercel.app/main-sitemap.xml?v=20250804
