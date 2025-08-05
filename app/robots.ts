@@ -31,6 +31,7 @@ export default function robots(): MetadataRoute.Robots {
         ],
       },
     ],
-    sitemap: `${baseUrl}/main-sitemap.xml?v=20250804`,
+    // Use a stable sitemap URL without query params for Google Search Console
+    sitemap: `${baseUrl}/main-sitemap.xml`,
   }
-} 
+}
