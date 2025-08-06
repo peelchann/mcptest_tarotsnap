@@ -4,6 +4,7 @@ module.exports = {
   generateRobotsTxt: false,  // ← CONFLICT FIX: Use dynamic robots.ts only
   generateIndexSitemap: false,  // ← BULLET-PROOF FIX: Single sitemap only
   sitemapBaseFileName: 'main-sitemap',  // ← CACHE-BUSTER: New filename bypasses GSC cache
+  outDir: './public',  // ← FIX: Generate sitemap in public directory where Vercel can serve it
   exclude: ['/dashboard', '/dashboard/*', '/private/*', '/api/*', '/_next/*', '/temp/*', '/robots.txt'],
   changefreq: 'daily',
   priority: 0.7,
