@@ -203,7 +203,38 @@ curl https://tarot-snap.vercel.app/main-sitemap.xml > temp-sitemap.xml
 - **Monitor**: Check for noindex headers and platform-specific quirks
 - **Timeline**: Allow 24-48 hours for GSC to process changes
 
+## ❌ ATTEMPTED FIXES (UNSUCCESSFUL)
+
+### Fix Attempt #1: Middleware Exclusion 
+**Theory**: Middleware was interfering with Googlebot sitemap access
+**Action**: Added `|xml|txt` to middleware matcher exclusions
+**Result**: ❌ Still "Sitemap could not be read"
+**Lesson**: Middleware wasn't the issue
+
+### Fix Attempt #2: Static File Location
+**Theory**: Sitemap was in wrong location (project root vs public/)
+**Action**: Moved `main-sitemap.xml` to `public/` directory, updated `next-sitemap.config.js`
+**Result**: ❌ Still "Sitemap could not be read" 
+**Lesson**: File location wasn't the core issue
+
+## 🎯 **ACTUAL ROOT CAUSE DISCOVERED**
+
+### **GSC URL Submission Mismatch**
+**Theory**: Relative vs absolute URL mismatch between GSC submission and robots.txt
+**Evidence**: 
+- **GSC shows**: `/main-sitemap.xml` (relative path)
+- **robots.txt declares**: `https://tarot-snap.vercel.app/main-sitemap.xml` (absolute URL)
+**Root Cause**: Google tries to fetch relative path `/main-sitemap.xml` instead of full URL
+**Solution**: Delete current sitemap in GSC and resubmit with full absolute URL
+
+## **Final Solution**
+1. Delete `/main-sitemap.xml` from GSC
+2. Submit: `https://tarot-snap.vercel.app/main-sitemap.xml`
+3. Ensure exact match with robots.txt declaration
+
 ---
 
-*Analysis completed: January 11, 2025*
-*Next action: Execute debugging steps 1-2 to confirm current state*
+*Analysis completed: August 6, 2025*
+*Status: ROOT CAUSE IDENTIFIED - URL mismatch*
+*Failed attempts: 2*
+*Solution: Absolute URL submission required*
