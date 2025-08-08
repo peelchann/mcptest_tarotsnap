@@ -31,7 +31,7 @@ export default function robots(): MetadataRoute.Robots {
         ],
       },
     ],
-    // Use a stable sitemap URL without query params for Google Search Console
-    sitemap: `${baseUrl}/main-sitemap.xml`,
+    // Use the standard Next.js dynamic sitemap route
+    sitemap: `${baseUrl}/sitemap.xml`,
   }
 }
