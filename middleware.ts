@@ -4,6 +4,12 @@ import { NextResponse, type NextRequest } from 'next/server'
 export async function middleware(request: NextRequest) {
   // Bypass middleware for sitemap and robots to avoid any crawler interference
   const pathname = request.nextUrl.pathname
+  // Canonicalize trailing slash variants first
+  if (pathname === '/sitemap.xml/' || pathname === '/robots.txt/') {
+    const url = new URL(request.url)
+    url.pathname = pathname.replace(/\/$/, '')
+    return NextResponse.redirect(url, 308)
+  }
   if (pathname === '/sitemap.xml' || pathname === '/sitemap.xml/' || pathname === '/robots.txt') {
     return NextResponse.next()
   }
