@@ -2,6 +2,12 @@ import { createServerClient } from '@supabase/ssr'
 import { NextResponse, type NextRequest } from 'next/server'
 
 export async function middleware(request: NextRequest) {
+  // Bypass middleware for sitemap and robots to avoid any crawler interference
+  const pathname = request.nextUrl.pathname
+  if (pathname === '/sitemap.xml' || pathname === '/sitemap.xml/' || pathname === '/robots.txt') {
+    return NextResponse.next()
+  }
+
   let response = NextResponse.next({
     request: {
       headers: request.headers,
