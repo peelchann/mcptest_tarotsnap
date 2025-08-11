@@ -5,8 +5,12 @@ import { AuthProvider } from "./providers/AuthProvider";
 import { GoogleAnalytics } from '@next/third-parties/google';
 import StructuredData from "./components/StructuredData";
 
+const canonicalBaseUrl = process.env.NODE_ENV === 'production'
+  ? 'https://tarot-snap.vercel.app'
+  : 'http://localhost:3000'
+
 export const metadata: Metadata = {
-  metadataBase: new URL(process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : 'http://localhost:3000'),
+  metadataBase: new URL(canonicalBaseUrl),
   title: {
     template: '%s | TarotSnap',
     default: 'TarotSnap - AI Tarot Readings & Spiritual Guidance',
@@ -61,7 +65,7 @@ export const metadata: Metadata = {
     google: 'JDomEglmiJxAajLXTE4frGcLjRoIGFDsVIW2hrznc8g', // Google Search Console verification
   },
   alternates: {
-    canonical: process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : 'http://localhost:3000',
+    canonical: canonicalBaseUrl,
   },
   icons: {
     icon: [
