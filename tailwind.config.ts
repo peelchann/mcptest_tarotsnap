@@ -69,8 +69,8 @@ const config: Config = {
         sm: "calc(var(--radius) - 4px)",
       },
       fontFamily: {
-        'witchcraft': ['Cinzel', 'serif'],
-        'mystical': ['Lato', 'sans-serif'],
+        'witchcraft': ['var(--font-cinzel)', 'serif'],
+        'mystical': ['var(--font-lato)', 'sans-serif'],
       },
       keyframes: {
         "accordion-down": {
