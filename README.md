@@ -150,6 +150,7 @@ npm run test:watch
 - ✅ Cross-device responsiveness testing
 - ✅ AI response quality validation
 - ✅ Rate limiting and analytics verification
+- ✅ Automated image validation (`npm run check:images`)
 
 ## 📈 **Analytics & Business Intelligence**
 
@@ -198,7 +199,7 @@ TarotSnap is evolving beyond one-off readings to become a **personal spiritual a
 
 ## 📄 **License**
 
-This project is licensed under the MIT License - see the LICENSE file for details.
+This project is licensed under the [MIT License](LICENSE).
 
 ## 🆘 **Support & Troubleshooting**
 

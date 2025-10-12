@@ -1,13 +1,16 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import StarsBackground, { StarsFallback } from "./components/StarsBackground";
-import ScrollingSymbols from "./components/ScrollingSymbols";
 import { AuthProvider } from "./providers/AuthProvider";
 import { GoogleAnalytics } from '@next/third-parties/google';
 import StructuredData from "./components/StructuredData";
 
+const canonicalBaseUrl = process.env.NODE_ENV === 'production'
+  ? 'https://tarot-snap.vercel.app'
+  : 'http://localhost:3000'
+
 export const metadata: Metadata = {
-  metadataBase: new URL(process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : 'http://localhost:3000'),
+  metadataBase: new URL(canonicalBaseUrl),
   title: {
     template: '%s | TarotSnap',
     default: 'TarotSnap - AI Tarot Readings & Spiritual Guidance',
@@ -59,10 +62,10 @@ export const metadata: Metadata = {
     },
   },
   verification: {
-    google: 'your-google-verification-code', // Add when setting up Search Console
+    google: 'JDomEglmiJxAajLXTE4frGcLjRoIGFDsVIW2hrznc8g', // Google Search Console verification
   },
   alternates: {
-    canonical: process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : 'http://localhost:3000',
+    canonical: canonicalBaseUrl,
   },
   icons: {
     icon: [
@@ -100,6 +103,13 @@ export default function RootLayout({
   return (
     <html lang="en" className="dark" suppressHydrationWarning>
       <head>
+        {/* iOS Safari specific meta tags to prevent system color overrides */}
+        <meta name="color-scheme" content="dark" />
+        <meta name="theme-color" content="#4c1d95" />
+        <meta name="msapplication-navbutton-color" content="#4c1d95" />
+        <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+        <meta name="format-detection" content="telephone=no" />
+        
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="" />
         <link href="https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap" rel="stylesheet" />
@@ -114,12 +124,9 @@ export default function RootLayout({
         {/* Dynamic canvas-based stars that replace the fallback once loaded */}
         <StarsBackground />
         
-        {/* Decorative scrolling witch symbols */}
-        <ScrollingSymbols />
-        
         {/* Content */}
         <AuthProvider>
-          <main className="relative z-10 min-h-screen container mx-auto px-4 py-8">
+          <main className="relative z-10 min-h-screen">
             {children}
           </main>
         </AuthProvider>

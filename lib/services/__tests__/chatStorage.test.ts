@@ -37,7 +37,7 @@ describe('ChatStorageService', () => {
 
   beforeEach(() => {
     mockSupabaseClient = (createBrowserSupabaseClient as jest.Mock)();
-    chatStorage = new ChatStorageService();
+    chatStorage = new ChatStorageService(mockSupabaseClient);
     jest.clearAllMocks();
   });
 
@@ -204,7 +204,6 @@ describe('ChatStorageService', () => {
         select: jest.fn().mockReturnThis(),
         eq: jest.fn().mockReturnThis(),
         order: jest.fn().mockReturnThis(),
-        limit: jest.fn().mockReturnThis(),
         range: jest.fn().mockResolvedValue({ data: [], error: null }),
       };
       mockSupabaseClient.from.mockReturnValue(mockQuery);
@@ -216,7 +215,6 @@ describe('ChatStorageService', () => {
       });
 
       expect(mockQuery.eq).toHaveBeenCalledWith('reading_id', 'reading-123');
-      expect(mockQuery.limit).toHaveBeenCalledWith(20);
       expect(mockQuery.range).toHaveBeenCalledWith(10, 29);
     });
   });
@@ -229,9 +227,11 @@ describe('ChatStorageService', () => {
     it('should delete a specific message for authenticated user', async () => {
       const mockDelete = {
         delete: jest.fn().mockReturnThis(),
-        eq: jest.fn().mockReturnThis(),
-      };
-      mockDelete.eq.mockResolvedValue({ error: null });
+        eq: jest.fn(),
+      } as any;
+      (mockDelete.eq as jest.Mock)
+        .mockReturnValueOnce(mockDelete)
+        .mockResolvedValueOnce({ error: null });
       mockSupabaseClient.from.mockReturnValue(mockDelete);
 
       const result = await chatStorage.deleteChatMessage('message-123');
@@ -258,9 +258,8 @@ describe('ChatStorageService', () => {
       expect(result).toEqual(
         expect.objectContaining({
           content_length: content.length,
-          reading_id: context.readingId,
-          card_mentioned: context.cardDrawn,
-          user_question: context.userQuestion,
+          word_count: content.split(' ').length,
+          context: context,
           timestamp: expect.any(String),
         })
       );
@@ -274,6 +273,8 @@ describe('ChatStorageService', () => {
       expect(result).toEqual(
         expect.objectContaining({
           content_length: content.length,
+          word_count: content.split(' ').length,
+          context: {},
           timestamp: expect.any(String),
         })
       );

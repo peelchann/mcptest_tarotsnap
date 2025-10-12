@@ -149,6 +149,17 @@
   @apply w-full p-3 bg-purple-900/40 border border-purple-400/50 rounded-lg text-purple-100 placeholder-purple-300/60 focus:border-gold-400 focus:ring-2 focus:ring-gold-400/50 focus:outline-none transition-all duration-300 backdrop-blur-sm;
 }
 
+/* Scrollbar hide utility for mobile cards */
+@layer utilities {
+  .scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
+  }
+}
+
 /* Custom color classes */
 .text-gold-400 {
   color: #facc15;
@@ -671,4 +682,122 @@ body {
 
 .animate-border-flow {
   animation: border-flow 3s ease infinite;
+}
+
+/* CSS-only fallback for hero cards visibility */
+.hero-card-fallback {
+  opacity: 0;
+  transform: translateY(40px) scale(0.9);
+  animation: hero-card-fadein 0.6s ease-out forwards;
+}
+
+.hero-card-fallback:nth-child(1) { animation-delay: 0s; }
+.hero-card-fallback:nth-child(2) { animation-delay: 0.1s; }
+.hero-card-fallback:nth-child(3) { animation-delay: 0.2s; }
+
+@keyframes hero-card-fadein {
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* Ensure cards are visible as fallback */
+.hero-card-visible {
+  opacity: 1 !important;
+  transform: translateY(0) scale(1) !important;
+  transition: all 0.5s ease-out;
+}
+
+/* Hide scrollbars while maintaining functionality */
+.scrollbar-hide {
+  /* IE and Edge */
+  -ms-overflow-style: none;
+  /* Firefox */
+  scrollbar-width: none;
+}
+
+.scrollbar-hide::-webkit-scrollbar {
+  /* Safari and Chrome */
+  display: none;
+}
+
+.mystical-scrollbar {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(200, 173, 127, 0.6) rgba(255, 255, 255, 0.1);
+}
+
+.mystical-scrollbar::-webkit-scrollbar {
+  width: 8px;
+}
+
+.mystical-scrollbar::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 4px;
+}
+
+.mystical-scrollbar::-webkit-scrollbar-thumb {
+  background: rgba(200, 173, 127, 0.6);
+  border-radius: 4px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.mystical-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: rgba(200, 173, 127, 0.8);
+  box-shadow: 0 0 8px rgba(200, 173, 127, 0.4);
+}
+
+/* iOS Safari Specific Overrides - CRITICAL for iPhone compatibility */
+@supports (-webkit-appearance: none) {
+  /* Force purple backgrounds on iOS Safari with !important */
+  .bg-purple-900\/80,
+  [class*="bg-purple-900/80"] {
+    background-color: rgba(88, 28, 135, 0.8) !important;
+    -webkit-background-color: rgba(88, 28, 135, 0.8) !important;
+  }
+  
+  .bg-purple-900\/90,
+  [class*="bg-purple-900/90"] {
+    background-color: rgba(88, 28, 135, 0.9) !important;
+    -webkit-background-color: rgba(88, 28, 135, 0.9) !important;
+  }
+  
+  .bg-slate-800\/90,
+  [class*="bg-slate-800/90"] {
+    background-color: rgba(30, 41, 59, 0.9) !important;
+    -webkit-background-color: rgba(30, 41, 59, 0.9) !important;
+  }
+  
+  /* Force text colors on iOS Safari */
+  .text-purple-100,
+  [class*="text-purple-100"] {
+    color: rgb(243, 232, 255) !important;
+    -webkit-text-fill-color: rgb(243, 232, 255) !important;
+  }
+  
+  .text-purple-200,
+  [class*="text-purple-200"] {
+    color: rgb(233, 213, 255) !important;
+    -webkit-text-fill-color: rgb(233, 213, 255) !important;
+  }
+  
+  /* Reset iOS Safari defaults that cause white backgrounds */
+  input, textarea, button, select {
+    -webkit-appearance: none !important;
+    appearance: none !important;
+    background-color: transparent !important;
+  }
+  
+  /* Force card backgrounds on iOS Safari */
+  [data-radix-collection-item] {
+    background-color: rgba(88, 28, 135, 0.8) !important;
+    -webkit-background-color: rgba(88, 28, 135, 0.8) !important;
+  }
+  
+  /* Override any system-imposed white backgrounds */
+  div[class*="bg-white"],
+  div[class*="bg-slate"] {
+    background-color: rgba(88, 28, 135, 0.8) !important;
+    -webkit-background-color: rgba(88, 28, 135, 0.8) !important;
+  }
 }

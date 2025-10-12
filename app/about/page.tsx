@@ -25,9 +25,9 @@ export default function AboutPage() {
               TarotSnap was created to provide a modern, accessible approach to the ancient wisdom of tarot. 
               We combine traditional tarot symbolism with cutting-edge AI interpretation to offer insights tailored to your unique situation.
             </p>
-            <p>
-              Whether you're a tarot enthusiast or a curious newcomer, our platform offers a space for reflection, insight, and personal growth.
-            </p>
+              <p>
+                Whether you&apos;re a tarot enthusiast or a curious newcomer, our platform offers a space for reflection, insight, and personal growth.
+              </p>
           </div>
           
           <div className="mystical-card">
@@ -36,9 +36,9 @@ export default function AboutPage() {
               Tarot cards have been used for centuries as tools for divination, self-discovery, and spiritual guidance. 
               Each card contains rich symbolism that speaks to different aspects of the human experience.
             </p>
-            <p>
-              Our readings aim to help you connect with your intuition and gain perspective on your life's journey.
-            </p>
+              <p>
+                Our readings aim to help you connect with your intuition and gain perspective on your life&apos;s journey.
+              </p>
           </div>
         </div>
         

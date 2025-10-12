@@ -1,48 +1,48 @@
 import { MetadataRoute } from 'next'
 
+// Drop milliseconds in ISO timestamp: 2025-07-31T15:31:00Z
+const isoNoMs = (d = new Date()) => d.toISOString().replace(/\.\d{3}Z$/, 'Z')
+
+// Avoid per-request rendering for a stable sitemap
+export const dynamic = 'force-static'
+
 export default function sitemap(): MetadataRoute.Sitemap {
-  const baseUrl = process.env.VERCEL_URL 
-    ? `https://${process.env.VERCEL_URL}` 
-    : process.env.NODE_ENV === 'production'
-    ? 'https://tarotsnap.com'  // Replace with actual domain when purchased
+  // Force main Vercel alias for production to ensure consistent URLs
+  // VERCEL_URL points to deployment-specific URLs which cause sitemap issues
+  const baseUrl = process.env.NODE_ENV === 'production'
+    ? 'https://tarot-snap.vercel.app'
     : 'http://localhost:3000'
 
-  // Static routes
-  const routes = [
+  const now = isoNoMs()
+
+  // Only include PUBLIC routes accessible without authentication
+  const routes: MetadataRoute.Sitemap = [
     {
       url: baseUrl,
-      lastModified: new Date(),
-      changeFrequency: 'daily' as const,
+      lastModified: now,
+      changeFrequency: 'daily',
       priority: 1,
     },
     {
       url: `${baseUrl}/about`,
-      lastModified: new Date(),
-      changeFrequency: 'monthly' as const,
+      lastModified: now,
+      changeFrequency: 'monthly',
       priority: 0.8,
     },
     {
-      url: `${baseUrl}/reading/single`,
-      lastModified: new Date(),
-      changeFrequency: 'daily' as const,
+      url: `${baseUrl}/reading`,
+      lastModified: now,
+      changeFrequency: 'weekly',
       priority: 0.9,
     },
     {
-      url: `${baseUrl}/dashboard`,
-      lastModified: new Date(),
-      changeFrequency: 'weekly' as const,
-      priority: 0.7,
+      url: `${baseUrl}/reading/single`,
+      lastModified: now,
+      changeFrequency: 'daily',
+      priority: 0.9,
     },
   ]
 
-  // Add blog routes when blog is implemented
-  // const blogPosts = await getBlogPosts()
-  // const blogRoutes = blogPosts.map((post) => ({
-  //   url: `${baseUrl}/blog/${post.slug}`,
-  //   lastModified: new Date(post.updatedAt),
-  //   changeFrequency: 'monthly' as const,
-  //   priority: 0.6,
-  // }))
-
   return routes
-} 
+}
+

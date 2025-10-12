@@ -1,10 +1,9 @@
 import { MetadataRoute } from 'next'
 
 export default function robots(): MetadataRoute.Robots {
-  const baseUrl = process.env.VERCEL_URL 
-    ? `https://${process.env.VERCEL_URL}` 
-    : process.env.NODE_ENV === 'production'
-    ? 'https://tarotsnap.com'  // Replace with actual domain when purchased
+  // Force main Vercel alias for production consistency with sitemap
+  const baseUrl = process.env.NODE_ENV === 'production'
+    ? 'https://tarot-snap.vercel.app'  // Always use main alias in production
     : 'http://localhost:3000'
 
   return {
@@ -14,6 +13,7 @@ export default function robots(): MetadataRoute.Robots {
         allow: '/',
         disallow: [
           '/api/',
+          '/dashboard/',     // Block private dashboard
           '/dashboard/admin/',
           '/private/',
           '/_next/',
@@ -25,12 +25,13 @@ export default function robots(): MetadataRoute.Robots {
         allow: '/',
         disallow: [
           '/api/',
+          '/dashboard/',     // Block private dashboard for Google
           '/dashboard/admin/',
           '/private/',
         ],
       },
     ],
+    // Use the standard Next.js dynamic sitemap route
     sitemap: `${baseUrl}/sitemap.xml`,
-    host: baseUrl,
   }
-} 
+}

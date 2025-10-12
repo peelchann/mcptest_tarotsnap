@@ -135,4 +135,157 @@ Enable TarotSnap to remember readings, card relationships, and themes for users 
 - [ ] Fetch and display chat history for returning users to enable seamless session continuity.
 - [ ] Analyze chat content for recurring themes, emotional trends, and user goals using AI.
 - [ ] Use chat insights to drive personalized follow-ups, greetings, and recommendations.
-- [ ] Implement privacy controls: allow users to view, export, or delete their chat history. 
+- [ ] Implement privacy controls: allow users to view, export, or delete their chat history.
+
+# TarotSnap Landing Page Authentication Integration Plan
+
+**Issue:** Critical Priority #1 - Missing Login/Signup functionality on landing page  
+**Impact:** Blocks freemium conversion funnel and user account access across all platforms  
+**Timeline:** 4-6 hours total implementation  
+
+## Phase 1: Research & Design Analysis ✅
+
+### Current State Assessment
+- **Landing Page Structure:** Single-page layout with left content area and right floating tarot cards
+- **Existing Auth Components:** Complete AuthModal.tsx with LoginForm and SignupForm already implemented
+- **Design Theme:** Navy+gold mystical Agatha Harkness aesthetic with sophisticated animations
+- **Missing Element:** No visible header/navigation with auth access points
+
+### Integration Strategy
+**Approach:** Floating header overlay with mystical auth buttons that don't disrupt main visual flow
+
+## Phase 2: Header/Navigation Integration ✅
+
+### 2.1 Create Mystical Header Component ✅
+```typescript
+// ✅ COMPLETED: app/components/MysticalHeader.tsx
+- Floating semi-transparent header bar
+- Login/Signup buttons with gold mystical styling
+- User profile dropdown for authenticated users
+- Responsive design for mobile compatibility
+```
+
+### 2.2 Integration Points ✅
+- ✅ Top-right corner positioning to avoid disrupting main CTA
+- ✅ Backdrop blur with navy gradient background
+- ✅ Gold accent borders matching card theme
+- ✅ Smooth animations on hover/focus states
+
+### 2.3 Authentication State Management ✅
+- ✅ Import existing AuthProvider context
+- ✅ Handle authenticated vs anonymous user states
+- ✅ Display user avatar/name when logged in
+- ✅ Show auth buttons when anonymous
+
+**Implementation Notes:**
+- Successfully integrated MysticalHeader component into main landing page
+- Component uses existing AuthModal.tsx for authentication flows
+- Matches navy+gold mystical theme perfectly
+- Includes loading states to prevent UI flash
+- Features smooth Framer Motion animations
+
+## Phase 3: Visual Design & UX Consistency
+
+### 3.1 Design Principles
+- **Color Harmony:** Navy (#1e293b) backgrounds with gold (#FFD700) accents
+- **Typography:** Match existing Cinzel-style mystical fonts
+- **Animations:** Subtle hover effects with Framer Motion
+- **Spacing:** Maintain 8px grid system and existing margins
+
+### 3.2 Button Design Specifications
+```css
+Login Button:
+- Semi-transparent navy background with gold border
+- "Log In" text in amber-300 color
+- Hover: Gold shimmer effect similar to main CTA
+
+Signup Button:
+- Solid gold gradient background
+- "Sign Up" text in slate-900 color  
+- Hover: Scale and shadow effects
+```
+
+### 3.3 Mobile Optimization
+- Responsive button sizing (smaller on mobile)
+- Touch-friendly 44px minimum touch targets
+- Simplified animation for performance
+- Proper z-index management over floating cards
+
+## Phase 4: Testing & Optimization
+
+### 4.1 Functionality Testing
+- [ ] Auth modal opens/closes correctly
+- [ ] Login/Signup flows work as expected
+- [ ] User state persists across sessions
+- [ ] Error handling displays properly
+- [ ] Form validation functions correctly
+
+### 4.2 Visual Integration Testing
+- [ ] Header doesn't interfere with main content
+- [ ] Animations are smooth and performant
+- [ ] Colors match existing mystical theme
+- [ ] Mobile responsive behavior verified
+- [ ] Cross-browser compatibility confirmed
+
+### 4.3 User Experience Testing
+- [ ] Auth flow feels natural and mystical
+- [ ] No disruption to existing user journey
+- [ ] Clear visual hierarchy maintained
+- [ ] Accessibility standards met
+- [ ] Performance impact minimized
+
+## Implementation Checklist
+
+### Technical Tasks
+- [ ] Create MysticalHeader.tsx component
+- [ ] Add authentication state management
+- [ ] Integrate AuthModal trigger functionality
+- [ ] Implement responsive design styles
+- [ ] Add smooth animations and transitions
+- [ ] Test on desktop and mobile viewports
+
+### Quality Assurance
+- [ ] Component follows existing code patterns
+- [ ] TypeScript types properly defined
+- [ ] No accessibility regressions
+- [ ] Performance metrics maintained
+- [ ] Memory leaks prevented
+
+### Documentation
+- [ ] Update component documentation
+- [ ] Record design decisions
+- [ ] Document responsive breakpoints
+- [ ] Create usage examples
+
+## Success Metrics
+
+### Business Impact
+- **Primary:** Unblock freemium conversion funnel
+- **Secondary:** Enable Memory Bank access for logged-in users
+- **Tertiary:** Improve user identification for analytics
+
+### Technical Success
+- **Performance:** No impact on page load times
+- **Compatibility:** Works across all target devices/browsers
+- **Maintainability:** Clean, reusable component architecture
+
+## Risk Mitigation
+
+### Potential Issues
+1. **Visual Disruption:** Header interferes with main design flow
+   - **Solution:** Floating, semi-transparent design with careful positioning
+
+2. **Mobile UX Problems:** Auth buttons too small or hard to access
+   - **Solution:** Touch-optimized sizing with proper spacing
+
+3. **Performance Impact:** Additional components slow page load
+   - **Solution:** Lazy loading and optimized animations
+
+## Next Steps
+1. **Immediate:** Begin Phase 2 implementation with MysticalHeader component
+2. **Validation:** Test integration with existing AuthModal functionality  
+3. **Deployment:** Staged rollout with production testing
+4. **Monitoring:** Track conversion metrics post-implementation
+
+---
+*This plan follows TarotSnap coding rules: simplicity, no duplication, clear organization, and focused implementation scope.* 
