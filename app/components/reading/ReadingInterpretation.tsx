@@ -21,18 +21,13 @@ export function ReadingInterpretation({ reading, question }: ReadingInterpretati
         initial={{ opacity: 0, x: -20 }}
         animate={{ opacity: 1, x: 0 }}
         transition={{ delay: 0.2, duration: 0.6 }}
-        className="bg-purple-900/80 backdrop-blur-sm rounded-xl p-6 shadow-lg border border-purple-400/30"
-        style={{ 
-          backgroundColor: 'rgba(88, 28, 135, 0.8)', 
-          WebkitBackgroundClip: 'initial',
-          colorScheme: 'dark'
-        } as React.CSSProperties}
+        className="bg-slate-900/80 backdrop-blur-sm rounded-xl p-6 shadow-lg border border-amber-400/30"
       >
-        <h3 className="text-lg font-semibold text-purple-200 mb-2 flex items-center gap-2" style={{ color: 'rgb(233, 213, 255)' }}>
-          <Sparkles className="w-5 h-5 text-purple-300" />
+        <h3 className="font-witchcraft text-lg font-semibold text-amber-400 mb-2 flex items-center gap-2">
+          <Sparkles className="w-5 h-5" />
           Your Question
         </h3>
-        <p className="text-purple-100 text-lg italic" style={{ color: 'rgb(243, 232, 255)' }}>&quot;{question}&quot;</p>
+        <p className="text-slate-300 text-lg italic">"{question}"</p>
       </motion.div>
 
       {/* Main Interpretation */}
@@ -40,23 +35,25 @@ export function ReadingInterpretation({ reading, question }: ReadingInterpretati
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.4, duration: 0.6 }}
-        className="mb-8"
       >
-        <Card className="bg-gradient-to-br from-slate-900/90 to-slate-800/90 backdrop-blur-sm shadow-lg border-purple-400/30">
-          <CardHeader className="pb-3">
-            <CardTitle className="text-xl text-purple-300 flex items-center gap-2">
-              <Sparkles className="w-5 h-5 text-purple-400" />
+        <Card className="bg-slate-900/80 backdrop-blur-sm shadow-lg border-amber-400/30">
+          <CardHeader className="pb-4">
+            <CardTitle className="font-witchcraft text-2xl text-amber-400 flex items-center gap-3">
+              <Heart className="w-6 h-6 text-amber-500" />
               Your Reading
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <p className="text-slate-300 leading-relaxed text-lg">
-              {reading.interpretation || "The cards speak of transformation and new beginnings. Trust in the journey ahead and embrace the changes that are coming your way."}
+            <div className="prose prose-lg max-w-none">
+              <p className="text-slate-300 leading-relaxed text-lg">
+                {reading.interpretation}
               </p>
+            </div>
           </CardContent>
         </Card>
       </motion.div>
 
+      {/* Additional Insights Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {/* Guidance Section */}
         <motion.div
@@ -64,10 +61,10 @@ export function ReadingInterpretation({ reading, question }: ReadingInterpretati
           animate={{ opacity: 1, x: 0 }}
           transition={{ delay: 0.6, duration: 0.6 }}
         >
-          <Card className="bg-gradient-to-br from-slate-900/90 to-slate-800/90 backdrop-blur-sm shadow-lg border-indigo-400/30 h-full">
+          <Card className="bg-slate-900/80 backdrop-blur-sm shadow-lg border-amber-400/30 h-full">
             <CardHeader className="pb-3">
-              <CardTitle className="text-xl text-indigo-300 flex items-center gap-2">
-                <Compass className="w-5 h-5 text-indigo-400" />
+              <CardTitle className="text-xl text-amber-400 flex items-center gap-2">
+                <Compass className="w-5 h-5 text-amber-500" />
                 Guidance
               </CardTitle>
             </CardHeader>
@@ -85,10 +82,10 @@ export function ReadingInterpretation({ reading, question }: ReadingInterpretati
           animate={{ opacity: 1, x: 0 }}
           transition={{ delay: 0.8, duration: 0.6 }}
         >
-          <Card className="bg-gradient-to-br from-slate-900/90 to-slate-800/90 backdrop-blur-sm shadow-lg border-emerald-400/30 h-full">
+          <Card className="bg-slate-900/80 backdrop-blur-sm shadow-lg border-amber-400/30 h-full">
             <CardHeader className="pb-3">
-              <CardTitle className="text-xl text-emerald-300 flex items-center gap-2">
-                <Clock className="w-5 h-5 text-emerald-400" />
+              <CardTitle className="text-xl text-amber-400 flex items-center gap-2">
+                <Clock className="w-5 h-5 text-amber-500" />
                 Timing & Energy
               </CardTitle>
             </CardHeader>

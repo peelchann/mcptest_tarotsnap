@@ -2,8 +2,7 @@
 
 import React, { useEffect, useState } from "react"
 import { motion } from "framer-motion"
-import { cn } from "@/lib/utils"
-import { Sparkles, Star } from "lucide-react"
+import { Sparkles } from "lucide-react"
 import Link from "next/link"
 import { MysticalHeader } from "@/app/components/MysticalHeader"
 import { getRandomCards, type TarotCard as TarotCardType } from "@/app/data/cards"
@@ -19,7 +18,7 @@ const MysticalBackground = () => {
 
   // Pre-calculate positions to avoid SSR issues
   const particles = React.useMemo(() => 
-    [...Array(20)].map((_, i) => ({
+    [...Array(15)].map((_, i) => ({
       id: i,
       x: Math.random() * 100,
       y: Math.random() * 100,
@@ -29,7 +28,7 @@ const MysticalBackground = () => {
   )
 
   const orbs = React.useMemo(() => 
-    [...Array(8)].map((_, i) => ({
+    [...Array(6)].map((_, i) => ({
       id: i,
       x: Math.random() * 100,
       y: Math.random() * 100,
@@ -41,15 +40,15 @@ const MysticalBackground = () => {
   if (!mounted) {
     return (
       <div className="absolute inset-0 overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-br from-purple-950 via-violet-950 to-indigo-950" />
+        <div className="absolute inset-0 bg-gradient-to-br from-slate-900 via-slate-950 to-blue-950" />
       </div>
     )
   }
 
   return (
     <div className="absolute inset-0 overflow-hidden">
-      {/* Deep purple mystical gradient */}
-      <div className="absolute inset-0 bg-gradient-to-br from-purple-950 via-violet-950 to-indigo-950" />
+      {/* Deep navy mystical gradient */}
+      <div className="absolute inset-0 bg-gradient-to-br from-slate-900 via-slate-950 to-blue-950" />
       
       {/* Floating particles */}
       {particles.map((particle) => (
@@ -115,19 +114,19 @@ const HeroSection = ({ heroCard }: { heroCard: TarotCardType | null }) => {
 
   return (
     <section className="relative min-h-screen flex flex-col items-center justify-center px-4 py-20">
-      <div className="text-center space-y-8 max-w-4xl mx-auto">
+      <div className="text-center space-y-12 max-w-4xl mx-auto">
         {/* Main title */}
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           animate={isVisible ? { opacity: 1, y: 0 } : { opacity: 0, y: 30 }}
           transition={{ duration: 0.8, ease: "easeOut" }}
-          className="space-y-4"
+          className="space-y-6"
         >
-          <h1 className="text-6xl md:text-8xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-amber-400 via-yellow-300 to-orange-400 leading-tight tracking-tight">
+          <h1 className="font-witchcraft text-7xl md:text-9xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-amber-300 via-amber-400 to-yellow-300 leading-tight tracking-tight drop-shadow-[0_0_30px_rgba(251,191,36,0.5)]">
             TarotSnap
           </h1>
-          <h2 className="text-2xl md:text-4xl text-purple-200 font-light leading-relaxed">
-            Psychic & Tarot Readings
+          <h2 className="text-3xl md:text-4xl text-slate-300 font-light leading-relaxed">
+            Instant Tarot Insight, <span className="text-amber-400 font-semibold">Powered by AI</span>
           </h2>
         </motion.div>
 
@@ -138,7 +137,7 @@ const HeroSection = ({ heroCard }: { heroCard: TarotCardType | null }) => {
           transition={{ duration: 1, delay: 0.3, ease: "easeOut" }}
           className="relative my-16"
         >
-          <div className="w-64 h-96 mx-auto relative mb-8">
+          <div className="w-64 h-96 mx-auto relative">
             {heroCard ? (
               <motion.div
                 className="w-full h-full relative"
@@ -154,17 +153,16 @@ const HeroSection = ({ heroCard }: { heroCard: TarotCardType | null }) => {
                     isReversed={false}
                     isFlipped={true}
                     className="w-full h-full shadow-2xl"
-                    hideOverlayText={true}
                   />
                 </div>
                 
-                {/* Enhanced mystical glow effects */}
+                {/* Enhanced gold glow effects */}
                 <div className="absolute inset-0 bg-amber-400/20 rounded-xl blur-xl animate-pulse pointer-events-none" />
-                <div className="absolute inset-0 bg-gradient-to-r from-purple-500/10 to-amber-500/10 rounded-xl blur-2xl animate-pulse pointer-events-none" />
+                <div className="absolute inset-0 bg-gradient-to-r from-amber-400/10 to-yellow-400/10 rounded-xl blur-2xl animate-pulse pointer-events-none" />
               </motion.div>
             ) : (
               <motion.div 
-                className="absolute inset-0 bg-gradient-to-br from-purple-800/50 to-indigo-900/50 rounded-xl backdrop-blur-sm border border-amber-400/30 shadow-2xl"
+                className="absolute inset-0 bg-gradient-to-br from-slate-800/50 to-blue-900/50 rounded-xl backdrop-blur-sm border border-amber-400/30 shadow-2xl"
                 whileHover={{ scale: 1.05, rotateY: 5 }}
                 transition={{ duration: 0.3 }}
               >
@@ -186,44 +184,34 @@ const HeroSection = ({ heroCard }: { heroCard: TarotCardType | null }) => {
               initial={{ opacity: 0, y: 20 }}
               animate={isVisible ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
               transition={{ duration: 0.8, delay: 0.8, ease: "easeOut" }}
-              className="text-center space-y-2"
+              className="absolute -bottom-20 left-1/2 -translate-x-1/2 w-full text-center"
             >
-              <h3 className="text-2xl font-bold text-amber-300 font-serif">
+              <h3 className="font-witchcraft text-2xl font-bold text-amber-300">
                 {heroCard.name}
               </h3>
-              <p className="text-purple-300 text-sm tracking-wide">
+              <p className="text-slate-400 text-sm tracking-wide mt-1">
                 {heroCard.keywords.slice(0, 3).join(' • ')}
               </p>
             </motion.div>
           )}
         </motion.div>
 
-        {/* Subtitle - positioned much lower to prevent stacking */}
-        <motion.p
-          initial={{ opacity: 0 }}
-          animate={isVisible ? { opacity: 1 } : { opacity: 0 }}
-          transition={{ duration: 0.8, delay: 0.6, ease: "easeOut" }}
-          className="text-xl text-purple-300 font-light max-w-2xl mx-auto mt-16 mb-8"
-        >
-          Your AI mystic that <span className="text-amber-300 font-semibold">remembers your journey</span>. Get personalized readings that evolve with you.
-        </motion.p>
-
         {/* Primary CTA Button */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={isVisible ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
           transition={{ duration: 0.8, delay: 0.8, ease: "easeOut" }}
-          className="pt-8"
+          className="pt-16"
         >
           <Link href="/reading/single">
             <motion.button 
               whileHover={{ 
                 scale: 1.05, 
-                boxShadow: '0 0 30px rgba(255,215,0,0.5)',
-                y: -2
+                boxShadow: '0 0 40px rgba(251,191,36,0.6)',
+                y: -3
               }}
               whileTap={{ scale: 0.98 }}
-              className="px-12 py-4 bg-gradient-to-r from-amber-500 to-amber-600 text-purple-900 font-bold text-xl rounded-full shadow-2xl hover:from-amber-400 hover:to-amber-500 transition-all duration-300 border-2 border-amber-400/50"
+              className="px-16 py-5 bg-gradient-to-r from-amber-500 to-amber-600 text-slate-900 font-bold text-xl rounded-full shadow-[0_0_30px_rgba(251,191,36,0.3)] hover:shadow-[0_0_50px_rgba(251,191,36,0.5)] hover:from-amber-400 hover:to-amber-500 transition-all duration-300 border-2 border-amber-400/50"
             >
               ✨ Begin Your Reading
             </motion.button>
@@ -234,95 +222,28 @@ const HeroSection = ({ heroCard }: { heroCard: TarotCardType | null }) => {
   )
 }
 
-// Reading types section
-const ReadingTypesSection = ({ cards }: { cards: TarotCardType[] }) => {
-  const readingTypes = [
-    {
-      title: "Easy Tarot",
-      description: "Quick insights for daily guidance",
-      icon: "🌙",
-    },
-    {
-      title: "Quick Mix",
-      description: "Mixed reading combining different approaches",
-      icon: "✨",
-    },
-    {
-      title: "Full Reading",
-      description: "Comprehensive analysis of your situation",
-      icon: "🔮",
-    },
-    {
-      title: "Get Clarity",
-      description: "Focus on specific questions or concerns",
-      icon: "💫",
-    },
-  ]
-
-  return (
-    <section className="relative py-20 px-4">
-      <div className="max-w-6xl mx-auto">
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8 }}
-          className="text-center mb-16"
-        >
-          <h3 className="text-4xl font-bold text-amber-400 mb-4">Choose Your Path</h3>
-          <p className="text-xl text-purple-300">Select the reading that speaks to your soul</p>
-        </motion.div>
-
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-          {readingTypes.map((type, index) => (
-            <motion.div
-              key={index}
-              initial={{ opacity: 0, y: 30 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, margin: "-100px" }}
-              transition={{ duration: 0.6, delay: index * 0.15, ease: "easeOut" }}
-              whileHover={{ scale: 1.05, y: -5 }}
-              className="relative group cursor-pointer"
-            >
-              <div className="bg-gradient-to-br from-purple-900/50 to-indigo-900/50 backdrop-blur-sm border border-amber-400/30 rounded-xl p-6 h-full transition-all duration-300 group-hover:border-amber-400/50 group-hover:shadow-xl">
-                <div className="text-center space-y-4">
-                  <div className="text-4xl mb-4">{type.icon}</div>
-                  <h4 className="text-xl font-semibold text-amber-300">{type.title}</h4>
-                  <p className="text-purple-300 text-sm leading-relaxed">{type.description}</p>
-                </div>
-                
-                {/* Hover glow effect */}
-                <div className="absolute inset-0 bg-amber-400/5 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-              </div>
-            </motion.div>
-          ))}
-        </div>
-      </div>
-    </section>
-  )
-}
-
-// Memory Features section
+// Memory Features section - reduced text
 const MemoryFeaturesSection = () => {
   const memoryFeatures = [
     {
-      title: "Remembers Your Journey",
-      description: "Your AI mystic recalls past readings and grows more insightful with each conversation",
+      title: "Remembers You",
+      description: "Grows more insightful with each conversation",
       icon: "🧠",
     },
     {
-      title: "Personalized Insights", 
-      description: "Readings become more accurate as your spiritual advisor learns your patterns",
+      title: "Personalized", 
+      description: "Learns your patterns for deeper accuracy",
       icon: "💫",
     },
     {
-      title: "Cross-Device Memory",
-      description: "Access your complete reading history from any device, anywhere",
+      title: "Always There",
+      description: "Access your history from any device",
       icon: "☁️",
     },
   ]
 
   return (
-    <section className="relative py-20 px-4 bg-gradient-to-r from-purple-900/20 to-indigo-900/20">
+    <section className="relative py-24 px-4 bg-gradient-to-r from-slate-900/40 to-blue-900/40">
       <div className="max-w-6xl mx-auto">
         <motion.div
           initial={{ opacity: 0, y: 30 }}
@@ -330,8 +251,8 @@ const MemoryFeaturesSection = () => {
           transition={{ duration: 0.8 }}
           className="text-center mb-16"
         >
-          <h3 className="text-4xl font-bold text-amber-400 mb-4">A Reader That Remembers</h3>
-          <p className="text-xl text-purple-300">Unlike other tarot apps, TarotSnap builds a relationship with you</p>
+          <h3 className="font-witchcraft text-5xl font-bold text-amber-400 mb-4">A Reader That Remembers</h3>
+          <p className="text-xl text-slate-300">Unlike other tarot apps</p>
         </motion.div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
@@ -345,11 +266,11 @@ const MemoryFeaturesSection = () => {
               whileHover={{ scale: 1.05, y: -5 }}
               className="relative group cursor-pointer"
             >
-              <div className="bg-gradient-to-br from-amber-900/30 to-yellow-900/30 backdrop-blur-sm border border-amber-400/40 rounded-xl p-6 h-full transition-all duration-300 group-hover:border-amber-400/60 group-hover:shadow-xl">
+              <div className="bg-gradient-to-br from-amber-900/30 to-yellow-900/30 backdrop-blur-sm border border-amber-400/40 rounded-xl p-8 h-full transition-all duration-300 group-hover:border-amber-400/60 group-hover:shadow-[0_0_30px_rgba(251,191,36,0.3)]">
                 <div className="text-center space-y-4">
                   <div className="text-5xl mb-4">{feature.icon}</div>
                   <h4 className="text-xl font-semibold text-amber-300">{feature.title}</h4>
-                  <p className="text-purple-300 text-sm leading-relaxed">{feature.description}</p>
+                  <p className="text-slate-400 text-sm leading-relaxed">{feature.description}</p>
                 </div>
                 
                 {/* Enhanced hover glow effect */}
@@ -363,10 +284,10 @@ const MemoryFeaturesSection = () => {
   )
 }
 
-// Featured cards section
+// Featured cards section - streamlined
 const FeaturedCardsSection = ({ cards }: { cards: TarotCardType[] }) => {
   return (
-    <section className="relative py-20 px-4">
+    <section className="relative py-24 px-4">
       <div className="max-w-6xl mx-auto">
         <motion.div
           initial={{ opacity: 0, y: 30 }}
@@ -374,8 +295,8 @@ const FeaturedCardsSection = ({ cards }: { cards: TarotCardType[] }) => {
           transition={{ duration: 0.8 }}
           className="text-center mb-16"
         >
-          <h3 className="text-4xl font-bold text-amber-400 mb-4">Mystical Guidance</h3>
-          <p className="text-xl text-purple-300">Three cards await your discovery</p>
+          <h3 className="font-witchcraft text-5xl font-bold text-amber-400 mb-4">Mystical Guidance</h3>
+          <p className="text-xl text-slate-300">Three cards await</p>
         </motion.div>
 
         <div className="flex flex-col md:flex-row items-center justify-center gap-8 md:gap-12">
@@ -386,7 +307,11 @@ const FeaturedCardsSection = ({ cards }: { cards: TarotCardType[] }) => {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true, margin: "-50px" }}
               transition={{ duration: 0.8, delay: index * 0.2, ease: "easeOut" }}
-              whileHover={{ scale: 1.05, y: -10 }}
+              whileHover={{ 
+                scale: 1.05, 
+                y: -10,
+                boxShadow: '0 0 30px rgba(251,191,36,0.3)'
+              }}
               className="relative group cursor-pointer"
             >
               <div className="w-48 aspect-[3/5] relative">
@@ -394,14 +319,16 @@ const FeaturedCardsSection = ({ cards }: { cards: TarotCardType[] }) => {
                   card={card}
                   isReversed={card.isReversed}
                   isFlipped={true}
-                  className="w-full h-full"
-                  hideOverlayText={true}
+                  className="w-full h-full shadow-2xl rounded-lg"
                 />
+                
+                {/* Enhanced card glow */}
+                <div className="absolute inset-0 bg-amber-400/0 group-hover:bg-amber-400/10 rounded-lg blur-xl transition-all duration-300" />
                 
                 {/* Card info overlay */}
                 <div className="absolute -bottom-16 left-1/2 -translate-x-1/2 w-full text-center">
-                  <h4 className="text-amber-300 font-semibold text-lg">{card.name}</h4>
-                  <p className="text-purple-300 text-sm mt-1">
+                  <h4 className="font-witchcraft text-amber-300 font-semibold text-lg">{card.name}</h4>
+                  <p className="text-slate-400 text-sm mt-1">
                     {card.keywords.slice(0, 2).join(' • ')}
                   </p>
                 </div>
@@ -415,13 +342,16 @@ const FeaturedCardsSection = ({ cards }: { cards: TarotCardType[] }) => {
           initial={{ opacity: 0 }}
           whileInView={{ opacity: 1 }}
           transition={{ duration: 0.8, delay: 0.8 }}
-          className="text-center mt-20"
+          className="text-center mt-24"
         >
           <Link href="/reading/single">
             <motion.button 
-              whileHover={{ scale: 1.05, boxShadow: '0 0 30px rgba(255,215,0,0.4)' }}
+              whileHover={{ 
+                scale: 1.05, 
+                boxShadow: '0 0 40px rgba(251,191,36,0.5)' 
+              }}
               whileTap={{ scale: 0.98 }}
-              className="px-12 py-4 bg-gradient-to-r from-amber-500 to-amber-600 text-purple-900 font-bold text-lg rounded-full shadow-xl hover:from-amber-400 hover:to-amber-500 transition-all duration-300"
+              className="px-12 py-4 bg-gradient-to-r from-amber-500 to-amber-600 text-slate-900 font-bold text-lg rounded-full shadow-[0_0_30px_rgba(251,191,36,0.3)] hover:from-amber-400 hover:to-amber-500 transition-all duration-300"
             >
               ✨ Begin Your Reading
             </motion.button>
@@ -459,9 +389,6 @@ function NewHomepage() {
         {/* Hero Section */}
         <HeroSection heroCard={randomCards[0] || null} />
 
-        {/* Reading Types */}
-        <ReadingTypesSection cards={randomCards} />
-
         {/* Memory Features */}
         <MemoryFeaturesSection />
 
@@ -484,4 +411,5 @@ function NewHomepage() {
   )
 }
 
-export default NewHomepage 
+export default NewHomepage
+
