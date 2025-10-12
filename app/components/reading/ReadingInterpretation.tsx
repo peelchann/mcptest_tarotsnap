@@ -21,13 +21,13 @@ export function ReadingInterpretation({ reading, question }: ReadingInterpretati
         initial={{ opacity: 0, x: -20 }}
         animate={{ opacity: 1, x: 0 }}
         transition={{ delay: 0.2, duration: 0.6 }}
-        className="bg-white/95 backdrop-blur-sm rounded-xl p-6 shadow-lg"
+        className="bg-slate-900/80 backdrop-blur-sm rounded-xl p-6 shadow-lg border border-amber-400/30"
       >
-        <h3 className="text-lg font-semibold text-purple-800 mb-2 flex items-center gap-2">
+        <h3 className="font-witchcraft text-lg font-semibold text-amber-400 mb-2 flex items-center gap-2">
           <Sparkles className="w-5 h-5" />
           Your Question
         </h3>
-        <p className="text-gray-700 text-lg italic">"{question}"</p>
+        <p className="text-slate-300 text-lg italic">"{question}"</p>
       </motion.div>
 
       {/* Main Interpretation */}
@@ -36,16 +36,16 @@ export function ReadingInterpretation({ reading, question }: ReadingInterpretati
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.4, duration: 0.6 }}
       >
-        <Card className="bg-white/95 backdrop-blur-sm shadow-lg border-purple-200">
+        <Card className="bg-slate-900/80 backdrop-blur-sm shadow-lg border-amber-400/30">
           <CardHeader className="pb-4">
-            <CardTitle className="text-2xl text-purple-800 flex items-center gap-3">
-              <Heart className="w-6 h-6 text-rose-500" />
+            <CardTitle className="font-witchcraft text-2xl text-amber-400 flex items-center gap-3">
+              <Heart className="w-6 h-6 text-amber-500" />
               Your Reading
             </CardTitle>
           </CardHeader>
           <CardContent>
             <div className="prose prose-lg max-w-none">
-              <p className="text-gray-800 leading-relaxed text-lg">
+              <p className="text-slate-300 leading-relaxed text-lg">
                 {reading.interpretation}
               </p>
             </div>
@@ -61,15 +61,15 @@ export function ReadingInterpretation({ reading, question }: ReadingInterpretati
           animate={{ opacity: 1, x: 0 }}
           transition={{ delay: 0.6, duration: 0.6 }}
         >
-          <Card className="bg-white/95 backdrop-blur-sm shadow-lg border-indigo-200 h-full">
+          <Card className="bg-slate-900/80 backdrop-blur-sm shadow-lg border-amber-400/30 h-full">
             <CardHeader className="pb-3">
-              <CardTitle className="text-xl text-indigo-800 flex items-center gap-2">
-                <Compass className="w-5 h-5 text-indigo-500" />
+              <CardTitle className="text-xl text-amber-400 flex items-center gap-2">
+                <Compass className="w-5 h-5 text-amber-500" />
                 Guidance
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <p className="text-gray-700 leading-relaxed">
+              <p className="text-slate-300 leading-relaxed">
                 {reading.guidance || "Trust your intuition and let your inner wisdom guide you forward. The path ahead is illuminated by your authentic choices."}
               </p>
             </CardContent>
@@ -82,15 +82,15 @@ export function ReadingInterpretation({ reading, question }: ReadingInterpretati
           animate={{ opacity: 1, x: 0 }}
           transition={{ delay: 0.8, duration: 0.6 }}
         >
-          <Card className="bg-white/95 backdrop-blur-sm shadow-lg border-emerald-200 h-full">
+          <Card className="bg-slate-900/80 backdrop-blur-sm shadow-lg border-amber-400/30 h-full">
             <CardHeader className="pb-3">
-              <CardTitle className="text-xl text-emerald-800 flex items-center gap-2">
-                <Clock className="w-5 h-5 text-emerald-500" />
+              <CardTitle className="text-xl text-amber-400 flex items-center gap-2">
+                <Clock className="w-5 h-5 text-amber-500" />
                 Timing & Energy
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <p className="text-gray-700 leading-relaxed">
+              <p className="text-slate-300 leading-relaxed">
                 {reading.timeframe || "The energies surrounding this guidance are building momentum. Remain open to opportunities that align with your highest good."}
               </p>
             </CardContent>

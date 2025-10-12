@@ -384,7 +384,7 @@ export default function SingleCardReading() {
   };
 
   return (
-    <div className="min-h-screen relative overflow-hidden">
+    <div className="min-h-screen relative overflow-hidden bg-gradient-to-br from-slate-900 via-slate-950 to-blue-950">
       {/* Reduce particle opacity for better readability */}
       <div className="opacity-30">
         <MysticalParticles />
@@ -393,22 +393,22 @@ export default function SingleCardReading() {
       <div className="container mx-auto px-4 py-8 relative z-10">
         {/* Header */}
         <div className="flex items-center justify-between mb-8">
-          <Button 
+            <Button 
             variant="ghost" 
             onClick={() => router.push('/')}
-            className="flex items-center gap-2 text-white hover:text-gold-300 hover:bg-white/10"
+            className="flex items-center gap-2 text-slate-300 hover:text-amber-400 hover:bg-slate-800/50"
           >
             <ArrowLeft className="w-4 h-4" />
             Back to Home
           </Button>
           
           <div className="flex items-center gap-2">
-            <Sparkles className="w-6 h-6 text-gold-400" />
-            <h1 className="text-2xl font-bold text-white">Single Card Reading</h1>
+            <Sparkles className="w-6 h-6 text-amber-400" />
+            <h1 className="font-witchcraft text-2xl font-bold text-amber-400">Single Card Reading</h1>
           </div>
           
           {/* Usage Counters */}
-          <div className="flex items-center gap-4 text-sm text-white/80">
+          <div className="flex items-center gap-4 text-sm text-slate-300">
             <div className="flex items-center gap-1">
               <span>Readings: {remainingReadings}/3</span>
             </div>
@@ -422,7 +422,7 @@ export default function SingleCardReading() {
           <Button 
             variant="outline" 
             onClick={startNewReading}
-            className="flex items-center gap-2 text-white hover:text-gold-300 hover:bg-white/10 border-white/30"
+            className="flex items-center gap-2 text-amber-400 hover:text-amber-300 hover:bg-slate-800/50 border-amber-400/30"
           >
             <RefreshCw className="w-4 h-4" />
             New Reading
@@ -436,14 +436,14 @@ export default function SingleCardReading() {
             animate={{ opacity: 1, y: 0 }}
             className="max-w-2xl mx-auto mb-6"
           >
-            <Card className="border-red-400/50 bg-red-900/20 backdrop-blur-md">
+            <Card className="border-red-400/50 bg-red-900/30 backdrop-blur-md">
               <CardContent className="p-4">
                 <div className="flex items-center gap-2 text-red-300">
                   <AlertTriangle className="w-5 h-5" />
                   <p>{error}</p>
                 </div>
                 {rateLimited && (
-                  <p className="text-sm text-white/70 mt-2">
+                  <p className="text-sm text-slate-300 mt-2">
                     You can have 3 free readings per day. Consider signing up for unlimited access.
                   </p>
                 )}
@@ -461,23 +461,23 @@ export default function SingleCardReading() {
               exit={{ opacity: 0, y: -20 }}
               className="max-w-2xl mx-auto"
             >
-              <Card className="border-white/30 bg-white/10 backdrop-blur-md">
+              <Card className="border-amber-400/30 bg-slate-900/80 backdrop-blur-md shadow-[0_0_30px_rgba(251,191,36,0.2)]">
                 <CardHeader className="text-center">
-                  <CardTitle className="text-2xl flex items-center justify-center gap-2 text-white">
-                    <Heart className="w-6 h-6 text-gold-400" />
+                  <CardTitle className="font-witchcraft text-3xl flex items-center justify-center gap-2 text-amber-400">
+                    <Heart className="w-6 h-6 text-amber-400" />
                     What guidance do you seek?
                   </CardTitle>
-                  <CardDescription className="text-white/80">
-                    Focus your intention and ask the universe for guidance
+                  <CardDescription className="text-slate-300 text-lg">
+                    Focus your intention
                   </CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-6">
                   <div className="space-y-2">
                     <Textarea
-                      placeholder="Ask your question to the cards... (e.g., 'What should I focus on in my career?')"
+                      placeholder="Ask your question... (e.g., 'What should I focus on in my career?')"
                       value={question}
                       onChange={(e) => setQuestion(e.target.value)}
-                      className="min-h-[120px] bg-white/90 border-white/30 text-gray-800 placeholder:text-gray-500 resize-none"
+                      className="min-h-[120px] bg-slate-800/50 border-amber-400/30 text-slate-100 placeholder:text-slate-400 resize-none focus:border-amber-400/50"
                       maxLength={500}
                       onKeyDown={(e) => {
                         if (e.key === 'Enter' && !e.shiftKey && question.trim()) {
@@ -486,8 +486,8 @@ export default function SingleCardReading() {
                         }
                       }}
                     />
-                    <div className="flex justify-between text-sm text-white/60">
-                      <span>Press Enter to draw your card</span>
+                    <div className="flex justify-between text-sm text-slate-400">
+                      <span>Press Enter to draw</span>
                       <span>{question.length}/500</span>
                     </div>
                   </div>
@@ -495,15 +495,15 @@ export default function SingleCardReading() {
                   <Button
                     onClick={drawCard}
                     disabled={!question.trim() || isDrawing}
-                    className="w-full bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white py-3 text-lg font-semibold"
+                    className="w-full bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-slate-900 py-3 text-lg font-semibold shadow-[0_0_20px_rgba(251,191,36,0.3)] hover:shadow-[0_0_30px_rgba(251,191,36,0.5)]"
                   >
                     {isDrawing ? (
                       <div className="flex items-center gap-2">
-                        <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                        <div className="w-4 h-4 border-2 border-slate-900/30 border-t-slate-900 rounded-full animate-spin" />
                         Channeling mystical energies...
                       </div>
                     ) : (
-                      'Draw Your Card'
+                      '✨ Draw Your Card'
                     )}
                   </Button>
                 </CardContent>
@@ -525,9 +525,9 @@ export default function SingleCardReading() {
                 transition={{ type: "spring", stiffness: 300, damping: 20, delay: 0.5 }}
                 className="max-w-sm mx-auto mb-8"
               >
-                <Card className="border-white/30 bg-white/10 backdrop-blur-md">
+                <Card className="border-amber-400/30 bg-slate-900/80 backdrop-blur-md shadow-[0_0_30px_rgba(251,191,36,0.2)]">
                   <CardContent className="p-6">
-                    <div className="relative w-64 h-96 mx-auto mb-6 rounded-lg border-2 border-gold-400/50 overflow-hidden">
+                    <div className="relative w-64 h-96 mx-auto mb-6 rounded-lg border-2 border-amber-400/50 overflow-hidden shadow-[0_0_20px_rgba(251,191,36,0.3)]">
                       {reading.imagePath ? (
                         <Image
                           src={reading.imagePath}
@@ -545,7 +545,7 @@ export default function SingleCardReading() {
                         />
                       ) : null}
                       {/* Fallback placeholder */}
-                      <div className="absolute inset-0 bg-gradient-to-b from-purple-900/20 to-indigo-900/20 flex items-center justify-center text-center text-gold-400" style={{ display: reading.imagePath ? 'none' : 'flex' }}>
+                      <div className="absolute inset-0 bg-gradient-to-b from-slate-800/50 to-blue-900/50 flex items-center justify-center text-center text-amber-400" style={{ display: reading.imagePath ? 'none' : 'flex' }}>
                         <div>
                           <Sparkles className="w-16 h-16 mx-auto mb-4" />
                           <p className="text-lg font-medium">{reading.card}</p>
@@ -556,7 +556,7 @@ export default function SingleCardReading() {
                       initial={{ opacity: 0 }}
                       animate={{ opacity: 1 }}
                       transition={{ delay: 1.0 }}
-                      className="text-3xl font-bold mb-2 text-gold-400"
+                      className="font-witchcraft text-3xl font-bold mb-2 text-amber-400"
                     >
                       {reading.card}
                     </motion.h2>
@@ -564,7 +564,7 @@ export default function SingleCardReading() {
                       initial={{ opacity: 0 }}
                       animate={{ opacity: 1 }}
                       transition={{ delay: 1.2 }}
-                      className="text-white/80 text-lg"
+                      className="text-slate-300 text-lg"
                     >
                       {reading.meaning}
                     </motion.p>
@@ -580,10 +580,10 @@ export default function SingleCardReading() {
               >
                 <Button
                   onClick={() => handleChatStart(reading.card)}
-                  className="bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white px-8 py-3 rounded-full font-semibold shadow-lg"
+                  className="bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-slate-900 px-8 py-3 rounded-full font-semibold shadow-[0_0_20px_rgba(251,191,36,0.3)] hover:shadow-[0_0_30px_rgba(251,191,36,0.5)]"
                 >
                   <MessageCircle className="w-5 h-5 mr-2" />
-                  Continue with AI Oracle
+                  ✨ Continue with AI Oracle
                 </Button>
               </motion.div>
             </motion.div>
@@ -599,10 +599,10 @@ export default function SingleCardReading() {
               {/* Card Display */}
               <div className="space-y-6">
                 {question && (
-                  <Card className="border-white/20 bg-white/10 backdrop-blur-md">
+                  <Card className="border-amber-400/30 bg-slate-900/80 backdrop-blur-md">
                     <CardContent className="p-6">
-                      <p className="text-sm font-medium mb-2 text-white">Your Question:</p>
-                      <p className="text-white/80 italic">"{question}"</p>
+                      <p className="text-sm font-medium mb-2 text-amber-400">Your Question:</p>
+                      <p className="text-slate-300 italic">"{question}"</p>
                     </CardContent>
                   </Card>
                 )}
@@ -613,9 +613,9 @@ export default function SingleCardReading() {
                   transition={{ type: "spring", stiffness: 300, damping: 20 }}
                   className="text-center"
                 >
-                  <Card className="border-white/30 bg-white/10 backdrop-blur-md">
+                  <Card className="border-amber-400/30 bg-slate-900/80 backdrop-blur-md shadow-[0_0_30px_rgba(251,191,36,0.2)]">
                     <CardContent className="p-6">
-                      <div className="relative w-64 h-96 mx-auto mb-6 rounded-lg border-2 border-gold-400/50 overflow-hidden">
+                      <div className="relative w-64 h-96 mx-auto mb-6 rounded-lg border-2 border-amber-400/50 overflow-hidden shadow-[0_0_20px_rgba(251,191,36,0.3)]">
                         {reading.imagePath ? (
                           <Image
                             src={reading.imagePath}
@@ -633,36 +633,36 @@ export default function SingleCardReading() {
                           />
                         ) : null}
                         {/* Fallback placeholder */}
-                        <div className="absolute inset-0 bg-gradient-to-b from-purple-900/20 to-indigo-900/20 flex items-center justify-center text-center text-gold-400" style={{ display: reading.imagePath ? 'none' : 'flex' }}>
+                        <div className="absolute inset-0 bg-gradient-to-b from-slate-800/50 to-blue-900/50 flex items-center justify-center text-center text-amber-400" style={{ display: reading.imagePath ? 'none' : 'flex' }}>
                           <div>
                             <Sparkles className="w-16 h-16 mx-auto mb-4" />
                             <p className="text-lg font-medium">{reading.card}</p>
                           </div>
                         </div>
                       </div>
-                      <h2 className="text-2xl font-bold mb-2 text-gold-400">{reading.card}</h2>
-                      <p className="text-white/80">{reading.meaning}</p>
+                      <h2 className="font-witchcraft text-2xl font-bold mb-2 text-amber-400">{reading.card}</h2>
+                      <p className="text-slate-300">{reading.meaning}</p>
                       
                       {/* Reading Details */}
                       <div className="mt-6 space-y-4 text-left">
                         <div>
-                          <h3 className="font-semibold text-gold-400 mb-2">Interpretation</h3>
-                          <p className="text-sm text-white/70">{reading.interpretation}</p>
+                          <h3 className="font-semibold text-amber-400 mb-2">Interpretation</h3>
+                          <p className="text-sm text-slate-300">{reading.interpretation}</p>
                         </div>
                         
                         <div>
-                          <h3 className="font-semibold text-gold-400 mb-2">Guidance</h3>
-                          <p className="text-sm text-white/70">{reading.guidance}</p>
+                          <h3 className="font-semibold text-amber-400 mb-2">Guidance</h3>
+                          <p className="text-sm text-slate-300">{reading.guidance}</p>
                         </div>
                         
                         <div>
-                          <h3 className="font-semibold text-gold-400 mb-2">Energy</h3>
-                          <p className="text-sm text-white/70">{reading.energy}</p>
+                          <h3 className="font-semibold text-amber-400 mb-2">Energy</h3>
+                          <p className="text-sm text-slate-300">{reading.energy}</p>
                         </div>
                         
                         <div>
-                          <h3 className="font-semibold text-gold-400 mb-2">Timeframe</h3>
-                          <p className="text-sm text-white/70">{reading.timeframe}</p>
+                          <h3 className="font-semibold text-amber-400 mb-2">Timeframe</h3>
+                          <p className="text-sm text-slate-300">{reading.timeframe}</p>
                         </div>
                       </div>
                     </CardContent>
@@ -688,21 +688,21 @@ export default function SingleCardReading() {
                   />
                 )}
                 
-                <Card className="border-white/30 bg-white/10 backdrop-blur-md h-[600px] flex flex-col">
+                <Card className="border-amber-400/30 bg-slate-900/80 backdrop-blur-md h-[600px] flex flex-col shadow-[0_0_30px_rgba(251,191,36,0.2)]">
                   <CardHeader>
-                    <CardTitle className="flex items-center gap-2 text-white">
-                      <MessageCircle className="w-5 h-5 text-gold-400" />
+                    <CardTitle className="flex items-center gap-2 text-amber-400">
+                      <MessageCircle className="w-5 h-5 text-amber-400" />
                       AI Oracle Chat
                       {user && (
-                        <span className="text-xs bg-gold-500/20 text-gold-300 px-2 py-1 rounded-full ml-2">
+                        <span className="text-xs bg-amber-500/20 text-amber-300 px-2 py-1 rounded-full ml-2">
                           Memory Enabled
                         </span>
                       )}
                     </CardTitle>
-                    <CardDescription className="text-white/70">
+                    <CardDescription className="text-slate-300">
                       {user 
-                        ? "Your conversations are saved and remembered across sessions"
-                        : "Discuss your reading with our mystical AI guide"
+                        ? "Your conversations are saved and remembered"
+                        : "Discuss your reading with our AI guide"
                       }
                     </CardDescription>
                   </CardHeader>
@@ -719,14 +719,14 @@ export default function SingleCardReading() {
                         >
                           <div className={`flex gap-3 max-w-[80%] ${message.role === 'user' ? 'flex-row-reverse' : 'flex-row'}`}>
                             <div className={`w-8 h-8 rounded-full flex items-center justify-center ${
-                              message.role === 'user' ? 'bg-blue-600' : 'bg-gold-500'
+                              message.role === 'user' ? 'bg-amber-600' : 'bg-amber-500'
                             }`}>
-                              {message.role === 'user' ? <User className="w-4 h-4 text-white" /> : <Bot className="w-4 h-4 text-black" />}
+                              {message.role === 'user' ? <User className="w-4 h-4 text-slate-900" /> : <Bot className="w-4 h-4 text-slate-900" />}
                             </div>
                             <div className={`rounded-lg p-3 ${
                               message.role === 'user' 
-                                ? 'bg-blue-600 text-white' 
-                                : 'bg-white/90 text-gray-800'
+                                ? 'bg-amber-600 text-slate-900' 
+                                : 'bg-slate-800/90 text-slate-100 border border-amber-400/20'
                             }`}>
                               <pre className="whitespace-pre-wrap font-sans text-sm">{message.content}</pre>
                             </div>
@@ -740,14 +740,14 @@ export default function SingleCardReading() {
                           animate={{ opacity: 1 }}
                           className="flex gap-3 justify-start"
                         >
-                          <div className="w-8 h-8 rounded-full bg-gold-500 flex items-center justify-center">
-                            <Bot className="w-4 h-4 text-black" />
+                          <div className="w-8 h-8 rounded-full bg-amber-500 flex items-center justify-center">
+                            <Bot className="w-4 h-4 text-slate-900" />
                           </div>
-                          <div className="bg-white/90 rounded-lg p-3">
+                          <div className="bg-slate-800/90 border border-amber-400/20 rounded-lg p-3">
                             <div className="flex gap-1">
-                              <div className="w-2 h-2 bg-gray-600 rounded-full animate-pulse"></div>
-                              <div className="w-2 h-2 bg-gray-600 rounded-full animate-pulse" style={{ animationDelay: '0.2s' }}></div>
-                              <div className="w-2 h-2 bg-gray-600 rounded-full animate-pulse" style={{ animationDelay: '0.4s' }}></div>
+                              <div className="w-2 h-2 bg-amber-400 rounded-full animate-pulse"></div>
+                              <div className="w-2 h-2 bg-amber-400 rounded-full animate-pulse" style={{ animationDelay: '0.2s' }}></div>
+                              <div className="w-2 h-2 bg-amber-400 rounded-full animate-pulse" style={{ animationDelay: '0.4s' }}></div>
                             </div>
                           </div>
                         </motion.div>
@@ -764,7 +764,7 @@ export default function SingleCardReading() {
                           placeholder="Ask about your reading..."
                           value={newMessage}
                           onChange={(e) => setNewMessage(e.target.value)}
-                          className="min-h-[60px] resize-none bg-white/90 border-white/30 text-gray-800 placeholder:text-gray-500"
+                          className="min-h-[60px] resize-none bg-slate-800/50 border-amber-400/30 text-slate-100 placeholder:text-slate-400 focus:border-amber-400/50"
                           onKeyDown={(e) => {
                             if (e.key === 'Enter' && !e.shiftKey) {
                               e.preventDefault();
