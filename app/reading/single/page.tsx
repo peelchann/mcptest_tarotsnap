@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useRouter } from 'next/navigation';
 import { Button } from '@/app/components/ui/button';
@@ -52,6 +52,7 @@ export default function SingleCardReading() {
   const [user, setUser] = useState<any>(null);
   const [isLoadingAuth, setIsLoadingAuth] = useState(true);
   const [currentSessionId, setCurrentSessionId] = useState<string | null>(null);
+  const chatEndRef = useRef<HTMLDivElement>(null);
 
   const supabase = createBrowserSupabaseClient();
 
@@ -97,6 +98,11 @@ export default function SingleCardReading() {
       sessionStorage.setItem('tarot-question', question);
     }
   }, [question]);
+
+  // Auto-scroll chat container when new messages arrive
+  useEffect(() => {
+    chatEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+  }, [chatMessages]);
 
   const drawCard = async () => {
     if (!question.trim()) {
@@ -709,7 +715,7 @@ export default function SingleCardReading() {
                   
                   <CardContent className="flex-1 flex flex-col p-0">
                     {/* Messages */}
-                    <div className="flex-1 overflow-y-auto p-6 space-y-4">
+                    <div className="h-96 max-h-96 overflow-y-auto p-6 space-y-4 scroll-smooth">
                       {chatMessages.map((message) => (
                         <motion.div
                           key={message.id}
@@ -752,6 +758,7 @@ export default function SingleCardReading() {
                           </div>
                         </motion.div>
                       )}
+                      <div ref={chatEndRef} />
                     </div>
                     
                     {/* Message Input */}
