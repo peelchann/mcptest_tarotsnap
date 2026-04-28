@@ -37,18 +37,50 @@ function safeHashIp(ip: string): string {
   }
 }
 
+// Uses fetch directly (instead of @supabase/supabase-js client) for two
+// reasons:
+//   1. supabase-js silently fails on Vercel's serverless runtime in some
+//      cases — likely because of how the bundled fetch polyfill interacts
+//      with Vercel's edge proxy. Direct fetch() works.
+//   2. fewer dependencies on the hot path mean smaller cold-start time.
+async function insertViaRest(payload: Record<string, unknown>): Promise<{ ok: boolean; status: number; body: string }> {
+  const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
+  const key = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+  if (!url || !key) {
+    return { ok: false, status: 0, body: 'missing supabase env vars' };
+  }
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), TIMEOUT_MS);
+  try {
+    const res = await fetch(`${url}/rest/v1/anonymous_readings`, {
+      method: 'POST',
+      headers: {
+        apikey: key,
+        Authorization: `Bearer ${key}`,
+        'Content-Type': 'application/json',
+        Prefer: 'return=minimal',
+      },
+      body: JSON.stringify(payload),
+      signal: controller.signal,
+    });
+    const body = await res.text();
+    return { ok: res.ok, status: res.status, body: body.slice(0, 500) };
+  } catch (err) {
+    return {
+      ok: false,
+      status: 0,
+      body: err instanceof Error ? err.message : String(err),
+    };
+  } finally {
+    clearTimeout(timer);
+  }
+}
+
 export async function logAnonymousReading(input: LogInput): Promise<void> {
   // Logging must never break the user-facing request. Wrap the entire body
-  // so that any synchronous or async failure (env var missing, supabase
-  // client construction failing, hashing failing, network error) is
-  // swallowed with a console.error.
+  // so that any synchronous or async failure is swallowed with a console.error.
   try {
-    const supabase = createClient(
-      process.env.NEXT_PUBLIC_SUPABASE_URL!,
-      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-    );
-
-    const insertPromise = supabase.from('anonymous_readings').insert({
+    const result = await insertViaRest({
       anon_id: input.anonId || randomUUID(),
       ip_hash: safeHashIp(input.ip),
       user_agent: input.userAgent,
@@ -63,14 +95,8 @@ export async function logAnonymousReading(input: LogInput): Promise<void> {
       ai_token_usage: input.aiTokenUsage,
       error: input.error,
     });
-
-    const timeout = new Promise<{ error: Error }>((resolve) =>
-      setTimeout(() => resolve({ error: new Error('logging timed out after 2s') }), TIMEOUT_MS)
-    );
-
-    const result = (await Promise.race([insertPromise, timeout])) as { error: unknown };
-    if (result?.error) {
-      console.error('[anonymous_readings] insert failed:', result.error);
+    if (!result.ok) {
+      console.error(`[anonymous_readings] insert failed status=${result.status} body=${result.body}`);
     }
   } catch (err) {
     console.error('[anonymous_readings] logAnonymousReading threw:', err);

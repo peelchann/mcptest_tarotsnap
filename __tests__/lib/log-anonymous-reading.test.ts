@@ -38,24 +38,9 @@ describe('hashIp', () => {
   });
 });
 
-// __tests__/lib/log-anonymous-reading.test.ts (continued)
 import { logAnonymousReading } from '@/lib/log-anonymous-reading';
 
-const mockInsert = jest.fn();
-jest.mock('@supabase/supabase-js', () => ({
-  createClient: () => ({
-    from: () => ({ insert: mockInsert }),
-  }),
-}));
-
 describe('logAnonymousReading', () => {
-  beforeEach(() => {
-    mockInsert.mockReset();
-    process.env.IP_HASH_SECRET = 'a'.repeat(64);
-    process.env.NEXT_PUBLIC_SUPABASE_URL = 'https://example.supabase.co';
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY = 'pk_test';
-  });
-
   const baseInput = {
     anonId: 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa',
     ip: '1.2.3.4',
@@ -72,12 +57,46 @@ describe('logAnonymousReading', () => {
     error: null,
   };
 
-  it('inserts one row with all fields mapped correctly', async () => {
-    mockInsert.mockResolvedValue({ error: null });
+  let fetchMock: jest.Mock;
+  let originalFetch: typeof globalThis.fetch | undefined;
+
+  beforeEach(() => {
+    process.env.IP_HASH_SECRET = 'a'.repeat(64);
+    process.env.NEXT_PUBLIC_SUPABASE_URL = 'https://example.supabase.co';
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY = 'pk_test';
+    originalFetch = globalThis.fetch;
+    fetchMock = jest.fn();
+    globalThis.fetch = fetchMock as unknown as typeof globalThis.fetch;
+  });
+
+  afterEach(() => {
+    if (originalFetch) globalThis.fetch = originalFetch;
+    else delete (globalThis as { fetch?: unknown }).fetch;
+    jest.restoreAllMocks();
+  });
+
+  function makeResponse(status: number, body = ''): Response {
+    return {
+      ok: status >= 200 && status < 300,
+      status,
+      text: async () => body,
+    } as unknown as Response;
+  }
+
+  it('POSTs to /rest/v1/anonymous_readings with auth headers and mapped payload', async () => {
+    fetchMock.mockResolvedValue(makeResponse(201));
     await logAnonymousReading(baseInput);
-    expect(mockInsert).toHaveBeenCalledTimes(1);
-    const inserted = mockInsert.mock.calls[0][0];
-    expect(inserted).toMatchObject({
+    expect(fetchMock).toHaveBeenCalledTimes(1);
+    const [url, init] = fetchMock.mock.calls[0];
+    expect(url).toBe('https://example.supabase.co/rest/v1/anonymous_readings');
+    expect(init.method).toBe('POST');
+    expect(init.headers).toMatchObject({
+      apikey: 'pk_test',
+      Authorization: 'Bearer pk_test',
+      'Content-Type': 'application/json',
+    });
+    const body = JSON.parse(init.body);
+    expect(body).toMatchObject({
       anon_id: baseInput.anonId,
       ip_hash: expect.stringMatching(/^[0-9a-f]{64}$/),
       user_agent: baseInput.userAgent,
@@ -89,35 +108,23 @@ describe('logAnonymousReading', () => {
   });
 
   it('falls back to a generated UUID when anonId is empty', async () => {
-    mockInsert.mockResolvedValue({ error: null });
+    fetchMock.mockResolvedValue(makeResponse(201));
     await logAnonymousReading({ ...baseInput, anonId: null });
-    const inserted = mockInsert.mock.calls[0][0];
-    expect(inserted.anon_id).toMatch(/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/);
+    const body = JSON.parse(fetchMock.mock.calls[0][1].body);
+    expect(body.anon_id).toMatch(/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/);
   });
 
-  it('does not throw when Supabase returns an error', async () => {
-    mockInsert.mockResolvedValue({ error: { message: 'rls violation' } });
+  it('does not throw when the REST call returns a non-2xx status', async () => {
+    fetchMock.mockResolvedValue(makeResponse(401, 'rls violation'));
     const consoleSpy = jest.spyOn(console, 'error').mockImplementation(() => {});
     await expect(logAnonymousReading(baseInput)).resolves.toBeUndefined();
-    expect(consoleSpy).toHaveBeenCalledWith(
-      expect.stringContaining('[anonymous_readings]'),
-      expect.anything()
-    );
-    consoleSpy.mockRestore();
+    expect(consoleSpy).toHaveBeenCalledWith(expect.stringContaining('status=401'));
   });
 
-  it('times out after 2 seconds and logs without throwing', async () => {
-    jest.useFakeTimers();
-    mockInsert.mockImplementation(() => new Promise(() => {})); // never resolves
+  it('does not throw when fetch itself rejects (network error)', async () => {
+    fetchMock.mockRejectedValue(new Error('boom'));
     const consoleSpy = jest.spyOn(console, 'error').mockImplementation(() => {});
-    const promise = logAnonymousReading(baseInput);
-    jest.advanceTimersByTime(2001);
-    await expect(promise).resolves.toBeUndefined();
-    expect(consoleSpy).toHaveBeenCalledWith(
-      expect.stringContaining('[anonymous_readings]'),
-      expect.objectContaining({ message: expect.stringContaining('timed out') })
-    );
-    consoleSpy.mockRestore();
-    jest.useRealTimers();
+    await expect(logAnonymousReading(baseInput)).resolves.toBeUndefined();
+    expect(consoleSpy).toHaveBeenCalledWith(expect.stringContaining('boom'));
   });
 });
