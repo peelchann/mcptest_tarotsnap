@@ -21,6 +21,17 @@ export async function GET() {
     ip_hash_secret_head: ipHashHead,
     has_global_fetch: typeof globalThis.fetch === 'function',
     runtime_node_version: process.version,
+    // Vercel-injected diagnostics
+    vercel_env: process.env.VERCEL_ENV,
+    vercel_region: process.env.VERCEL_REGION,
+    vercel_url: process.env.VERCEL_URL,
+    has_openrouter_key: !!process.env.OPENROUTER_API_KEY,
+    // Count + sample of env keys that survived
+    process_env_key_count: Object.keys(process.env).length,
+    next_public_env_keys: Object.keys(process.env).filter(k => k.startsWith('NEXT_PUBLIC_')),
+    custom_env_keys_present: Object.keys(process.env).filter(k =>
+      ['NEXT_PUBLIC_SUPABASE_URL','NEXT_PUBLIC_SUPABASE_ANON_KEY','IP_HASH_SECRET','OPENROUTER_API_KEY','NEXT_PUBLIC_GA_ID'].includes(k)
+    ),
   };
 
   // Try a direct fetch to Supabase to verify connectivity
