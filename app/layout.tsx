@@ -4,6 +4,21 @@ import StarsBackground, { StarsFallback } from "./components/StarsBackground";
 import { AuthProvider } from "./providers/AuthProvider";
 import { GoogleAnalytics } from '@next/third-parties/google';
 import StructuredData from "./components/StructuredData";
+import { Lato, Cinzel } from "next/font/google";
+
+const lato = Lato({
+  subsets: ["latin"],
+  weight: ["300", "400", "700"],
+  display: "swap",
+  variable: "--font-lato",
+});
+
+const cinzel = Cinzel({
+  subsets: ["latin"],
+  weight: ["400", "500", "600", "700"],
+  display: "swap",
+  variable: "--font-cinzel",
+});
 
 const canonicalBaseUrl = process.env.NODE_ENV === 'production'
   ? 'https://tarot-snap.vercel.app'
@@ -101,7 +116,7 @@ export default function RootLayout({
   children: React.ReactNode
 }) {
   return (
-    <html lang="en" className="dark" suppressHydrationWarning>
+    <html lang="en" className={`dark ${lato.variable} ${cinzel.variable}`} suppressHydrationWarning>
       <head>
         {/* iOS Safari specific meta tags to prevent system color overrides */}
         <meta name="color-scheme" content="dark" />
@@ -109,12 +124,11 @@ export default function RootLayout({
         <meta name="msapplication-navbutton-color" content="#4c1d95" />
         <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
         <meta name="format-detection" content="telephone=no" />
-        
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="" />
-        <link href="https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap" rel="stylesheet" />
       </head>
-      <body className="antialiased bg-gradient-to-b from-agatha-navy to-agatha-mid text-agatha-mist font-body min-h-screen" suppressHydrationWarning>
+      <body
+        className={`${lato.className} antialiased bg-gradient-to-b from-agatha-navy to-agatha-mid text-agatha-mist min-h-screen`}
+        suppressHydrationWarning
+      >
         {/* SEO Structured Data */}
         <StructuredData type="homepage" />
         
