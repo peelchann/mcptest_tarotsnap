@@ -1,6 +1,17 @@
 // Import Jest DOM extensions
 import '@testing-library/jest-dom';
 
+// jsdom v20 exposes Web Crypto, but older jest-environment-jsdom bundles ship
+// without `crypto.randomUUID()`. Expose Node's randomUUID on the test global so
+// browser-targeted code that calls `crypto.randomUUID()` works under Jest.
+import { randomUUID } from 'crypto';
+if (typeof globalThis.crypto === 'undefined') {
+  globalThis.crypto = {};
+}
+if (typeof globalThis.crypto.randomUUID !== 'function') {
+  globalThis.crypto.randomUUID = randomUUID;
+}
+
 // Mock Next.js router
 jest.mock('next/router', () => ({
   useRouter: () => ({

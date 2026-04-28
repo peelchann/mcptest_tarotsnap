@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { generateTarotReading, generateFollowUpResponse } from '@/lib/openrouter';
+import { logAnonymousReading } from '@/lib/log-anonymous-reading';
 
 // Rate limiting configuration
 const READING_LIMIT = 3; // Daily limit for tarot readings
@@ -44,11 +45,17 @@ function checkRateLimit(clientIp: string, isFollowUp: boolean = false): { allowe
 export async function POST(request: NextRequest) {
   try {
     // Get client IP for rate limiting
-    const clientIp = request.headers.get('x-forwarded-for') || 
-                     request.headers.get('x-real-ip') || 
+    const clientIp = request.headers.get('x-forwarded-for') ||
+                     request.headers.get('x-real-ip') ||
                      'unknown';
 
+    const anonId = request.headers.get('x-anon-id');
+    const userAgent = request.headers.get('user-agent');
+    const referrer = request.headers.get('referer');
+    // `locale` arrives in the body; pull from body after json() below
+
     const body = await request.json();
+    const locale = typeof body.locale === 'string' ? body.locale : null;
 
     // Check rate limit (different limits for readings vs follow-ups)
     const isFollowUp = !!body.followUp;
@@ -95,32 +102,88 @@ export async function POST(request: NextRequest) {
         );
       }
 
-      const followUpResponse = await generateFollowUpResponse(
-        originalQuestion,
-        cardName,
-        cardMeaning,
-        previousInterpretation,
-        question.trim()
-      );
+      const start = Date.now();
+      let followUpResult;
+      try {
+        followUpResult = await generateFollowUpResponse(
+          originalQuestion, cardName, cardMeaning, previousInterpretation, question.trim(),
+        );
+      } catch (err) {
+        await logAnonymousReading({
+          anonId, ip: clientIp, userAgent, referrer, locale,
+          questionText: question.trim(),
+          spreadType: 'followUp',
+          cardsDrawn: cardName ? [cardName] : [],
+          aiResponse: null,
+          aiModel: 'meta-llama/llama-3.1-8b-instruct',
+          aiLatencyMs: Date.now() - start,
+          aiTokenUsage: null,
+          error: err instanceof Error ? err.message : String(err),
+        });
+        throw err; // bubble up to the outer catch
+      }
+      const followUpLatency = Date.now() - start;
+
+      await logAnonymousReading({
+        anonId, ip: clientIp, userAgent, referrer, locale,
+        questionText: question.trim(),
+        spreadType: 'followUp',
+        cardsDrawn: [cardName],
+        aiResponse: followUpResult.response,
+        aiModel: followUpResult.model,
+        aiLatencyMs: followUpLatency,
+        aiTokenUsage: followUpResult.usage,
+        error: null,
+      });
 
       return NextResponse.json({
         success: true,
-        response: followUpResponse,
+        response: followUpResult.response,
         timestamp: new Date().toISOString(),
         remainingFollowUps: rateLimitResult.remaining,
-        type: 'followUp'
+        type: 'followUp',
       });
     }
 
     // Generate the initial tarot reading
-    const reading = await generateTarotReading(question.trim());
+    const initialStart = Date.now();
+    let initialResult;
+    try {
+      initialResult = await generateTarotReading(question.trim());
+    } catch (err) {
+      await logAnonymousReading({
+        anonId, ip: clientIp, userAgent, referrer, locale,
+        questionText: question.trim(),
+        spreadType: 'single',
+        cardsDrawn: [],
+        aiResponse: null,
+        aiModel: 'meta-llama/llama-3.1-8b-instruct',
+        aiLatencyMs: Date.now() - initialStart,
+        aiTokenUsage: null,
+        error: err instanceof Error ? err.message : String(err),
+      });
+      throw err;
+    }
+    const initialLatency = Date.now() - initialStart;
+
+    await logAnonymousReading({
+      anonId, ip: clientIp, userAgent, referrer, locale,
+      questionText: question.trim(),
+      spreadType: 'single',
+      cardsDrawn: [initialResult.reading.card],
+      aiResponse: JSON.stringify(initialResult.reading),
+      aiModel: initialResult.model,
+      aiLatencyMs: initialLatency,
+      aiTokenUsage: initialResult.usage,
+      error: null,
+    });
 
     return NextResponse.json({
       success: true,
-      reading,
+      reading: initialResult.reading,
       timestamp: new Date().toISOString(),
       remainingReadings: rateLimitResult.remaining,
-      type: 'initial'
+      type: 'initial',
     });
 
   } catch (error) {
