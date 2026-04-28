@@ -16,8 +16,9 @@ async function testOpenRouter() {
   // Test 2: Generate Tarot Reading
   console.log('2. Testing Tarot Reading Generation...');
   try {
-    const reading = await generateTarotReading("What should I focus on in my career?");
-    
+    const result = await generateTarotReading("What should I focus on in my career?");
+    const reading = result.reading;
+
     console.log('✅ Reading Generated Successfully!');
     console.log(`📇 Card: ${reading.card}`);
     console.log(`💫 Meaning: ${reading.meaning}`);
@@ -29,7 +30,7 @@ async function testOpenRouter() {
     // Validate response structure
     const requiredFields = ['card', 'meaning', 'interpretation', 'guidance', 'energy', 'timeframe'];
     const missingFields = requiredFields.filter(field => !reading[field as keyof typeof reading]);
-    
+
     if (missingFields.length === 0) {
       console.log('✅ Response Structure: VALID\n');
     } else {
@@ -51,9 +52,10 @@ async function testOpenRouter() {
   for (const question of testQuestions) {
     try {
       console.log(`Testing: "${question}"`);
-      const reading = await generateTarotReading(question);
+      const result = await generateTarotReading(question);
+      const reading = result.reading;
       console.log(`✅ Generated: ${reading.card} - ${reading.interpretation.substring(0, 50)}...\n`);
-      
+
       // Small delay to avoid rate limiting
       await new Promise(resolve => setTimeout(resolve, 1000));
     } catch (error) {

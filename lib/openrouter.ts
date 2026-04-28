@@ -78,54 +78,61 @@ export interface TarotReading {
   imagePath?: string;
 }
 
-export async function generateTarotReading(question: string): Promise<TarotReading> {
+export interface ReadingResult {
+  reading: TarotReading;
+  model: string;
+  usage: object | null;
+}
+
+export async function generateTarotReading(question: string): Promise<ReadingResult> {
   try {
-    // Select a random card from our Major Arcana deck (cards with images)
     const selectedCard = cards[Math.floor(Math.random() * cards.length)];
-    
-    // Generate personalized prompt using new template system
     const promptTemplate = generateInitialReadingPrompt(question, selectedCard.name, selectedCard.keywords);
 
     const completion = await getOpenAIClient().chat.completions.create({
-      model: "meta-llama/llama-3.1-8b-instruct", // Stable paid model - 85% cheaper, no rate limits
+      model: "meta-llama/llama-3.1-8b-instruct",
       messages: [
-        {
-          role: "system",
-          content: promptTemplate.system
-        },
-        {
-          role: "user",
-          content: promptTemplate.user
-        }
+        { role: "system", content: promptTemplate.system },
+        { role: "user", content: promptTemplate.user }
       ],
       max_tokens: 600,
-      temperature: 0.9, // Increased for more varied responses
+      temperature: 0.9,
     });
 
     const response = completion.choices[0]?.message?.content || "";
-    
-    // Parse the response to extract sections
+
     const sections = {
       interpretation: extractSection(response, 'INTERPRETATION'),
       guidance: extractSection(response, 'GUIDANCE'),
       energy: extractSection(response, 'ENERGY'),
-      timeframe: extractSection(response, 'TIMEFRAME')
+      timeframe: extractSection(response, 'TIMEFRAME'),
     };
 
-    return {
+    const reading: TarotReading = {
       card: selectedCard.name,
       meaning: selectedCard.keywords.join(', '),
       interpretation: sections.interpretation || "The universe speaks through this card with a message tailored just for you.",
       guidance: sections.guidance || "Trust in the wisdom of the cards and follow your intuition.",
       energy: sections.energy || "A mystical energy surrounds you, full of potential and transformation.",
       timeframe: sections.timeframe || "Divine timing is at work in your situation.",
-      imagePath: selectedCard.imagePath
+      imagePath: selectedCard.imagePath,
     };
 
+    return {
+      reading,
+      model: completion.model,
+      usage: completion.usage ? { ...completion.usage } : null,
+    };
   } catch (error) {
     console.error('Error generating tarot reading:', error);
     throw new Error('Unable to channel the mystical energies at this time. Please try again.');
   }
+}
+
+export interface FollowUpResult {
+  response: string;
+  model: string;
+  usage: object | null;
 }
 
 export async function generateFollowUpResponse(
@@ -133,35 +140,31 @@ export async function generateFollowUpResponse(
   cardName: string,
   cardMeaning: string,
   previousInterpretation: string,
-  followUpQuestion: string
-): Promise<string> {
+  followUpQuestion: string,
+): Promise<FollowUpResult> {
   try {
     const promptTemplate = generateFollowUpPrompt({
-      originalQuestion,
-      cardName,
-      cardMeaning,
-      previousInterpretation,
-      followUpQuestion
+      originalQuestion, cardName, cardMeaning, previousInterpretation, followUpQuestion,
     });
 
     const completion = await getOpenAIClient().chat.completions.create({
       model: "meta-llama/llama-3.1-8b-instruct",
       messages: [
-        {
-          role: "system",
-          content: promptTemplate.system
-        },
-        {
-          role: "user",
-          content: promptTemplate.user
-        }
+        { role: "system", content: promptTemplate.system },
+        { role: "user", content: promptTemplate.user },
       ],
       max_tokens: 300,
       temperature: 0.85,
     });
 
-    return completion.choices[0]?.message?.content || "The mystical energies encourage you to trust your inner wisdom as you navigate this question.";
+    const response = completion.choices[0]?.message?.content
+      || "The mystical energies encourage you to trust your inner wisdom as you navigate this question.";
 
+    return {
+      response,
+      model: completion.model,
+      usage: completion.usage ? { ...completion.usage } : null,
+    };
   } catch (error) {
     console.error('Error generating follow-up response:', error);
     throw new Error('Unable to channel the mystical energies for your follow-up question.');

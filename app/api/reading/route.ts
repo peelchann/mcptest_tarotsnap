@@ -95,32 +95,28 @@ export async function POST(request: NextRequest) {
         );
       }
 
-      const followUpResponse = await generateFollowUpResponse(
-        originalQuestion,
-        cardName,
-        cardMeaning,
-        previousInterpretation,
-        question.trim()
+      const followUpResult = await generateFollowUpResponse(
+        originalQuestion, cardName, cardMeaning, previousInterpretation, question.trim(),
       );
 
       return NextResponse.json({
         success: true,
-        response: followUpResponse,
+        response: followUpResult.response,
         timestamp: new Date().toISOString(),
         remainingFollowUps: rateLimitResult.remaining,
-        type: 'followUp'
+        type: 'followUp',
       });
     }
 
     // Generate the initial tarot reading
-    const reading = await generateTarotReading(question.trim());
+    const initialResult = await generateTarotReading(question.trim());
 
     return NextResponse.json({
       success: true,
-      reading,
+      reading: initialResult.reading,
       timestamp: new Date().toISOString(),
       remainingReadings: rateLimitResult.remaining,
-      type: 'initial'
+      type: 'initial',
     });
 
   } catch (error) {
