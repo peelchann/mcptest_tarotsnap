@@ -26,6 +26,7 @@ import {
   AlertTriangle
 } from 'lucide-react';
 import { analytics, categorizeQuestion } from '@/lib/analytics';
+import { getAnonId } from '@/lib/anon-id';
 
 interface ChatMessage {
   id: string;
@@ -116,6 +117,7 @@ export default function SingleCardReading() {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
+          'X-Anon-Id': getAnonId(),
         },
         body: JSON.stringify({
           question: question.trim()
@@ -259,6 +261,7 @@ export default function SingleCardReading() {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
+          'X-Anon-Id': getAnonId(),
         },
         body: JSON.stringify({
           question: userMessage.content,
