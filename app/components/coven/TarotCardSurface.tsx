@@ -25,7 +25,7 @@ export default function TarotCardSurface({
       className={cn('relative gold-frame rounded-[3px] overflow-hidden', className)}
       style={{
         aspectRatio: '5 / 8',
-        width: width ? `${width}px` : undefined,
+        width: width ? `${width}px` : '100%',
       }}
     >
       {innerRing && (

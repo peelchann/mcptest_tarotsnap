@@ -7,7 +7,10 @@ import TarotCardSurface from './TarotCardSurface';
 interface TarotCardImageProps {
   src: string;
   alt: string;
-  /** Width hint for next/image. Height auto-derives from 5:8 aspect. */
+  /**
+   * Optional fixed width in px. When omitted, the image fills its
+   * container — preferred for responsive Tailwind-sized wrappers.
+   */
   width?: number;
   /** Higher visual priority on the central hero card. */
   priority?: boolean;
@@ -30,7 +33,7 @@ interface TarotCardImageProps {
 export default function TarotCardImage({
   src,
   alt,
-  width = 280,
+  width,
   priority = false,
   className,
   toneIntegration = true,

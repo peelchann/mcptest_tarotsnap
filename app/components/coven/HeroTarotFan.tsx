@@ -215,8 +215,8 @@ export default function HeroTarotFan() {
       onBlur={() => setHovered(false)}
       className="relative mx-auto w-full"
       style={{
-        height: 'clamp(380px, 42vw, 540px)',
-        maxWidth: 600,
+        height: 'clamp(340px, 36vw, 460px)',
+        maxWidth: 560,
         perspective: 1200,
       }}
     >
