@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
-import { motion, useReducedMotion } from 'framer-motion';
+import { motion } from 'framer-motion';
 import {
   BookOpen,
   Eye,
@@ -22,7 +22,7 @@ import RitualStep from './coven/RitualStep';
 import SpreadCard from './coven/SpreadCard';
 import JournalCard from './coven/JournalCard';
 import ThemeInsightCard from './coven/ThemeInsightCard';
-import TarotCardBack from './coven/TarotCardBack';
+import HeroTarotFan from './coven/HeroTarotFan';
 import QuotaPill from './coven/QuotaPill';
 import LogoMark from './coven/LogoMark';
 import { SPREADS } from '@/app/data/spreads';
@@ -52,8 +52,6 @@ export default function NewHomepage() {
 /* ────────────────── Hero ────────────────── */
 
 function Hero() {
-  const reduce = useReducedMotion();
-
   return (
     <section className="relative overflow-hidden">
       <div className="smoke-layer" aria-hidden="true" />
@@ -123,85 +121,13 @@ function Hero() {
             </motion.div>
           </div>
 
-          {/* Card fan */}
+          {/* Card fan — see HeroTarotFan for full motion system */}
           <div className="lg:col-span-5">
-            <CardFan reduce={!!reduce} />
+            <HeroTarotFan />
           </div>
         </div>
       </div>
     </section>
-  );
-}
-
-function CardFan({ reduce }: { reduce: boolean }) {
-  const float = (delay: number, dy = 6) =>
-    reduce
-      ? {}
-      : {
-          animate: {
-            y: [0, -dy, 0, dy * 0.6, 0],
-            rotate: [0, 0.4, 0, -0.4, 0],
-          },
-          transition: {
-            duration: 6.4,
-            ease: 'easeInOut' as const,
-            repeat: Infinity,
-            delay,
-          },
-        };
-
-  return (
-    <div className="relative mx-auto max-w-md aspect-[4/5] flex items-center justify-center">
-      {/* aura behind */}
-      <div
-        className="absolute inset-0 -m-8 rounded-full bg-[radial-gradient(circle,rgba(122,69,165,0.4)_0%,transparent_65%)] blur-2xl"
-        aria-hidden="true"
-      />
-
-      {/* left */}
-      <motion.div
-        {...float(0.4, 5)}
-        whileHover={{ y: -10 }}
-        className="absolute left-[8%] top-[18%] w-[42%] -rotate-[12deg]"
-        style={{ transformOrigin: 'bottom right' }}
-      >
-        <TarotCardBack />
-      </motion.div>
-      {/* right */}
-      <motion.div
-        {...float(0.8, 5)}
-        whileHover={{ y: -10 }}
-        className="absolute right-[8%] top-[18%] w-[42%] rotate-[12deg]"
-        style={{ transformOrigin: 'bottom left' }}
-      >
-        <TarotCardBack />
-      </motion.div>
-      {/* center */}
-      <motion.div
-        {...float(0, 7)}
-        whileHover={{ y: -12 }}
-        className="absolute left-1/2 top-[8%] -translate-x-1/2 w-[48%] z-[2]"
-      >
-        <TarotCardBack />
-      </motion.div>
-
-      {/* tiny corner stars floating around */}
-      {[
-        { left: '5%', top: '10%' },
-        { left: '92%', top: '14%' },
-        { left: '7%', top: '88%' },
-        { left: '90%', top: '85%' },
-      ].map((s, i) => (
-        <span
-          key={i}
-          className="absolute text-coven-soft-gold/55 text-base animate-coven-pulse"
-          style={{ ...s, animationDelay: `${i * 0.6}s` }}
-          aria-hidden="true"
-        >
-          ✦
-        </span>
-      ))}
-    </div>
   );
 }
 
