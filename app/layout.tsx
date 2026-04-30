@@ -1,9 +1,28 @@
 import type { Metadata } from "next";
+import { Cormorant_Garamond, Inter } from "next/font/google";
 import "./globals.css";
-import StarsBackground, { StarsFallback } from "./components/StarsBackground";
 import { AuthProvider } from "./providers/AuthProvider";
 import { GoogleAnalytics } from '@next/third-parties/google';
 import StructuredData from "./components/StructuredData";
+import AmbientBackground from "./components/coven/AmbientBackground";
+import SiteHeader from "./components/coven/SiteHeader";
+
+const serif = Cormorant_Garamond({
+  subsets: ['latin'],
+  weight: ['400', '500', '600', '700'],
+  style: ['normal', 'italic'],
+  variable: '--font-serif',
+  display: 'swap',
+  fallback: ['Georgia', 'Times New Roman', 'serif'],
+});
+
+const sans = Inter({
+  subsets: ['latin'],
+  weight: ['300', '400', '500', '600', '700'],
+  variable: '--font-sans',
+  display: 'swap',
+  fallback: ['system-ui', '-apple-system', 'Segoe UI', 'Roboto', 'sans-serif'],
+});
 
 const canonicalBaseUrl = process.env.NODE_ENV === 'production'
   ? 'https://tarot-snap.vercel.app'
@@ -17,7 +36,7 @@ export const metadata: Metadata = {
   },
   description: "Get personalized AI tarot readings with mystical guidance. Ask the universe your questions and receive insights through ancient tarot wisdom powered by advanced AI technology.",
   keywords: [
-    "tarot", "AI tarot", "tarot reading", "spiritual guidance", "divination", 
+    "tarot", "AI tarot", "tarot reading", "spiritual guidance", "divination",
     "mystical", "oracle", "free tarot reading", "online tarot", "tarot cards",
     "spiritual advisor", "fortune telling", "tarot card meanings", "psychic reading"
   ],
@@ -62,7 +81,7 @@ export const metadata: Metadata = {
     },
   },
   verification: {
-    google: 'JDomEglmiJxAajLXTE4frGcLjRoIGFDsVIW2hrznc8g', // Google Search Console verification
+    google: 'JDomEglmiJxAajLXTE4frGcLjRoIGFDsVIW2hrznc8g',
   },
   alternates: {
     canonical: canonicalBaseUrl,
@@ -93,45 +112,43 @@ export const viewport = {
   initialScale: 1,
 };
 
-// Simplified Web Vitals - will be handled by analytics.ts instead
-
 export default function RootLayout({
   children,
 }: {
   children: React.ReactNode
 }) {
   return (
-    <html lang="en" className="dark" suppressHydrationWarning>
+    <html
+      lang="en"
+      className={`dark ${serif.variable} ${sans.variable}`}
+      suppressHydrationWarning
+    >
       <head>
-        {/* iOS Safari specific meta tags to prevent system color overrides */}
         <meta name="color-scheme" content="dark" />
-        <meta name="theme-color" content="#4c1d95" />
-        <meta name="msapplication-navbutton-color" content="#4c1d95" />
+        <meta name="theme-color" content="#0B0810" />
+        <meta name="msapplication-navbutton-color" content="#0B0810" />
         <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
         <meta name="format-detection" content="telephone=no" />
-        
+
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="" />
-        <link href="https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap" rel="stylesheet" />
       </head>
-      <body className="antialiased bg-gradient-to-b from-agatha-navy to-agatha-mid text-agatha-mist font-body min-h-screen" suppressHydrationWarning>
-        {/* SEO Structured Data */}
+      <body
+        className="coven-body antialiased font-sans bg-coven-deep text-coven-bone min-h-screen"
+        suppressHydrationWarning
+      >
         <StructuredData type="homepage" />
-        
-        {/* Static fallback stars that show immediately during initial load */}
-        <StarsFallback />
-        
-        {/* Dynamic canvas-based stars that replace the fallback once loaded */}
-        <StarsBackground />
-        
-        {/* Content */}
+
+        <AmbientBackground />
+        <div className="grain" aria-hidden="true" />
+
         <AuthProvider>
+          <SiteHeader />
           <main className="relative z-10 min-h-screen">
             {children}
           </main>
         </AuthProvider>
-        
-        {/* Google Analytics 4 - Only in production */}
+
         {process.env.NODE_ENV === 'production' && process.env.NEXT_PUBLIC_GA_ID && (
           <GoogleAnalytics gaId={process.env.NEXT_PUBLIC_GA_ID} />
         )}
@@ -140,7 +157,6 @@ export default function RootLayout({
   )
 }
 
-// Prevent error toasts from appearing
 export function reportWebVitals(): void {
   // Silence is golden - intentionally not reporting to disable dev toasts
 }

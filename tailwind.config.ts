@@ -1,5 +1,7 @@
 import type { Config } from "tailwindcss"
 
+// Note: this file exists for IDE typing only. Tailwind 3 picks up
+// `tailwind.config.js` first; the .js variant is the live config.
 const config: Config = {
   darkMode: ["class"],
   content: [
@@ -13,9 +15,7 @@ const config: Config = {
     container: {
       center: true,
       padding: "2rem",
-      screens: {
-        "2xl": "1400px",
-      },
+      screens: { "2xl": "1400px" },
     },
     extend: {
       colors: {
@@ -36,14 +36,6 @@ const config: Config = {
           DEFAULT: "hsl(var(--destructive))",
           foreground: "hsl(var(--destructive-foreground))",
         },
-        warning: {
-          DEFAULT: "hsl(var(--warning))",
-          foreground: "hsl(var(--warning-foreground))",
-        },
-        success: {
-          DEFAULT: "hsl(var(--success))",
-          foreground: "hsl(var(--success-foreground))",
-        },
         muted: {
           DEFAULT: "hsl(var(--muted))",
           foreground: "hsl(var(--muted-foreground))",
@@ -60,8 +52,23 @@ const config: Config = {
           DEFAULT: "hsl(var(--card))",
           foreground: "hsl(var(--card-foreground))",
         },
-        // Mystical theme colors
-        'mystical-glow': 'hsl(var(--mystical-glow))',
+        coven: {
+          midnight: '#0B0810',
+          deep: '#050308',
+          ink: '#1A1023',
+          plum: '#24122F',
+          violet: '#4D2A67',
+          spell: '#7A45A5',
+          aura: '#9D62D3',
+          fog: '#BFAEDC',
+          bone: '#EAE2D2',
+          paper: '#D8C8A8',
+          gold: '#B08A49',
+          'soft-gold': '#D8B66A',
+          silver: '#BFC4D6',
+          wine: '#6B2237',
+          danger: '#8E2A43',
+        },
       },
       borderRadius: {
         lg: "var(--radius)",
@@ -69,41 +76,12 @@ const config: Config = {
         sm: "calc(var(--radius) - 4px)",
       },
       fontFamily: {
-        'witchcraft': ['Cinzel', 'serif'],
-        'mystical': ['Lato', 'sans-serif'],
-      },
-      keyframes: {
-        "accordion-down": {
-          from: { height: "0" },
-          to: { height: "var(--radix-accordion-content-height)" },
-        },
-        "accordion-up": {
-          from: { height: "var(--radix-accordion-content-height)" },
-          to: { height: "0" },
-        },
-        float: {
-          '0%, 100%': { transform: 'translateY(0px)' },
-          '50%': { transform: 'translateY(-10px)' },
-        },
-        sparkle: {
-          '0%, 100%': { opacity: '0.3', transform: 'scale(0.8)' },
-          '50%': { opacity: '1', transform: 'scale(1.2)' },
-        },
-        'cosmic-pulse': {
-          '0%, 100%': { boxShadow: '0 0 20px hsl(var(--mystical-glow) / 0.3)' },
-          '50%': { boxShadow: '0 0 40px hsl(var(--mystical-glow) / 0.6)' },
-        },
-      },
-      animation: {
-        "accordion-down": "accordion-down 0.2s ease-out",
-        "accordion-up": "accordion-up 0.2s ease-out",
-        float: "float 3s ease-in-out infinite",
-        sparkle: "sparkle 2s ease-in-out infinite",
-        'cosmic-pulse': "cosmic-pulse 2s ease-in-out infinite",
+        serif: ['var(--font-serif)', 'Cormorant Garamond', 'Georgia', 'serif'],
+        sans: ['var(--font-sans)', 'Inter', 'system-ui', 'sans-serif'],
       },
     },
   },
   plugins: [require("tailwindcss-animate")],
 }
 
-export default config 
+export default config

@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700&family=Lato:wght@300;400;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700&family=Lato:wght@300;400;700&family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500;1,600&family=Inter:wght@300;400;500;600;700&display=swap');
 
 @tailwind base;
 @tailwind components;
@@ -6,6 +6,30 @@
 
 @layer base {
   :root {
+    /* ── Coven Luxe palette (canonical hex) ────────────────────── */
+    --coven-midnight: #0B0810;
+    --coven-deep: #050308;
+    --coven-ink: #1A1023;
+    --coven-plum: #24122F;
+    --coven-violet: #4D2A67;
+    --coven-spell: #7A45A5;
+    --coven-aura: #9D62D3;
+    --coven-fog: #BFAEDC;
+    --coven-bone: #EAE2D2;
+    --coven-paper: #D8C8A8;
+    --coven-gold: #B08A49;
+    --coven-soft-gold: #D8B66A;
+    --coven-silver: #BFC4D6;
+    --coven-wine: #6B2237;
+    --coven-danger: #8E2A43;
+    --coven-gold-rest: rgba(176, 138, 73, 0.35);
+    --coven-gold-strong: rgba(216, 182, 106, 0.7);
+    --coven-purple-glow: rgba(122, 69, 165, 0.45);
+
+    /* Local font fallbacks (next/font sets these, but this keeps SSR safe) */
+    --font-serif: 'Cormorant Garamond', Georgia, 'Times New Roman', serif;
+    --font-sans: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+
     /* Brand Colors - Mystical Theme */
     --background: 220 13% 9%;
     --foreground: 280 5% 96%;
@@ -801,3 +825,276 @@ body {
     -webkit-background-color: rgba(88, 28, 135, 0.8) !important;
   }
 }
+
+/* ═══════════════════════════════════════════════════════════════════
+ * COVEN LUXE — system utilities
+ * Velvet, candlelight, parchment, antique gold foil.
+ * ═══════════════════════════════════════════════════════════════════ */
+
+@layer base {
+  body.coven-body {
+    background: var(--coven-deep);
+    color: var(--coven-bone);
+    font-family: var(--font-sans);
+    background-image: none;
+    cursor: auto;
+  }
+  body.coven-body::before {
+    display: none;
+  }
+}
+
+@layer components {
+  /* Ambient backdrop layered behind every page */
+  .ambient-bg {
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+    background:
+      radial-gradient(ellipse 80% 60% at 18% 12%, rgba(122, 69, 165, 0.32) 0%, transparent 60%),
+      radial-gradient(ellipse 70% 55% at 85% 18%, rgba(107, 34, 55, 0.22) 0%, transparent 65%),
+      radial-gradient(ellipse 90% 70% at 50% 95%, rgba(36, 18, 47, 0.85) 0%, transparent 70%),
+      linear-gradient(180deg, #0B0810 0%, #1A1023 55%, #0B0810 100%);
+    overflow: hidden;
+  }
+
+  .ambient-bg::before,
+  .ambient-bg::after {
+    content: '';
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(120px);
+    opacity: 0.55;
+    pointer-events: none;
+  }
+  .ambient-bg::before {
+    width: 60vw;
+    height: 60vw;
+    top: -20vw;
+    left: -10vw;
+    background: radial-gradient(circle, rgba(122, 69, 165, 0.6) 0%, transparent 70%);
+    animation: covenDrift 60s ease-in-out infinite;
+  }
+  .ambient-bg::after {
+    width: 55vw;
+    height: 55vw;
+    bottom: -25vw;
+    right: -15vw;
+    background: radial-gradient(circle, rgba(107, 34, 55, 0.55) 0%, transparent 70%);
+    animation: covenDriftAlt 75s ease-in-out infinite;
+  }
+
+  /* Subtle grain laid over everything */
+  .grain {
+    position: fixed;
+    inset: 0;
+    z-index: 1;
+    pointer-events: none;
+    opacity: 0.06;
+    mix-blend-mode: overlay;
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='220' height='220'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0.92 0 0 0 0 0.88 0 0 0 0 0.82 0 0 0 0.55 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
+  }
+
+  .smoke-layer {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    overflow: hidden;
+  }
+  .smoke-layer::before,
+  .smoke-layer::after {
+    content: '';
+    position: absolute;
+    width: 70%;
+    height: 70%;
+    border-radius: 50%;
+    filter: blur(90px);
+    opacity: 0.4;
+  }
+  .smoke-layer::before {
+    top: -15%;
+    left: -10%;
+    background: radial-gradient(circle, rgba(122, 69, 165, 0.55) 0%, transparent 65%);
+    animation: covenDrift 70s ease-in-out infinite;
+  }
+  .smoke-layer::after {
+    bottom: -20%;
+    right: -15%;
+    background: radial-gradient(circle, rgba(216, 182, 106, 0.18) 0%, transparent 65%);
+    animation: covenDriftAlt 90s ease-in-out infinite;
+  }
+
+  /* Gold ornamental frame — used by tarot card surfaces and tile borders */
+  .gold-frame {
+    position: relative;
+    border: 1px solid rgba(176, 138, 73, 0.55);
+    box-shadow:
+      inset 0 0 0 1px rgba(216, 182, 106, 0.18),
+      inset 0 0 24px rgba(36, 18, 47, 0.6),
+      0 18px 50px -22px rgba(0, 0, 0, 0.9);
+    background:
+      linear-gradient(180deg, rgba(36, 18, 47, 0.96) 0%, rgba(11, 8, 16, 0.98) 100%);
+  }
+  .gold-frame::after {
+    content: '';
+    position: absolute;
+    inset: 6px;
+    border: 1px solid rgba(216, 182, 106, 0.25);
+    pointer-events: none;
+  }
+
+  /* Foil border — gentler ornament for chips, pills, kicker labels */
+  .foil-border {
+    position: relative;
+    border: 1px solid rgba(176, 138, 73, 0.45);
+    background:
+      linear-gradient(135deg, rgba(216, 182, 106, 0.08) 0%, rgba(176, 138, 73, 0.18) 50%, rgba(216, 182, 106, 0.08) 100%);
+  }
+
+  .purple-aura {
+    position: relative;
+  }
+  .purple-aura::before {
+    content: '';
+    position: absolute;
+    inset: -25%;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(122, 69, 165, 0.55) 0%, transparent 60%);
+    filter: blur(40px);
+    opacity: 0;
+    pointer-events: none;
+    z-index: -1;
+    transition: opacity 0.6s ease;
+  }
+  .purple-aura.is-glowing::before {
+    opacity: 1;
+  }
+
+  /* Shimmer button — gold on plum with passing highlight */
+  .shimmer-button {
+    position: relative;
+    overflow: hidden;
+    isolation: isolate;
+  }
+  .shimmer-button::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 50%;
+    height: 100%;
+    background: linear-gradient(
+      90deg,
+      transparent 0%,
+      rgba(216, 182, 106, 0.0) 30%,
+      rgba(216, 182, 106, 0.55) 50%,
+      rgba(216, 182, 106, 0.0) 70%,
+      transparent 100%
+    );
+    transform: translateX(-130%) skewX(-20deg);
+    pointer-events: none;
+    z-index: 1;
+  }
+  .shimmer-button:hover::before {
+    animation: covenShimmer 1.4s ease-in-out;
+  }
+
+  /* Card-back ornamental crosshatch fill behind the central sigil */
+  .card-back-pattern {
+    background:
+      radial-gradient(ellipse at 50% 50%, rgba(216, 182, 106, 0.08) 0%, transparent 70%),
+      repeating-linear-gradient(
+        45deg,
+        rgba(216, 182, 106, 0.04) 0px,
+        rgba(216, 182, 106, 0.04) 1px,
+        transparent 1px,
+        transparent 6px
+      ),
+      repeating-linear-gradient(
+        -45deg,
+        rgba(216, 182, 106, 0.04) 0px,
+        rgba(216, 182, 106, 0.04) 1px,
+        transparent 1px,
+        transparent 6px
+      ),
+      linear-gradient(180deg, #2A1638 0%, #1A0E26 100%);
+  }
+
+  .sigil-loader {
+    animation: covenSpin 8s linear infinite, covenPulse 3s ease-in-out infinite;
+    transform-origin: center;
+  }
+
+  /* Coven kicker label — small caps, 0.3em tracking */
+  .coven-kicker {
+    font-family: var(--font-sans);
+    font-size: 0.72rem;
+    font-weight: 500;
+    letter-spacing: 0.32em;
+    text-transform: uppercase;
+    color: var(--coven-soft-gold);
+    font-feature-settings: "smcp" on, "c2sc" on;
+  }
+
+  .coven-divider {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 1.25rem;
+    color: rgba(216, 182, 106, 0.55);
+  }
+  .coven-divider::before,
+  .coven-divider::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: linear-gradient(
+      90deg,
+      transparent 0%,
+      rgba(176, 138, 73, 0.5) 50%,
+      transparent 100%
+    );
+    max-width: 12rem;
+  }
+}
+
+@layer utilities {
+  .text-gold-soft {
+    color: var(--coven-soft-gold);
+  }
+  .border-gold-rest {
+    border-color: var(--coven-gold-rest);
+  }
+  .bg-coven-velvet {
+    background:
+      linear-gradient(180deg, #0B0810 0%, #1A1023 60%, #0B0810 100%);
+  }
+  .bg-plum-radial {
+    background: radial-gradient(ellipse at center, rgba(77, 42, 103, 0.5) 0%, rgba(11, 8, 16, 0.95) 70%);
+  }
+}
+
+/* Reduced-motion guard */
+@media (prefers-reduced-motion: reduce) {
+  .ambient-bg::before,
+  .ambient-bg::after,
+  .smoke-layer::before,
+  .smoke-layer::after,
+  .sigil-loader,
+  .shimmer-button:hover::before,
+  .animate-coven-drift,
+  .animate-coven-drift-alt,
+  .animate-coven-spin,
+  .animate-coven-pulse,
+  .animate-coven-shimmer,
+  .animate-coven-fade-up {
+    animation: none !important;
+  }
+  * {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+  }
+}
+

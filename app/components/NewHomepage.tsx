@@ -1,415 +1,403 @@
-"use client"
+'use client';
 
-import React, { useEffect, useState } from "react"
-import { motion } from "framer-motion"
-import { Sparkles } from "lucide-react"
-import Link from "next/link"
-import { MysticalHeader } from "@/app/components/MysticalHeader"
-import { getRandomCards, type TarotCard as TarotCardType } from "@/app/data/cards"
-import TarotCard from "./TarotCard"
+import React, { useEffect, useState } from 'react';
+import Link from 'next/link';
+import { motion, useReducedMotion } from 'framer-motion';
+import {
+  BookOpen,
+  Eye,
+  Sparkles,
+  Lock,
+  Feather,
+  Layers,
+  ArrowRight,
+} from 'lucide-react';
 
-// Mystical particles background component
-const MysticalBackground = () => {
-  const [mounted, setMounted] = useState(false)
-  
-  useEffect(() => {
-    setMounted(true)
-  }, [])
+import RitualButton from './coven/RitualButton';
+import GhostButton from './coven/GhostButton';
+import SectionFrame from './coven/SectionFrame';
+import DecorativeDivider from './coven/DecorativeDivider';
+import FeatureCard from './coven/FeatureCard';
+import RitualStep from './coven/RitualStep';
+import SpreadCard from './coven/SpreadCard';
+import JournalCard from './coven/JournalCard';
+import ThemeInsightCard from './coven/ThemeInsightCard';
+import TarotCardBack from './coven/TarotCardBack';
+import QuotaPill from './coven/QuotaPill';
+import LogoMark from './coven/LogoMark';
+import { SPREADS } from '@/app/data/spreads';
+import { MOCK_JOURNAL_ENTRIES, MOCK_THEMES } from '@/app/data/journalMock';
 
-  // Pre-calculate positions to avoid SSR issues
-  const particles = React.useMemo(() => 
-    [...Array(15)].map((_, i) => ({
-      id: i,
-      x: Math.random() * 100,
-      y: Math.random() * 100,
-      duration: 3 + Math.random() * 2,
-      delay: Math.random() * 2,
-    })), []
-  )
-
-  const orbs = React.useMemo(() => 
-    [...Array(6)].map((_, i) => ({
-      id: i,
-      x: Math.random() * 100,
-      y: Math.random() * 100,
-      duration: 4 + Math.random() * 3,
-      delay: Math.random() * 3,
-    })), []
-  )
-
-  if (!mounted) {
-    return (
-      <div className="absolute inset-0 overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-br from-slate-900 via-slate-950 to-blue-950" />
-      </div>
-    )
-  }
-
+/**
+ * NewHomepage — the Coven Luxe landing page.
+ * 70% Coven Luxe / 20% Archive of Witches / 10% clean product UI.
+ */
+export default function NewHomepage() {
   return (
-    <div className="absolute inset-0 overflow-hidden">
-      {/* Deep navy mystical gradient */}
-      <div className="absolute inset-0 bg-gradient-to-br from-slate-900 via-slate-950 to-blue-950" />
-      
-      {/* Floating particles */}
-      {particles.map((particle) => (
-        <motion.div
-          key={`particle-${particle.id}`}
-          className="absolute w-1 h-1 bg-amber-400/30 rounded-full"
-          style={{
-            left: `${particle.x}%`,
-            top: `${particle.y}%`,
-          }}
-          animate={{
-            y: [0, -30, 0],
-            opacity: [0.3, 0.8, 0.3],
-            scale: [1, 1.2, 1],
-          }}
-          transition={{
-            duration: particle.duration,
-            repeat: Infinity,
-            delay: particle.delay,
-            ease: "easeInOut",
-          }}
-        />
-      ))}
-      
-      {/* Larger mystical orbs */}
-      {orbs.map((orb) => (
-        <motion.div
-          key={`orb-${orb.id}`}
-          className="absolute w-2 h-2 bg-amber-300/20 rounded-full blur-sm"
-          style={{
-            left: `${orb.x}%`,
-            top: `${orb.y}%`,
-          }}
-          animate={{
-            x: [0, 20, 0],
-            y: [0, -40, 0],
-            opacity: [0.2, 0.6, 0.2],
-          }}
-          transition={{
-            duration: orb.duration,
-            repeat: Infinity,
-            delay: orb.delay,
-            ease: "easeInOut",
-          }}
-        />
-      ))}
+    <div className="relative pb-24">
+      <Hero />
+      <DecorativeDivider symbol="diamond" />
+      <Features />
+      <DecorativeDivider symbol="star" />
+      <TheRitual />
+      <DecorativeDivider symbol="diamond" />
+      <ChooseSpread />
+      <DecorativeDivider symbol="sigil" />
+      <GrimoireTeaser />
+      <Footer />
     </div>
-  )
+  );
 }
 
-// Main hero section with central mystical element
-const HeroSection = ({ heroCard }: { heroCard: TarotCardType | null }) => {
-  const [isVisible, setIsVisible] = useState(false)
+/* ────────────────── Hero ────────────────── */
 
-  useEffect(() => {
-    // Trigger animations after component mounts
-    const timer = setTimeout(() => {
-      setIsVisible(true)
-    }, 100)
-    
-    return () => clearTimeout(timer)
-  }, [])
+function Hero() {
+  const reduce = useReducedMotion();
 
   return (
-    <section className="relative min-h-screen flex flex-col items-center justify-center px-4 py-20">
-      <div className="text-center space-y-12 max-w-4xl mx-auto">
-        {/* Main title */}
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          animate={isVisible ? { opacity: 1, y: 0 } : { opacity: 0, y: 30 }}
-          transition={{ duration: 0.8, ease: "easeOut" }}
-          className="space-y-6"
-        >
-          <h1 className="font-witchcraft text-7xl md:text-9xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-amber-300 via-amber-400 to-yellow-300 leading-tight tracking-tight drop-shadow-[0_0_30px_rgba(251,191,36,0.5)]">
-            TarotSnap
-          </h1>
-          <h2 className="text-3xl md:text-4xl text-slate-300 font-light leading-relaxed">
-            Instant Tarot Insight, <span className="text-amber-400 font-semibold">Powered by AI</span>
-          </h2>
-        </motion.div>
+    <section className="relative overflow-hidden">
+      <div className="smoke-layer" aria-hidden="true" />
+      <div className="relative mx-auto max-w-7xl px-5 md:px-8 pt-16 md:pt-24 pb-16 md:pb-20">
+        <div className="grid lg:grid-cols-12 gap-10 lg:gap-12 items-center">
+          {/* Copy */}
+          <div className="lg:col-span-7 max-w-2xl">
+            <motion.div
+              initial={{ opacity: 0, y: 14 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.7, ease: 'easeOut' }}
+              className="mb-6 inline-flex items-center gap-3"
+            >
+              <span className="inline-block w-10 h-px bg-gradient-to-r from-transparent to-[rgba(216,182,106,0.7)]" aria-hidden="true" />
+              <span className="coven-kicker">An AI mystic that remembers</span>
+            </motion.div>
 
-        {/* Central 3D spinning tarot card */}
-        <motion.div
-          initial={{ opacity: 0, scale: 0.8 }}
-          animate={isVisible ? { opacity: 1, scale: 1 } : { opacity: 0, scale: 0.8 }}
-          transition={{ duration: 1, delay: 0.3, ease: "easeOut" }}
-          className="relative my-16"
-        >
-          <div className="w-64 h-96 mx-auto relative">
-            {heroCard ? (
-              <motion.div
-                className="w-full h-full relative"
-                animate={{ rotateY: 360 }}
-                transition={{ duration: 8, repeat: Infinity, ease: "linear" }}
-                whileHover={{ scale: 1.05, rotateX: 5 }}
-                style={{ transformStyle: "preserve-3d" }}
-              >
-                {/* Card without text spinning */}
-                <div className="w-full h-full relative">
-                  <TarotCard
-                    card={heroCard}
-                    isReversed={false}
-                    isFlipped={true}
-                    className="w-full h-full shadow-2xl"
-                  />
-                </div>
-                
-                {/* Enhanced gold glow effects */}
-                <div className="absolute inset-0 bg-amber-400/20 rounded-xl blur-xl animate-pulse pointer-events-none" />
-                <div className="absolute inset-0 bg-gradient-to-r from-amber-400/10 to-yellow-400/10 rounded-xl blur-2xl animate-pulse pointer-events-none" />
-              </motion.div>
-            ) : (
-              <motion.div 
-                className="absolute inset-0 bg-gradient-to-br from-slate-800/50 to-blue-900/50 rounded-xl backdrop-blur-sm border border-amber-400/30 shadow-2xl"
-                whileHover={{ scale: 1.05, rotateY: 5 }}
-                transition={{ duration: 0.3 }}
-              >
-                <div className="flex items-center justify-center h-full">
-                  <motion.div
-                    animate={{ rotate: 360 }}
-                    transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
-                  >
-                    <Sparkles className="w-20 h-20 text-amber-400" />
-                  </motion.div>
-                </div>
-              </motion.div>
-            )}
+            <motion.h1
+              initial={{ opacity: 0, y: 24 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.9, ease: 'easeOut' }}
+              className="font-serif text-coven-bone leading-[0.95] tracking-tight"
+              style={{ fontSize: 'clamp(3rem, 8vw, 6rem)' }}
+            >
+              Your AI Mystic
+              <span className="block italic text-coven-soft-gold/95 mt-1">
+                That Remembers
+              </span>
+            </motion.h1>
+
+            <motion.p
+              initial={{ opacity: 0, y: 16 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8, ease: 'easeOut', delay: 0.15 }}
+              className="mt-7 max-w-xl text-coven-fog font-sans text-base md:text-lg leading-[1.75] font-light"
+            >
+              Ask the cards. Receive a reading shaped not just by archetype, but
+              by every conversation you&apos;ve had with the deck before. A
+              quiet, evolving grimoire — yours.
+            </motion.p>
+
+            <motion.div
+              initial={{ opacity: 0, y: 14 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8, ease: 'easeOut', delay: 0.3 }}
+              className="mt-9 flex flex-wrap items-center gap-4"
+            >
+              <RitualButton size="lg" asChild>
+                <Link href="/reading/single">Enter the Ritual</Link>
+              </RitualButton>
+              <GhostButton size="lg" asChild>
+                <Link href="/spreads">View Spreads</Link>
+              </GhostButton>
+            </motion.div>
+
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ duration: 0.8, delay: 0.55 }}
+              className="mt-7 flex items-center gap-3 text-coven-fog/70 text-xs"
+            >
+              <QuotaPill remaining={3} total={3} label="Free readings" />
+              <span className="hidden sm:inline-block">·</span>
+              <span className="hidden sm:inline-block tracking-[0.18em] uppercase text-[0.66rem]">
+                No card required
+              </span>
+            </motion.div>
           </div>
 
-          {/* Card info - separate from spinning card, always readable */}
-          {heroCard && (
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={isVisible ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
-              transition={{ duration: 0.8, delay: 0.8, ease: "easeOut" }}
-              className="absolute -bottom-20 left-1/2 -translate-x-1/2 w-full text-center"
-            >
-              <h3 className="font-witchcraft text-2xl font-bold text-amber-300">
-                {heroCard.name}
-              </h3>
-              <p className="text-slate-400 text-sm tracking-wide mt-1">
-                {heroCard.keywords.slice(0, 3).join(' • ')}
-              </p>
-            </motion.div>
-          )}
-        </motion.div>
-
-        {/* Primary CTA Button */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={isVisible ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
-          transition={{ duration: 0.8, delay: 0.8, ease: "easeOut" }}
-          className="pt-16"
-        >
-          <Link href="/reading/single">
-            <motion.button 
-              whileHover={{ 
-                scale: 1.05, 
-                boxShadow: '0 0 40px rgba(251,191,36,0.6)',
-                y: -3
-              }}
-              whileTap={{ scale: 0.98 }}
-              className="px-16 py-5 bg-gradient-to-r from-amber-500 to-amber-600 text-slate-900 font-bold text-xl rounded-full shadow-[0_0_30px_rgba(251,191,36,0.3)] hover:shadow-[0_0_50px_rgba(251,191,36,0.5)] hover:from-amber-400 hover:to-amber-500 transition-all duration-300 border-2 border-amber-400/50"
-            >
-              ✨ Begin Your Reading
-            </motion.button>
-          </Link>
-        </motion.div>
-      </div>
-    </section>
-  )
-}
-
-// Memory Features section - reduced text
-const MemoryFeaturesSection = () => {
-  const memoryFeatures = [
-    {
-      title: "Remembers You",
-      description: "Grows more insightful with each conversation",
-      icon: "🧠",
-    },
-    {
-      title: "Personalized", 
-      description: "Learns your patterns for deeper accuracy",
-      icon: "💫",
-    },
-    {
-      title: "Always There",
-      description: "Access your history from any device",
-      icon: "☁️",
-    },
-  ]
-
-  return (
-    <section className="relative py-24 px-4 bg-gradient-to-r from-slate-900/40 to-blue-900/40">
-      <div className="max-w-6xl mx-auto">
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8 }}
-          className="text-center mb-16"
-        >
-          <h3 className="font-witchcraft text-5xl font-bold text-amber-400 mb-4">A Reader That Remembers</h3>
-          <p className="text-xl text-slate-300">Unlike other tarot apps</p>
-        </motion.div>
-
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-          {memoryFeatures.map((feature, index) => (
-            <motion.div
-              key={index}
-              initial={{ opacity: 0, y: 30 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, margin: "-100px" }}
-              transition={{ duration: 0.6, delay: index * 0.15, ease: "easeOut" }}
-              whileHover={{ scale: 1.05, y: -5 }}
-              className="relative group cursor-pointer"
-            >
-              <div className="bg-gradient-to-br from-amber-900/30 to-yellow-900/30 backdrop-blur-sm border border-amber-400/40 rounded-xl p-8 h-full transition-all duration-300 group-hover:border-amber-400/60 group-hover:shadow-[0_0_30px_rgba(251,191,36,0.3)]">
-                <div className="text-center space-y-4">
-                  <div className="text-5xl mb-4">{feature.icon}</div>
-                  <h4 className="text-xl font-semibold text-amber-300">{feature.title}</h4>
-                  <p className="text-slate-400 text-sm leading-relaxed">{feature.description}</p>
-                </div>
-                
-                {/* Enhanced hover glow effect */}
-                <div className="absolute inset-0 bg-amber-400/10 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-              </div>
-            </motion.div>
-          ))}
+          {/* Card fan */}
+          <div className="lg:col-span-5">
+            <CardFan reduce={!!reduce} />
+          </div>
         </div>
       </div>
     </section>
-  )
+  );
 }
 
-// Featured cards section - streamlined
-const FeaturedCardsSection = ({ cards }: { cards: TarotCardType[] }) => {
-  return (
-    <section className="relative py-24 px-4">
-      <div className="max-w-6xl mx-auto">
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8 }}
-          className="text-center mb-16"
-        >
-          <h3 className="font-witchcraft text-5xl font-bold text-amber-400 mb-4">Mystical Guidance</h3>
-          <p className="text-xl text-slate-300">Three cards await</p>
-        </motion.div>
-
-        <div className="flex flex-col md:flex-row items-center justify-center gap-8 md:gap-12">
-          {cards.slice(0, 3).map((card, index) => (
-            <motion.div
-              key={card.id}
-              initial={{ opacity: 0, y: 50 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, margin: "-50px" }}
-              transition={{ duration: 0.8, delay: index * 0.2, ease: "easeOut" }}
-              whileHover={{ 
-                scale: 1.05, 
-                y: -10,
-                boxShadow: '0 0 30px rgba(251,191,36,0.3)'
-              }}
-              className="relative group cursor-pointer"
-            >
-              <div className="w-48 aspect-[3/5] relative">
-                <TarotCard
-                  card={card}
-                  isReversed={card.isReversed}
-                  isFlipped={true}
-                  className="w-full h-full shadow-2xl rounded-lg"
-                />
-                
-                {/* Enhanced card glow */}
-                <div className="absolute inset-0 bg-amber-400/0 group-hover:bg-amber-400/10 rounded-lg blur-xl transition-all duration-300" />
-                
-                {/* Card info overlay */}
-                <div className="absolute -bottom-16 left-1/2 -translate-x-1/2 w-full text-center">
-                  <h4 className="font-witchcraft text-amber-300 font-semibold text-lg">{card.name}</h4>
-                  <p className="text-slate-400 text-sm mt-1">
-                    {card.keywords.slice(0, 2).join(' • ')}
-                  </p>
-                </div>
-              </div>
-            </motion.div>
-          ))}
-        </div>
-
-        {/* CTA Button */}
-        <motion.div
-          initial={{ opacity: 0 }}
-          whileInView={{ opacity: 1 }}
-          transition={{ duration: 0.8, delay: 0.8 }}
-          className="text-center mt-24"
-        >
-          <Link href="/reading/single">
-            <motion.button 
-              whileHover={{ 
-                scale: 1.05, 
-                boxShadow: '0 0 40px rgba(251,191,36,0.5)' 
-              }}
-              whileTap={{ scale: 0.98 }}
-              className="px-12 py-4 bg-gradient-to-r from-amber-500 to-amber-600 text-slate-900 font-bold text-lg rounded-full shadow-[0_0_30px_rgba(251,191,36,0.3)] hover:from-amber-400 hover:to-amber-500 transition-all duration-300"
-            >
-              ✨ Begin Your Reading
-            </motion.button>
-          </Link>
-        </motion.div>
-      </div>
-    </section>
-  )
-}
-
-function NewHomepage() {
-  const [randomCards, setRandomCards] = useState<TarotCardType[]>([])
-  const [isLoaded, setIsLoaded] = useState(false)
-
-  useEffect(() => {
-    setRandomCards(getRandomCards(6))
-    // Small delay to ensure smooth animation start
-    const timer = setTimeout(() => {
-      setIsLoaded(true)
-    }, 50)
-    
-    return () => clearTimeout(timer)
-  }, [])
+function CardFan({ reduce }: { reduce: boolean }) {
+  const float = (delay: number, dy = 6) =>
+    reduce
+      ? {}
+      : {
+          animate: {
+            y: [0, -dy, 0, dy * 0.6, 0],
+            rotate: [0, 0.4, 0, -0.4, 0],
+          },
+          transition: {
+            duration: 6.4,
+            ease: 'easeInOut' as const,
+            repeat: Infinity,
+            delay,
+          },
+        };
 
   return (
-    <div className="relative min-h-screen overflow-hidden">
-      {/* Mystical Background */}
-      <MysticalBackground />
+    <div className="relative mx-auto max-w-md aspect-[4/5] flex items-center justify-center">
+      {/* aura behind */}
+      <div
+        className="absolute inset-0 -m-8 rounded-full bg-[radial-gradient(circle,rgba(122,69,165,0.4)_0%,transparent_65%)] blur-2xl"
+        aria-hidden="true"
+      />
 
-      {/* Header */}
-      <MysticalHeader />
+      {/* left */}
+      <motion.div
+        {...float(0.4, 5)}
+        whileHover={{ y: -10 }}
+        className="absolute left-[8%] top-[18%] w-[42%] -rotate-[12deg]"
+        style={{ transformOrigin: 'bottom right' }}
+      >
+        <TarotCardBack />
+      </motion.div>
+      {/* right */}
+      <motion.div
+        {...float(0.8, 5)}
+        whileHover={{ y: -10 }}
+        className="absolute right-[8%] top-[18%] w-[42%] rotate-[12deg]"
+        style={{ transformOrigin: 'bottom left' }}
+      >
+        <TarotCardBack />
+      </motion.div>
+      {/* center */}
+      <motion.div
+        {...float(0, 7)}
+        whileHover={{ y: -12 }}
+        className="absolute left-1/2 top-[8%] -translate-x-1/2 w-[48%] z-[2]"
+      >
+        <TarotCardBack />
+      </motion.div>
 
-      {/* Main Content */}
-      <div className="relative z-10">
-        {/* Hero Section */}
-        <HeroSection heroCard={randomCards[0] || null} />
-
-        {/* Memory Features */}
-        <MemoryFeaturesSection />
-
-        {/* Featured Cards */}
-        <FeaturedCardsSection cards={randomCards} />
-
-        {/* Bottom Quote */}
-        <div className="relative py-12 text-center">
-          <motion.div
-            initial={{ opacity: 0 }}
-            whileInView={{ opacity: 1 }}
-            transition={{ duration: 0.8 }}
-            className="text-amber-400/80 text-lg font-light tracking-wider"
-          >
-            ✨ &quot;The cards reveal what the soul already knows&quot; ✨
-          </motion.div>
-        </div>
-      </div>
+      {/* tiny corner stars floating around */}
+      {[
+        { left: '5%', top: '10%' },
+        { left: '92%', top: '14%' },
+        { left: '7%', top: '88%' },
+        { left: '90%', top: '85%' },
+      ].map((s, i) => (
+        <span
+          key={i}
+          className="absolute text-coven-soft-gold/55 text-base animate-coven-pulse"
+          style={{ ...s, animationDelay: `${i * 0.6}s` }}
+          aria-hidden="true"
+        >
+          ✦
+        </span>
+      ))}
     </div>
-  )
+  );
 }
 
-export default NewHomepage
+/* ────────────────── Features ────────────────── */
 
+const FEATURES = [
+  {
+    icon: BookOpen,
+    title: 'It Remembers',
+    body: 'Every reading saves to your private grimoire. Return tomorrow and the deck recalls today.',
+  },
+  {
+    icon: Eye,
+    title: 'It Sees Patterns',
+    body: 'Recurring cards, themes, and questions surface as quiet insights — not noise.',
+  },
+  {
+    icon: Sparkles,
+    title: 'It Grows With You',
+    body: 'The voice of the reading sharpens to your tone, your seasons, your real life.',
+  },
+  {
+    icon: Lock,
+    title: 'Your Private Grimoire',
+    body: 'End-to-end private. Anonymous by default. Sign in only when you want continuity across devices.',
+  },
+];
+
+function Features() {
+  return (
+    <SectionFrame
+      kicker="What it is"
+      title={<>A reading that <span className="italic text-coven-soft-gold">stays with you</span></>}
+      body="Most tarot apps deal cards. TarotSnap holds a thread between sessions, so the deck speaks to who you are becoming, not who you were the first time."
+    >
+      <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-5 md:gap-6">
+        {FEATURES.map((f) => (
+          <FeatureCard key={f.title} icon={f.icon} title={f.title} body={f.body} />
+        ))}
+      </div>
+    </SectionFrame>
+  );
+}
+
+/* ────────────────── The Ritual (steps) ────────────────── */
+
+const STEPS = [
+  {
+    icon: Feather,
+    title: 'Ask',
+    body: 'Whisper the question that has been circling. Specific is better than safe.',
+  },
+  {
+    icon: Layers,
+    title: 'Draw',
+    body: 'A single card steps forward. Not random — selected from the energy of the moment.',
+  },
+  {
+    icon: Eye,
+    title: 'Receive',
+    body: 'The reading arrives in three voices: meaning, guidance, timing. You may dwell as long as you wish.',
+  },
+  {
+    icon: BookOpen,
+    title: 'Return',
+    body: 'The card joins your grimoire. The next reading remembers. The thread continues.',
+  },
+];
+
+function TheRitual() {
+  return (
+    <SectionFrame
+      kicker="The ritual"
+      title={<>Four steps, <span className="italic text-coven-soft-gold">honored</span> each time</>}
+      body="No clutter, no upsell, no rush. The cadence of a reading is the point — let it slow you down, let it hold attention."
+    >
+      <div className="relative">
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-10 md:gap-6">
+          {STEPS.map((s, i) => (
+            <div key={s.title} className="relative">
+              <RitualStep step={i + 1} icon={s.icon} title={s.title} body={s.body} />
+              {/* connector arrow on desktop, except after last step */}
+              {i < STEPS.length - 1 && (
+                <span
+                  className="hidden md:flex absolute top-9 -right-3 z-10 text-coven-soft-gold/60"
+                  aria-hidden="true"
+                >
+                  <svg width="32" height="14" viewBox="0 0 32 14" fill="none" stroke="currentColor" strokeWidth="0.9">
+                    <line x1="0" y1="7" x2="26" y2="7" strokeDasharray="2 3" />
+                    <path d="M22 3 L28 7 L22 11" fill="none" />
+                  </svg>
+                </span>
+              )}
+            </div>
+          ))}
+        </div>
+      </div>
+    </SectionFrame>
+  );
+}
+
+/* ────────────────── Choose your spread ────────────────── */
+
+function ChooseSpread() {
+  return (
+    <SectionFrame
+      kicker="Choose your spread"
+      title={<>Six ways to <span className="italic text-coven-soft-gold">listen</span></>}
+      body="One question. Different geometries of attention. Begin with one card, or unfold the year ahead."
+    >
+      <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5 md:gap-6">
+        {SPREADS.map((s) => (
+          <SpreadCard key={s.slug} spread={s} />
+        ))}
+      </div>
+      <div className="mt-12 flex justify-center">
+        <GhostButton asChild>
+          <Link href="/spreads">
+            All spreads
+            <ArrowRight className="w-3.5 h-3.5 ml-2" />
+          </Link>
+        </GhostButton>
+      </div>
+    </SectionFrame>
+  );
+}
+
+/* ────────────────── Living Grimoire teaser ────────────────── */
+
+function GrimoireTeaser() {
+  return (
+    <SectionFrame
+      kicker="Your living grimoire"
+      title={<>The deck <span className="italic text-coven-soft-gold">remembers</span> with you</>}
+      body="A private archive of every reading, every reflection, every recurring card. Yours and yours alone."
+    >
+      <div className="grid lg:grid-cols-3 gap-6">
+        <div className="lg:col-span-2 space-y-4">
+          {MOCK_JOURNAL_ENTRIES.slice(0, 2).map((e) => (
+            <JournalCard key={e.id} entry={e} />
+          ))}
+        </div>
+        <div className="space-y-4">
+          {MOCK_THEMES.slice(0, 2).map((t) => (
+            <ThemeInsightCard
+              key={t.theme}
+              theme={t.theme}
+              appearances={t.appearances}
+              trend={t.trend}
+            />
+          ))}
+        </div>
+      </div>
+
+      <div className="mt-10 flex justify-center">
+        <RitualButton asChild>
+          <Link href="/journal">Enter the grimoire</Link>
+        </RitualButton>
+      </div>
+    </SectionFrame>
+  );
+}
+
+/* ────────────────── Footer ────────────────── */
+
+function Footer() {
+  return (
+    <footer className="relative mt-24">
+      <div className="mx-auto max-w-7xl px-5 md:px-8 pt-12 pb-10">
+        <div className="coven-divider mb-10" aria-hidden="true">
+          <span className="text-coven-soft-gold/55 text-base">✦</span>
+        </div>
+        <div className="flex flex-col md:flex-row items-center justify-between gap-6">
+          <LogoMark href="/" />
+          <nav className="flex items-center gap-6 text-[0.7rem] tracking-[0.22em] uppercase text-coven-fog/75">
+            <Link href="/about" className="hover:text-coven-soft-gold transition-colors">About</Link>
+            <Link href="/journal" className="hover:text-coven-soft-gold transition-colors">Grimoire</Link>
+            <Link href="/spreads" className="hover:text-coven-soft-gold transition-colors">Spreads</Link>
+            <Link href="/about" className="hover:text-coven-soft-gold transition-colors">Privacy</Link>
+          </nav>
+        </div>
+        <p className="mt-8 text-center text-coven-fog/55 text-[0.68rem] tracking-[0.18em] leading-relaxed">
+          For reflection, not prescription. TarotSnap is a contemplative tool.
+          What the cards say is offered as mirror, never mandate.
+        </p>
+      </div>
+    </footer>
+  );
+}
+
+/**
+ * Legacy export-compatibility hook (kept for downstream imports of
+ * "useMounted" — analytics tooling sometimes references it).
+ */
+export function useMounted() {
+  const [m, set] = useState(false);
+  useEffect(() => set(true), []);
+  return m;
+}
