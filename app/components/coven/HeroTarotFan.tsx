@@ -339,72 +339,101 @@ export default function HeroTarotFan() {
           transformStyle: 'preserve-3d',
         }}
       >
-        {/* Center anchor — all three cards share this 0,0 origin */}
+        {/*
+          CARD STRUCTURE PATTERN (3 layers per card):
+            Layer 1 (static <div>): owns the centering transform.
+              left:50%, top:50% places its top-left at the stage center
+              (the relative wrapper is 0×0 inside flex-center).
+              transform: translate(-50%, -50%) shifts the wrapper by
+              half ITS OWN content size, centering the card on the
+              stage anchor. CSS-only — never touched by framer-motion.
+            Layer 2 (motion.div): entrance + hover variants. Its
+              transform is owned by framer-motion. Composes with
+              Layer 1's transform (parent first, then child).
+            Layer 3 (motion.div): idle oscillation that starts after
+              the entrance settles (delay 1.8s). Tiny offsets stack on
+              top of Layer 2's settled state.
+        */}
         <div className="relative">
           {/* === LEFT card === */}
-          <motion.div
-            className="absolute left-0 top-0 -translate-x-1/2 -translate-y-1/2 z-20 will-change-transform"
-            initial="hidden"
-            animate={hovered ? 'hover' : 'visible'}
-            variants={variants.left}
+          <div
+            className="absolute z-20"
+            style={{ left: '50%', top: '50%', transform: 'translate(-50%, -50%)' }}
           >
-            <motion.div {...leftIdle} className="will-change-transform">
-              <div className="w-[150px] sm:w-[180px] md:w-[200px] lg:w-[210px]">
-                <TarotCardImage
-                  src={cards[1]?.src ?? FALLBACK_HERO_CARDS[1].src}
-                  alt={cards[1]?.name ?? FALLBACK_HERO_CARDS[1].name}
-                />
-              </div>
+            <motion.div
+              className="will-change-transform"
+              initial="hidden"
+              animate={hovered ? 'hover' : 'visible'}
+              variants={variants.left}
+            >
+              <motion.div {...leftIdle} className="will-change-transform">
+                <div className="w-[150px] sm:w-[180px] md:w-[200px] lg:w-[210px]">
+                  <TarotCardImage
+                    src={cards[1]?.src ?? FALLBACK_HERO_CARDS[1].src}
+                    alt={cards[1]?.name ?? FALLBACK_HERO_CARDS[1].name}
+                  />
+                </div>
+              </motion.div>
             </motion.div>
-          </motion.div>
+          </div>
 
           {/* === RIGHT card === */}
-          <motion.div
-            className="absolute left-0 top-0 -translate-x-1/2 -translate-y-1/2 z-20 will-change-transform"
-            initial="hidden"
-            animate={hovered ? 'hover' : 'visible'}
-            variants={variants.right}
+          <div
+            className="absolute z-20"
+            style={{ left: '50%', top: '50%', transform: 'translate(-50%, -50%)' }}
           >
-            <motion.div {...rightIdle} className="will-change-transform">
-              <div className="w-[150px] sm:w-[180px] md:w-[200px] lg:w-[210px]">
-                <TarotCardImage
-                  src={cards[2]?.src ?? FALLBACK_HERO_CARDS[2].src}
-                  alt={cards[2]?.name ?? FALLBACK_HERO_CARDS[2].name}
-                />
-              </div>
+            <motion.div
+              className="will-change-transform"
+              initial="hidden"
+              animate={hovered ? 'hover' : 'visible'}
+              variants={variants.right}
+            >
+              <motion.div {...rightIdle} className="will-change-transform">
+                <div className="w-[150px] sm:w-[180px] md:w-[200px] lg:w-[210px]">
+                  <TarotCardImage
+                    src={cards[2]?.src ?? FALLBACK_HERO_CARDS[2].src}
+                    alt={cards[2]?.name ?? FALLBACK_HERO_CARDS[2].name}
+                  />
+                </div>
+              </motion.div>
             </motion.div>
-          </motion.div>
+          </div>
 
           {/* === CENTER card — chosen card, dominant === */}
-          <motion.div
-            className="absolute left-0 top-0 -translate-x-1/2 -translate-y-1/2 z-30 will-change-transform"
-            initial="hidden"
-            animate={hovered ? 'hover' : 'visible'}
-            variants={variants.center}
+          <div
+            className="absolute z-30"
+            style={{ left: '50%', top: '50%', transform: 'translate(-50%, -50%)' }}
           >
-            {/* Center-card focus aura — intensifies on hover */}
-            <div
-              className={
-                'absolute -inset-6 rounded-full pointer-events-none transition-opacity duration-700 ' +
-                (hovered ? 'opacity-100' : 'opacity-65')
-              }
-              style={{
-                background:
-                  'radial-gradient(circle at 50% 50%, rgba(157,98,211,0.55) 0%, rgba(77,42,103,0.22) 50%, transparent 75%)',
-                filter: 'blur(20px)',
-              }}
-              aria-hidden="true"
-            />
-            <motion.div {...centerIdle} className="relative will-change-transform">
-              <div className="w-[170px] sm:w-[200px] md:w-[220px] lg:w-[240px]">
-                <TarotCardImage
-                  src={cards[0]?.src ?? FALLBACK_HERO_CARDS[0].src}
-                  alt={cards[0]?.name ?? FALLBACK_HERO_CARDS[0].name}
-                  priority
-                />
-              </div>
+            <motion.div
+              className="relative will-change-transform"
+              initial="hidden"
+              animate={hovered ? 'hover' : 'visible'}
+              variants={variants.center}
+            >
+              {/* Center-card focus aura — intensifies on hover */}
+              <div
+                className={
+                  'absolute -inset-6 rounded-full pointer-events-none transition-opacity duration-700 ' +
+                  (hovered ? 'opacity-100' : 'opacity-65')
+                }
+                style={{
+                  background:
+                    'radial-gradient(circle at 50% 50%, rgba(157,98,211,0.55) 0%, rgba(77,42,103,0.22) 50%, transparent 75%)',
+                  filter: 'blur(20px)',
+                }}
+                aria-hidden="true"
+              />
+              <motion.div {...centerIdle} className="relative will-change-transform">
+                <div className="w-[170px] sm:w-[200px] md:w-[220px] lg:w-[240px]">
+                  <TarotCardImage
+                    src={cards[0]?.src ?? FALLBACK_HERO_CARDS[0].src}
+                    alt={cards[0]?.name ?? FALLBACK_HERO_CARDS[0].name}
+                    priority
+                  />
+                </div>
+              </motion.div>
             </motion.div>
-          </motion.div>
+          </div>
         </div>
       </motion.div>
     </div>
