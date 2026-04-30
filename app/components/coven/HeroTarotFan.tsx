@@ -21,29 +21,35 @@ import TarotCardImage from './TarotCardImage';
  * HeroTarotFan — homepage hero 3-card fan, choreographed per the
  * "TarotSnap Hero Animation Storyboard" reference.
  *
- * 6-phase storyboard:
- *   1. Pre-summon (0–350ms): cards invisible, container settles in.
- *   2. Center arrival (350–900ms): the chosen card rises and dominates.
- *   3. Side fan-open (700–1300ms): left & right cards slide out from
- *      behind center to their fanned positions.
- *   4. Aura bloom + ritual ring (900–1800ms): purple aura, gold floor
- *      ring, and deterministic gold sparks fade in.
- *   5. Idle loop (after 1800ms): each card breathes with its own
- *      independent y/rotate oscillation; aura pulses; sparks twinkle.
- *   6. Pointer parallax + hover/focus: desktop-only stage tilt up to
- *      ±4°; on hover the center lifts, sides ease outward, aura
- *      intensifies. Reduced-motion users get the static end-state.
+ * Visible motion design:
+ *   1. Pre-summon (0–200ms): cards hidden, blurred, low + small.
+ *   2. Center arrives first (200–1050ms): rises 90px → -12px with a
+ *      subtle overshoot to -18px, scales 0.72 → 1.18 → 1.14, blur clears.
+ *   3. Left fan-opens (650–1600ms): slides from x:-20 (behind center)
+ *      out to x:-168 with overshoot then settles at -155, rotates
+ *      -2° → -15° → -13°, blur clears.
+ *   4. Right mirrors (750–1700ms).
+ *   5. Idle (after entrance): each card breathes with visibly bigger
+ *      keyframes — center y oscillates -12 ↔ -24, sides ±5px x sway
+ *      and ±12px y bob plus ±1.2° rotation drift.
+ *   6. Atmosphere: aura blooms (opacity 0 → 0.78 peak), pulses
+ *      0.50 ↔ 0.78. Floor ring 0 → 0.48 idle pulse. 9 deterministic
+ *      gold sparks pulse opacity 0.15 ↔ 0.8.
+ *   7. Pointer parallax (mouse-only): ±4° rotateY, ±2° rotateX.
+ *   8. Hover: center lifts y → -34, scale → 1.19; sides splay to
+ *      ±178 and y 18; aura + ring brighten.
  *
- * Hydration safety:
- *   SSR + first paint render `FALLBACK_HERO_CARDS` (deterministic).
- *   `useEffect` then swaps to a random unique trio after mount.
- *   Card frame dimensions and stage anchor are identical between
- *   fallback and random, so there is zero layout shift on swap.
+ * Phase state machine (entrance → idle) ensures hover toggling never
+ * re-triggers entrance keyframes.
+ *
+ * Hydration safety: SSR + first paint render `FALLBACK_HERO_CARDS`,
+ * useEffect swaps to `getRandomUniqueCards(...)` after mount.
  */
 export default function HeroTarotFan() {
   const reduce = useReducedMotion();
   const [cards, setCards] = useState<HeroCardAsset[]>(FALLBACK_HERO_CARDS);
   const [hovered, setHovered] = useState(false);
+  const [phase, setPhase] = useState<'entrance' | 'idle'>('entrance');
   const [isMobile, setIsMobile] = useState(false);
 
   // Random card swap (post-mount, hydration-safe).
@@ -51,7 +57,7 @@ export default function HeroTarotFan() {
     setCards(getRandomUniqueCards(HERO_CARD_ASSETS, 3));
   }, []);
 
-  // Responsive offset scaling — desktop fans wider than mobile.
+  // Responsive offset scaling — mobile fans a tighter trio.
   useEffect(() => {
     const check = () => setIsMobile(window.innerWidth < 768);
     check();
@@ -88,122 +94,211 @@ export default function HeroTarotFan() {
     setHovered(false);
   }
 
-  // === Card variants (entrance + hover targets) ===
-  const EASE: [number, number, number, number] = [0.22, 0.8, 0.32, 1];
+  // === Variants ===
+  const ENTRANCE_EASE: [number, number, number, number] = [0.16, 1, 0.3, 1];
 
   const variants = useMemo(() => {
-    const xOffset = isMobile ? 95 : 145;
-    const yOffsetSide = isMobile ? 22 : 28;
-    const xHoverOffset = isMobile ? 105 : 158;
+    // Mobile shrinks fan width by ~35% so cards don't touch the screen edges.
+    const mob = isMobile;
+    const xSettle = mob ? 100 : 155;
+    const xOver = mob ? 110 : 168;
+    const xHover = mob ? 116 : 178;
+    const ySettle = mob ? 22 : 28;
+    const yOver = mob ? 16 : 22;
+    const yHoverSide = mob ? 12 : 18;
 
     const center: Variants = {
-      hidden: { opacity: 0, x: 0, y: 30, scale: 0.92, rotate: 1 },
+      hidden: {
+        opacity: 0,
+        x: 0,
+        y: 90,
+        scale: 0.72,
+        rotate: -4,
+        filter: 'blur(8px)',
+      },
+      entrance: {
+        opacity: [0, 1, 1],
+        x: [0, 0, 0],
+        y: [90, -18, -12],
+        scale: [0.72, 1.18, 1.14],
+        rotate: [-4, 1, 0],
+        filter: ['blur(8px)', 'blur(0px)', 'blur(0px)'],
+        transition: {
+          duration: 1.0,
+          delay: 0.20,
+          ease: ENTRANCE_EASE,
+          times: [0, 0.62, 1],
+        },
+      },
       visible: {
         opacity: 1,
         x: 0,
-        y: 0,
-        scale: 1.12,
+        y: -12,
+        scale: 1.14,
         rotate: 0,
-        transition: { duration: 0.8, delay: 0.25, ease: EASE },
+        filter: 'blur(0px)',
+        transition: { type: 'spring' as const, stiffness: 240, damping: 26 },
       },
       hover: {
         opacity: 1,
         x: 0,
-        y: -16,
-        scale: 1.18,
+        y: -34,
+        scale: 1.19,
         rotate: 0,
-        transition: { type: 'spring', stiffness: 220, damping: 22 },
+        filter: 'blur(0px)',
+        transition: { type: 'spring' as const, stiffness: 220, damping: 22 },
       },
     };
+
     const left: Variants = {
-      hidden: { opacity: 0, x: -30, y: 30, scale: 0.86, rotate: -3 },
+      hidden: {
+        opacity: 0,
+        x: -20,
+        y: 105,
+        scale: 0.68,
+        rotate: -2,
+        filter: 'blur(10px)',
+      },
+      entrance: {
+        opacity: [0, 1, 1],
+        x: [-20, -xOver, -xSettle],
+        y: [105, yOver, ySettle],
+        scale: [0.68, 0.99, 0.96],
+        rotate: [-2, -15, -13],
+        filter: ['blur(10px)', 'blur(0px)', 'blur(0px)'],
+        transition: {
+          duration: 1.05,
+          delay: 0.65,
+          ease: ENTRANCE_EASE,
+          times: [0, 0.65, 1],
+        },
+      },
       visible: {
         opacity: 1,
-        x: -xOffset,
-        y: yOffsetSide,
-        scale: 0.95,
-        rotate: -12,
-        transition: { duration: 0.9, delay: 0.55, ease: EASE },
+        x: -xSettle,
+        y: ySettle,
+        scale: 0.96,
+        rotate: -13,
+        filter: 'blur(0px)',
+        transition: { type: 'spring' as const, stiffness: 240, damping: 26 },
       },
       hover: {
         opacity: 1,
-        x: -xHoverOffset,
-        y: yOffsetSide - 6,
-        scale: 0.98,
-        rotate: -14,
-        transition: { type: 'spring', stiffness: 220, damping: 22 },
+        x: -xHover,
+        y: yHoverSide,
+        scale: 1.0,
+        rotate: -16,
+        filter: 'blur(0px)',
+        transition: { type: 'spring' as const, stiffness: 220, damping: 22 },
       },
     };
+
     const right: Variants = {
-      hidden: { opacity: 0, x: 30, y: 30, scale: 0.86, rotate: 3 },
+      hidden: {
+        opacity: 0,
+        x: 20,
+        y: 105,
+        scale: 0.68,
+        rotate: 2,
+        filter: 'blur(10px)',
+      },
+      entrance: {
+        opacity: [0, 1, 1],
+        x: [20, xOver, xSettle],
+        y: [105, yOver, ySettle],
+        scale: [0.68, 0.99, 0.96],
+        rotate: [2, 15, 13],
+        filter: ['blur(10px)', 'blur(0px)', 'blur(0px)'],
+        transition: {
+          duration: 1.05,
+          delay: 0.75,
+          ease: ENTRANCE_EASE,
+          times: [0, 0.65, 1],
+        },
+      },
       visible: {
         opacity: 1,
-        x: xOffset,
-        y: yOffsetSide,
-        scale: 0.95,
-        rotate: 12,
-        transition: { duration: 0.9, delay: 0.65, ease: EASE },
+        x: xSettle,
+        y: ySettle,
+        scale: 0.96,
+        rotate: 13,
+        filter: 'blur(0px)',
+        transition: { type: 'spring' as const, stiffness: 240, damping: 26 },
       },
       hover: {
         opacity: 1,
-        x: xHoverOffset,
-        y: yOffsetSide - 6,
-        scale: 0.98,
-        rotate: 14,
-        transition: { type: 'spring', stiffness: 220, damping: 22 },
+        x: xHover,
+        y: yHoverSide,
+        scale: 1.0,
+        rotate: 16,
+        filter: 'blur(0px)',
+        transition: { type: 'spring' as const, stiffness: 220, damping: 22 },
       },
     };
     return { center, left, right };
   }, [isMobile]);
 
-  // === Idle loops — start AFTER entrance settles (~1.8s) ===
-  const IDLE_DELAY = 1.8;
-  const idleTransition = (duration: number, delay: number) =>
-    ({
-      duration,
-      ease: 'easeInOut' as const,
-      repeat: Infinity,
-      delay: IDLE_DELAY + delay,
-    });
-
+  // === Idle inner-loop keyframes (relative offsets layered on top of
+  // the outer's settled position; visible enough to read as motion).
   const centerIdle = reduce
     ? {}
     : {
         animate: {
-          y: [0, -8, 0, 5, 0],
-          rotate: [0, 0.4, 0, -0.3, 0],
+          y: [0, -12, 0, 6, 0],
+          rotate: [0, 0.7, 0, -0.5, 0],
         },
-        transition: idleTransition(6.8, 0),
+        transition: {
+          duration: 6.5,
+          repeat: Infinity,
+          ease: 'easeInOut' as const,
+        },
       };
   const leftIdle = reduce
     ? {}
     : {
         animate: {
-          y: [0, -10, 0, 6, 0],
-          rotate: [0, 0.8, -0.5, 0],
+          y: [0, -12, 0, 6, 0],
+          x: [0, -5, 0, 5, 0],
+          rotate: [0, 1.2, 0, -1.2, 0],
         },
-        transition: idleTransition(7.4, 0.2),
+        transition: {
+          duration: 7.4,
+          repeat: Infinity,
+          ease: 'easeInOut' as const,
+        },
       };
   const rightIdle = reduce
     ? {}
     : {
         animate: {
-          y: [0, -8, 0, 7, 0],
-          rotate: [0, -0.8, 0.6, 0],
+          y: [0, -10, 0, 7, 0],
+          x: [0, 5, 0, -5, 0],
+          rotate: [0, -1.2, 0, 1.2, 0],
         },
-        transition: idleTransition(7.1, 0.45),
+        transition: {
+          duration: 7.1,
+          repeat: Infinity,
+          ease: 'easeInOut' as const,
+        },
       };
 
-  // === Deterministic sparks (no Math.random in render) ===
+  // === Deterministic sparks ===
   const SPARKS = [
-    { left: '8%', top: '14%', size: 6, delay: 1.10 },
-    { left: '88%', top: '18%', size: 8, delay: 1.20 },
-    { left: '12%', top: '78%', size: 5, delay: 1.30 },
-    { left: '90%', top: '70%', size: 7, delay: 1.40 },
-    { left: '20%', top: '92%', size: 6, delay: 1.50 },
-    { left: '78%', top: '88%', size: 8, delay: 1.60 },
-    { left: '50%', top: '4%', size: 5, delay: 1.70 },
+    { left: '8%',  top: '14%', size: 4, delay: 0.10, dur: 3.0 },
+    { left: '88%', top: '18%', size: 3, delay: 0.40, dur: 3.4 },
+    { left: '12%', top: '78%', size: 4, delay: 0.30, dur: 3.2 },
+    { left: '90%', top: '70%', size: 3, delay: 0.55, dur: 2.8 },
+    { left: '20%', top: '92%', size: 4, delay: 0.50, dur: 3.6 },
+    { left: '78%', top: '88%', size: 3, delay: 0.70, dur: 3.0 },
+    { left: '50%', top: '4%',  size: 3, delay: 0.20, dur: 3.4 },
+    { left: '5%',  top: '46%', size: 3, delay: 0.85, dur: 2.6 },
+    { left: '94%', top: '42%', size: 3, delay: 0.25, dur: 3.8 },
   ];
+
+  // Compute the active "outer" target for hover/visible after entrance.
+  const outerStateForCenter =
+    phase === 'entrance' ? 'entrance' : hovered ? 'hover' : 'visible';
+  const outerStateForSides = outerStateForCenter; // same string, different variant maps
 
   return (
     <div
@@ -215,119 +310,136 @@ export default function HeroTarotFan() {
       onBlur={() => setHovered(false)}
       className="relative mx-auto w-full"
       style={{
-        height: 'clamp(340px, 36vw, 460px)',
-        maxWidth: 560,
+        height: 'clamp(360px, 38vw, 480px)',
+        maxWidth: 580,
         perspective: 1200,
       }}
     >
-      {/* === Phase 4 — Ambient aura bloom (also idle pulses) === */}
+      {/* === Aura bloom — opacity 0 → 0.78 entrance, 0.50↔0.78 idle pulse === */}
       <motion.div
         aria-hidden="true"
-        className={
-          'absolute inset-0 -m-8 rounded-full blur-3xl pointer-events-none transition-opacity duration-700 ' +
-          (hovered ? 'opacity-100' : 'opacity-90')
-        }
+        className="absolute inset-0 -m-6 rounded-full blur-3xl pointer-events-none"
         style={{
           background:
-            'radial-gradient(circle at 50% 48%, rgba(157,98,211,0.50) 0%, rgba(122,69,165,0.24) 35%, transparent 70%)',
+            'radial-gradient(circle at 50% 48%, rgba(157,98,211,0.55) 0%, rgba(122,69,165,0.26) 35%, transparent 70%)',
         }}
-        initial={{ opacity: 0, scale: 0.92 }}
+        initial={{ opacity: 0, scale: 0.75 }}
         animate={
           reduce
-            ? { opacity: 0.9, scale: 1 }
+            ? { opacity: 0.65, scale: 1 }
             : {
-                opacity: [0, 0.55, 0.85, 0.6, 0.85],
-                scale: [0.92, 1, 1.04, 1, 1.04],
+                opacity: hovered ? [0.78, 0.92, 0.78] : [0.50, 0.78, 0.50],
+                scale: hovered ? [1.04, 1.12, 1.04] : [0.98, 1.06, 0.98],
               }
         }
         transition={
           reduce
-            ? { duration: 0.8, delay: 0.35 }
+            ? { duration: 1.4, delay: 0.45 }
             : {
                 duration: 6,
                 ease: 'easeInOut',
                 repeat: Infinity,
-                delay: 0.35,
-                times: [0, 0.12, 0.4, 0.7, 1],
+                delay: 0.45,
               }
         }
       />
 
-      {/* === Phase 4 — Ritual floor glow (elliptical) === */}
+      {/* === Floor ritual glow (gold + plum elliptical) === */}
       <motion.div
         aria-hidden="true"
-        className="absolute left-1/2 -translate-x-1/2 pointer-events-none"
+        className="absolute pointer-events-none"
         style={{
-          bottom: '4%',
-          width: '78%',
-          height: '14%',
+          left: '50%',
+          bottom: '12%',
+          width: '64%',
+          height: '22%',
+          transform: 'translateX(-50%)',
+          borderRadius: '9999px',
           background:
-            'radial-gradient(ellipse at center, rgba(157,98,211,0.50) 0%, rgba(122,69,165,0.20) 32%, transparent 65%)',
-          filter: 'blur(28px)',
+            'radial-gradient(ellipse at center, rgba(216,182,106,0.26) 0%, rgba(122,69,165,0.18) 35%, transparent 70%)',
+          filter: 'blur(10px)',
         }}
         initial={{ opacity: 0, scale: 0.8 }}
-        animate={{
-          opacity: hovered ? 0.75 : 0.55,
-          scale: 1,
-        }}
-        transition={{ duration: 0.9, delay: 0.9, ease: EASE }}
+        animate={
+          reduce
+            ? { opacity: 0.42, scale: 1 }
+            : {
+                opacity: hovered
+                  ? [0.55, 0.72, 0.55]
+                  : [0.32, 0.52, 0.32],
+                scale: [0.98, 1.04, 0.98],
+              }
+        }
+        transition={
+          reduce
+            ? { duration: 0.9, delay: 0.9, ease: ENTRANCE_EASE }
+            : {
+                duration: 5.5,
+                ease: 'easeInOut',
+                repeat: Infinity,
+                delay: 0.9,
+              }
+        }
       />
 
-      {/* === Phase 4 — Thin gold ritual ring outline === */}
+      {/* === Thin gold ritual ring (above the floor glow) === */}
       <motion.div
         aria-hidden="true"
-        className="absolute left-1/2 -translate-x-1/2 rounded-full pointer-events-none"
+        className="absolute pointer-events-none"
         style={{
-          bottom: '9%',
-          width: '64%',
-          height: '7%',
-          border: '1px solid rgba(216,182,106,0.24)',
+          left: '50%',
+          bottom: '18%',
+          width: '52%',
+          height: '8%',
+          transform: 'translateX(-50%)',
+          borderRadius: '9999px',
+          border: '1px solid rgba(216,182,106,0.30)',
           boxShadow:
-            '0 0 24px rgba(216,182,106,0.18), inset 0 0 14px rgba(216,182,106,0.10)',
+            '0 0 28px rgba(216,182,106,0.22), inset 0 0 14px rgba(216,182,106,0.12)',
         }}
         initial={{ opacity: 0, scale: 0.85 }}
         animate={{
           opacity: hovered ? 0.65 : 0.45,
           scale: 1,
         }}
-        transition={{ duration: 0.9, delay: 0.95, ease: EASE }}
+        transition={{ duration: 0.95, delay: 0.95, ease: ENTRANCE_EASE }}
       />
 
-      {/* === Phase 4 — Gold sparks === */}
+      {/* === Sparks (dot + box-shadow glow) === */}
       {SPARKS.map((s, i) => (
         <motion.span
           key={i}
           aria-hidden="true"
-          className="absolute text-coven-soft-gold"
+          className="absolute rounded-full"
           style={{
             left: s.left,
             top: s.top,
-            fontSize: `${s.size}px`,
-            lineHeight: 1,
-            textShadow: '0 0 8px rgba(216,182,106,0.6)',
+            width: `${s.size}px`,
+            height: `${s.size}px`,
+            background: '#D8B66A',
+            boxShadow:
+              '0 0 10px rgba(216,182,106,0.85), 0 0 18px rgba(157,98,211,0.45)',
           }}
           initial={{ opacity: 0, scale: 0.6 }}
           animate={
             reduce
-              ? { opacity: 0.6, scale: 1 }
+              ? { opacity: 0.55, scale: 1 }
               : {
-                  opacity: [0, 0.7, 0.3, 0.8, 0.45],
-                  scale: [0.6, 1, 0.95, 1.08, 1],
+                  opacity: [0.15, 0.85, 0.15],
+                  scale: [0.8, 1.35, 0.8],
                 }
           }
           transition={
             reduce
-              ? { duration: 0.6, delay: s.delay }
+              ? { duration: 0.6, delay: 0.6 + s.delay }
               : {
-                  duration: 4 + i * 0.2,
-                  delay: s.delay,
+                  duration: s.dur,
+                  delay: 0.6 + s.delay,
                   repeat: Infinity,
                   ease: 'easeInOut',
                 }
           }
-        >
-          ✦
-        </motion.span>
+        />
       ))}
 
       {/* === Card stage with parallax tilt === */}
@@ -340,19 +452,14 @@ export default function HeroTarotFan() {
         }}
       >
         {/*
-          CARD STRUCTURE PATTERN (3 layers per card):
-            Layer 1 (static <div>): owns the centering transform.
-              left:50%, top:50% places its top-left at the stage center
-              (the relative wrapper is 0×0 inside flex-center).
-              transform: translate(-50%, -50%) shifts the wrapper by
-              half ITS OWN content size, centering the card on the
-              stage anchor. CSS-only — never touched by framer-motion.
-            Layer 2 (motion.div): entrance + hover variants. Its
-              transform is owned by framer-motion. Composes with
-              Layer 1's transform (parent first, then child).
-            Layer 3 (motion.div): idle oscillation that starts after
-              the entrance settles (delay 1.8s). Tiny offsets stack on
-              top of Layer 2's settled state.
+          CARD STRUCTURE (3 layers per card):
+            Layer 1 (static <div>): owns the centering transform via
+              inline 'translate(-50%, -50%)'. Never touched by framer.
+            Layer 2 (motion.div): entrance / visible / hover targets.
+              `phase` state machine ensures we don't re-play entrance
+              keyframes when hover toggles.
+            Layer 3 (motion.div): idle oscillation. Composes on top of
+              layer 2's settled state so motion is visibly additive.
         */}
         <div className="relative">
           {/* === LEFT card === */}
@@ -363,10 +470,16 @@ export default function HeroTarotFan() {
             <motion.div
               className="will-change-transform"
               initial="hidden"
-              animate={hovered ? 'hover' : 'visible'}
+              animate={outerStateForSides}
               variants={variants.left}
+              onAnimationComplete={(def) => {
+                if (def === 'entrance') setPhase('idle');
+              }}
             >
-              <motion.div {...leftIdle} className="will-change-transform">
+              <motion.div
+                {...(phase === 'idle' ? leftIdle : {})}
+                className="will-change-transform"
+              >
                 <div className="w-[150px] sm:w-[180px] md:w-[200px] lg:w-[210px]">
                   <TarotCardImage
                     src={cards[1]?.src ?? FALLBACK_HERO_CARDS[1].src}
@@ -385,10 +498,13 @@ export default function HeroTarotFan() {
             <motion.div
               className="will-change-transform"
               initial="hidden"
-              animate={hovered ? 'hover' : 'visible'}
+              animate={outerStateForSides}
               variants={variants.right}
             >
-              <motion.div {...rightIdle} className="will-change-transform">
+              <motion.div
+                {...(phase === 'idle' ? rightIdle : {})}
+                className="will-change-transform"
+              >
                 <div className="w-[150px] sm:w-[180px] md:w-[200px] lg:w-[210px]">
                   <TarotCardImage
                     src={cards[2]?.src ?? FALLBACK_HERO_CARDS[2].src}
@@ -407,23 +523,26 @@ export default function HeroTarotFan() {
             <motion.div
               className="relative will-change-transform"
               initial="hidden"
-              animate={hovered ? 'hover' : 'visible'}
+              animate={outerStateForCenter}
               variants={variants.center}
             >
-              {/* Center-card focus aura — intensifies on hover */}
+              {/* center-card focus aura (tighter than the global aura) */}
               <div
                 className={
                   'absolute -inset-6 rounded-full pointer-events-none transition-opacity duration-700 ' +
-                  (hovered ? 'opacity-100' : 'opacity-65')
+                  (hovered ? 'opacity-100' : 'opacity-70')
                 }
                 style={{
                   background:
-                    'radial-gradient(circle at 50% 50%, rgba(157,98,211,0.55) 0%, rgba(77,42,103,0.22) 50%, transparent 75%)',
+                    'radial-gradient(circle at 50% 50%, rgba(157,98,211,0.60) 0%, rgba(77,42,103,0.24) 50%, transparent 75%)',
                   filter: 'blur(20px)',
                 }}
                 aria-hidden="true"
               />
-              <motion.div {...centerIdle} className="relative will-change-transform">
+              <motion.div
+                {...(phase === 'idle' ? centerIdle : {})}
+                className="relative will-change-transform"
+              >
                 <div className="w-[170px] sm:w-[200px] md:w-[220px] lg:w-[240px]">
                   <TarotCardImage
                     src={cards[0]?.src ?? FALLBACK_HERO_CARDS[0].src}
