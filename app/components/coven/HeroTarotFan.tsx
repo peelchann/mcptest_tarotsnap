@@ -10,7 +10,6 @@ import {
   useTransform,
 } from 'framer-motion';
 import {
-  FALLBACK_HERO_CARDS,
   HERO_CARD_ASSETS,
   type HeroCardAsset,
   getRandomUniqueCards,
@@ -42,17 +41,31 @@ import TarotCardImage from './TarotCardImage';
  * Phase state machine (entrance → idle) ensures hover toggling never
  * re-triggers entrance keyframes.
  *
- * Hydration safety: SSR + first paint render `FALLBACK_HERO_CARDS`,
- * useEffect swaps to `getRandomUniqueCards(...)` after mount.
+ * Hydration + ready-gate strategy:
+ *   SSR + first paint render WITHOUT card images (cards = null) so the
+ *   server / client markup matches and the layout box reserves space.
+ *   useEffect picks `getRandomUniqueCards(...)` once after mount; only
+ *   then do the 3 card motion.divs mount with `initial="hidden"` and
+ *   begin the entrance keyframes. This guarantees:
+ *     - No fallback face flashes before the random pick.
+ *     - No mid-entrance image swap.
+ *     - Random selection happens once per page load and never again
+ *       (hover, parallax, resize, re-render do not re-randomize).
  */
 export default function HeroTarotFan() {
   const reduce = useReducedMotion();
-  const [cards, setCards] = useState<HeroCardAsset[]>(FALLBACK_HERO_CARDS);
+  // null until the client picks a random unique trio. While null, the
+  // stage reserves layout space but does not render card faces.
+  const [cards, setCards] = useState<HeroCardAsset[] | null>(null);
   const [hovered, setHovered] = useState(false);
   const [phase, setPhase] = useState<'entrance' | 'idle'>('entrance');
   const [isMobile, setIsMobile] = useState(false);
 
-  // Random card swap (post-mount, hydration-safe).
+  // One-shot random pick on mount. Strict-mode double-invocation in
+  // dev re-runs this effect; the second run replaces the first random
+  // pick with another random pick (still stable for the rest of the
+  // page lifetime, since dependency array is empty). In production
+  // this runs exactly once.
   useEffect(() => {
     setCards(getRandomUniqueCards(HERO_CARD_ASSETS, 3));
   }, []);
@@ -462,97 +475,98 @@ export default function HeroTarotFan() {
               layer 2's settled state so motion is visibly additive.
         */}
         <div className="relative">
-          {/* === LEFT card === */}
-          <div
-            className="absolute z-20"
-            style={{ left: '50%', top: '50%', transform: 'translate(-50%, -50%)' }}
-          >
-            <motion.div
-              className="will-change-transform"
-              initial="hidden"
-              animate={outerStateForSides}
-              variants={variants.left}
-              onAnimationComplete={(def) => {
-                if (def === 'entrance') setPhase('idle');
-              }}
-            >
-              <motion.div
-                {...(phase === 'idle' ? leftIdle : {})}
-                className="will-change-transform"
-              >
-                <div className="w-[150px] sm:w-[180px] md:w-[200px] lg:w-[210px]">
-                  <TarotCardImage
-                    src={cards[1]?.src ?? FALLBACK_HERO_CARDS[1].src}
-                    alt={cards[1]?.name ?? FALLBACK_HERO_CARDS[1].name}
-                  />
-                </div>
-              </motion.div>
-            </motion.div>
-          </div>
-
-          {/* === RIGHT card === */}
-          <div
-            className="absolute z-20"
-            style={{ left: '50%', top: '50%', transform: 'translate(-50%, -50%)' }}
-          >
-            <motion.div
-              className="will-change-transform"
-              initial="hidden"
-              animate={outerStateForSides}
-              variants={variants.right}
-            >
-              <motion.div
-                {...(phase === 'idle' ? rightIdle : {})}
-                className="will-change-transform"
-              >
-                <div className="w-[150px] sm:w-[180px] md:w-[200px] lg:w-[210px]">
-                  <TarotCardImage
-                    src={cards[2]?.src ?? FALLBACK_HERO_CARDS[2].src}
-                    alt={cards[2]?.name ?? FALLBACK_HERO_CARDS[2].name}
-                  />
-                </div>
-              </motion.div>
-            </motion.div>
-          </div>
-
-          {/* === CENTER card — chosen card, dominant === */}
-          <div
-            className="absolute z-30"
-            style={{ left: '50%', top: '50%', transform: 'translate(-50%, -50%)' }}
-          >
-            <motion.div
-              className="relative will-change-transform"
-              initial="hidden"
-              animate={outerStateForCenter}
-              variants={variants.center}
-            >
-              {/* center-card focus aura (tighter than the global aura) */}
+          {/* Card motion.divs only mount after the client picks the
+              random trio. Until then, the stage shows just the
+              ambient atmosphere (aura, ring, sparks). This is the
+              ready-gate that prevents the fallback-then-swap flash. */}
+          {cards && (
+            <>
+              {/* === LEFT card === */}
               <div
-                className={
-                  'absolute -inset-6 rounded-full pointer-events-none transition-opacity duration-700 ' +
-                  (hovered ? 'opacity-100' : 'opacity-70')
-                }
-                style={{
-                  background:
-                    'radial-gradient(circle at 50% 50%, rgba(157,98,211,0.60) 0%, rgba(77,42,103,0.24) 50%, transparent 75%)',
-                  filter: 'blur(20px)',
-                }}
-                aria-hidden="true"
-              />
-              <motion.div
-                {...(phase === 'idle' ? centerIdle : {})}
-                className="relative will-change-transform"
+                key={`left-${cards[1].name}`}
+                className="absolute z-20"
+                style={{ left: '50%', top: '50%', transform: 'translate(-50%, -50%)' }}
               >
-                <div className="w-[170px] sm:w-[200px] md:w-[220px] lg:w-[240px]">
-                  <TarotCardImage
-                    src={cards[0]?.src ?? FALLBACK_HERO_CARDS[0].src}
-                    alt={cards[0]?.name ?? FALLBACK_HERO_CARDS[0].name}
-                    priority
+                <motion.div
+                  className="will-change-transform"
+                  initial="hidden"
+                  animate={outerStateForSides}
+                  variants={variants.left}
+                  onAnimationComplete={(def) => {
+                    if (def === 'entrance') setPhase('idle');
+                  }}
+                >
+                  <motion.div
+                    {...(phase === 'idle' ? leftIdle : {})}
+                    className="will-change-transform"
+                  >
+                    <div className="w-[150px] sm:w-[180px] md:w-[200px] lg:w-[210px]">
+                      <TarotCardImage src={cards[1].src} alt={cards[1].name} />
+                    </div>
+                  </motion.div>
+                </motion.div>
+              </div>
+
+              {/* === RIGHT card === */}
+              <div
+                key={`right-${cards[2].name}`}
+                className="absolute z-20"
+                style={{ left: '50%', top: '50%', transform: 'translate(-50%, -50%)' }}
+              >
+                <motion.div
+                  className="will-change-transform"
+                  initial="hidden"
+                  animate={outerStateForSides}
+                  variants={variants.right}
+                >
+                  <motion.div
+                    {...(phase === 'idle' ? rightIdle : {})}
+                    className="will-change-transform"
+                  >
+                    <div className="w-[150px] sm:w-[180px] md:w-[200px] lg:w-[210px]">
+                      <TarotCardImage src={cards[2].src} alt={cards[2].name} />
+                    </div>
+                  </motion.div>
+                </motion.div>
+              </div>
+
+              {/* === CENTER card — chosen card, dominant === */}
+              <div
+                key={`center-${cards[0].name}`}
+                className="absolute z-30"
+                style={{ left: '50%', top: '50%', transform: 'translate(-50%, -50%)' }}
+              >
+                <motion.div
+                  className="relative will-change-transform"
+                  initial="hidden"
+                  animate={outerStateForCenter}
+                  variants={variants.center}
+                >
+                  {/* center-card focus aura (tighter than the global aura) */}
+                  <div
+                    className={
+                      'absolute -inset-6 rounded-full pointer-events-none transition-opacity duration-700 ' +
+                      (hovered ? 'opacity-100' : 'opacity-70')
+                    }
+                    style={{
+                      background:
+                        'radial-gradient(circle at 50% 50%, rgba(157,98,211,0.60) 0%, rgba(77,42,103,0.24) 50%, transparent 75%)',
+                      filter: 'blur(20px)',
+                    }}
+                    aria-hidden="true"
                   />
-                </div>
-              </motion.div>
-            </motion.div>
-          </div>
+                  <motion.div
+                    {...(phase === 'idle' ? centerIdle : {})}
+                    className="relative will-change-transform"
+                  >
+                    <div className="w-[170px] sm:w-[200px] md:w-[220px] lg:w-[240px]">
+                      <TarotCardImage src={cards[0].src} alt={cards[0].name} priority />
+                    </div>
+                  </motion.div>
+                </motion.div>
+              </div>
+            </>
+          )}
         </div>
       </motion.div>
     </div>
